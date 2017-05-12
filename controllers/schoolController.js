@@ -15,7 +15,7 @@ let moment = require("moment");
 let log = require("../helpers/logger");
 
 module.exports.index = function (req, res) {
-  res.json({"message": "Home", "result": {}, "error": false});
+  res.render('index');
 };
 
 let schoolQuery = function (queryObj) {
@@ -32,32 +32,32 @@ let schoolQuery = function (queryObj) {
 exports.schoolQuery = schoolQuery;
 
 module.exports.school = function (req, res) {
-  let attributes = [];
-  let group = '';
-  let requested_data = '';
+  var attributes = [];
+  var group = '';
   if(req.query.district) {
-    attributes = ['block'];
-    requested_data = 'block';
+    attributes = ['block']
+    group = 'block'
   } else if(req.query.block) {
-    attributes = ['cluster'];
-    requested_data = 'cluster';
+    attributes = ['cluster']
+    group = 'cluster'
   } else if(req.query.cluster) {
-    attributes = ['school_name'];
-    requested_data = 'school_name';
+    attributes = ['school_name']
+    group = 'school_name'
   } else {
-    attributes = ['district'];
-    requested_data = 'district';
+    attributes = ['district']
+    group = 'district'
   }
   Promise.all([
     schoolQuery({
       raw: true,
       attributes: attributes,
       where: req.query,
-      group: requested_data
+      group: group
     })
   ]).then(function (data) {
-    let response = {};
-    response[requested_data] = data[0];
+    let response = {
+      data: data[0]
+    };
     log.info(response);
     res.json({"message": "Data", "result": response, "error": false});
   }).catch(function (err) {

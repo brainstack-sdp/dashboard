@@ -1,0 +1,61 @@
+doctype html
+html
+    head
+        title HP Education Analysis
+        link(rel="stylesheet" href="styles/vendor-aa67210ead.css")
+        link(rel="stylesheet" href="styles/app-fe96e7be2d.css")
+        link(rel="stylesheet" href="assets/chartist.min.css")
+        link(rel="stylesheet" href="styles/style.css")
+    body
+        header
+            .page-top.clearfix(scroll-position="scrolled" max-height="50")
+                a(href="#/dashboard" class="al-logo clearfix")
+                    span HP
+                    | Data
+                a(href class="collapse-menu-link ion-navicon" ba-sidebar-toggle-menu)
+        .body-bg
+        main
+            aside.al-sidebar
+                h4 Use Filters
+                ul.al-sidebar-list
+                    li
+                        h3 District
+                        select(class="js-filter" data-type="district")
+                    li
+                        h3 Block
+                        select(class="js-filter" data-type="block")
+                    li
+                        h3 Cluster
+                        select(class="js-filter" data-type="cluster")
+                    li
+                        h3 School
+                        select(class="js-filter" data-type="school")
+
+            .chart-main.al-main
+                .al-content
+                    section.chartist
+                    .col-md-12
+                        h3 Overall Grade Distribution (#OGD)
+                        .ct-chart(id="label-pie")
+                    .col-md-12
+                        h3 Districtwise Subject Learning Achievement (#DSLA)
+                        .ct-chart(id="multi-bar")
+                    .col-md-12
+                        h3 Districtwise Subject Learning Achievement (#DSLA)
+                        .ct-chart(id="multi-bar")
+                    .col-md-12
+                        h3 Districtwise Subject Learning Achievement (#DSLA)
+                        .ct-chart(id="multi-bar")
+                    .col-md-12
+                        h3 Districtwise Subject Learning Achievement (#DSLA)
+                        .ct-chart(id="line-chart")
+                    .col-md-12
+                        h3 Districtwise Subject Learning Achievement (#DSLA)
+                        .ct-chart.stacked-bar(id="stacked-bar")
+        footer.al-footer.clearfix
+            .al-footer-right Created with&nbsp;
+                i(class="ion-heart")
+                | in India
+        script(src="assets/chartist.min.js")
+        script(src="js/vendor-727ff9d081.js")
+        script(src="js/app.js")

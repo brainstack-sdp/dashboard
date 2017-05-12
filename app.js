@@ -12,6 +12,7 @@ let cors = require("cors");
 let errorHandler = require("errorhandler");
 // let lusca = require('lusca');
 let dotenv = require("dotenv");
+let pug = require("pug");
 let expressValidator = require("express-validator");
 let errorController = require("./controllers/errorController");
 let passport = require("passport");
@@ -124,7 +125,9 @@ passport.use(new Strategy({
 
 app.use(passport.initialize());
 app.use(passport.session());
-
+app.use(express.static('./public'));
+app.set('views', './views');
+app.set('view engine', 'pug');
 
 /**
  * Error Handler.
