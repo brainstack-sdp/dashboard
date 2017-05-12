@@ -167,9 +167,11 @@ app.use(function (req, res, next) {
  */
 let routes = require("./routes/indexRoutes");
 let schoolRoutes = require("./routes/schoolRoutes");
+let studentRoutes = require("./routes/studentRoutes");
 
 app.use("/", routes);
 app.use("/school", schoolRoutes);
+app.use("/student", studentRoutes);
 
 /**
  * catch 404 and forward to error handler

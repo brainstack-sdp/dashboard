@@ -34,32 +34,25 @@ exports.studentQuery = studentQuery;
 
 module.exports.student = function (req, res) {
   
-  if(req.query.district) {
-    attributes = ['block']
-    group = 'district'
-  } else if(req.query.block) {
-    attributes = ['cluster']
-    group = 'district'
-  } else if(req.query.cluster) {
-    attributes = ['school_name']
-    group = 'district'
-  } else {
-    attributes = ['district']
-    group = 'district'
-  }
   Promise.all([
     studentQuery({
       raw: true,
+      include: [{
+        model: models.school_info,
+        as: "SI",
+        attributes: [],
+        required: true,
+        where: req.query
+      }],
       attributes: [
-        [sequelize.fn("COUNT", sequelize.col("id")), "count"],
+        [sequelize.fn("COUNT", sequelize.col("student.id")), "count"],
         "grade"
       ],
-      where: req.query,
-      group: group
+      group: "grade"
     })
   ]).then(function (data) {
     let response = {
-      district: data[0]
+      data: data[0]
     };
     log.info(response);
     res.json({"message": "Data", "result": response, "error": false});

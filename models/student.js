@@ -112,10 +112,6 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.STRING,
       allowNull: true
     },
-    u_dise: {
-      type: DataTypes.STRING,
-      allowNull: true
-    },
     grade: {
       type: DataTypes.STRING,
       allowNull: false
@@ -131,21 +127,20 @@ module.exports = function (sequelize, DataTypes) {
     sum: {
       type: DataTypes.FLOAT,
       allowNull: true
-    }
-    // brand_id: {
-    //   type: DataTypes.INTEGER(10),
-    //   allowNull: false,
-    //   references: {
-    //     model: "brands",
-    //     key: "id"
-    //   }
-    // },
+    },
+    u_dise: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      references: {
+        model: "school_info",
+        key: "school_code"
+      }
+    },
   }, {
     tableName: "student",
     classMethods: {
       associate: function (models) {
-        // models.student_info.hasMany(models.sub_orders, {foreignKey: "restaurant_id", as: "SO"});
-        // models.student_info.belongsTo(models.brands, {foreignKey: "brand_id", as: "B"});
+        models.student.belongsTo(models.school_info, {foreignKey: "u_dise", targetKey: "school_code", as: "SI"});
       }
     }
   });

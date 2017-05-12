@@ -88,20 +88,11 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.BOOLEAN,
       allowNull: true
     }
-    // brand_id: {
-    //   type: DataTypes.INTEGER(10),
-    //   allowNull: false,
-    //   references: {
-    //     model: "brands",
-    //     key: "id"
-    //   }
-    // },
   }, {
     tableName: "school_info",
     classMethods: {
       associate: function (models) {
-        // models.student_info.hasMany(models.sub_orders, {foreignKey: "restaurant_id", as: "SO"});
-        // models.student_info.belongsTo(models.brands, {foreignKey: "brand_id", as: "B"});
+        models.school_info.hasMany(models.student, {foreignKey: "u_dise", sourceKey: "school_code"});
       }
     }
   });
