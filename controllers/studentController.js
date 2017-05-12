@@ -48,6 +48,11 @@ module.exports.student = function (req, res) {
         [sequelize.fn("COUNT", sequelize.col("student.id")), "count"],
         "grade"
       ],
+      where: {
+        grade: {
+          $ne: null
+        }
+      },
       group: "grade"
     })
   ]).then(function (data) {
