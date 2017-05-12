@@ -34,18 +34,19 @@ exports.schoolQuery = schoolQuery;
 module.exports.school = function (req, res) {
   let attributes = [];
   let group = '';
+  let requested_data = '';
   if(req.query.district) {
-    attributes = ['block']
-    requested_data = 'block'
+    attributes = ['block'];
+    requested_data = 'block';
   } else if(req.query.block) {
-    attributes = ['cluster']
-    requested_data = 'cluster'
+    attributes = ['cluster'];
+    requested_data = 'cluster';
   } else if(req.query.cluster) {
-    attributes = ['school_name']
-    requested_data = 'school_name'
+    attributes = ['school_name'];
+    requested_data = 'school_name';
   } else {
-    attributes = ['district']
-    requested_data = 'district'
+    attributes = ['district'];
+    requested_data = 'district';
   }
   Promise.all([
     schoolQuery({
