@@ -32,32 +32,31 @@ let schoolQuery = function (queryObj) {
 exports.schoolQuery = schoolQuery;
 
 module.exports.school = function (req, res) {
-  var attributes = [];
-  var group = '';
+  let attributes = [];
+  let group = '';
   if(req.query.district) {
     attributes = ['block']
-    group = 'block'
+    requested_data = 'block'
   } else if(req.query.block) {
     attributes = ['cluster']
-    group = 'cluster'
+    requested_data = 'cluster'
   } else if(req.query.cluster) {
     attributes = ['school_name']
-    group = 'school_name'
+    requested_data = 'school_name'
   } else {
     attributes = ['district']
-    group = 'district'
+    requested_data = 'district'
   }
   Promise.all([
     schoolQuery({
       raw: true,
       attributes: attributes,
       where: req.query,
-      group: group
+      group: requested_data
     })
   ]).then(function (data) {
-    let response = {
-      data: data[0]
-    };
+    let response = {};
+    response[requested_data] = data[0];
     log.info(response);
     res.json({"message": "Data", "result": response, "error": false});
   }).catch(function (err) {
