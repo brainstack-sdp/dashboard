@@ -1,0 +1,7 @@
+node_modules/*
+.idea/*
+public/*
+*.log
+Gruntfile.js
+sequelize-template
+test.js
