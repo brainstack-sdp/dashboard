@@ -33,7 +33,21 @@ let studentQuery = function (queryObj) {
 exports.studentQuery = studentQuery;
 
 module.exports.student = function (req, res) {
-  
+  var attributes = [];
+  var group = '';
+  if(req.query.district) {
+    attributes = ['block']
+    group = 'block'
+  } else if(req.query.block) {
+    attributes = ['cluster']
+    group = 'cluster'
+  } else if(req.query.cluster) {
+    attributes = ['school_name']
+    group = 'school_name'
+  } else {
+    attributes = ['district']
+    group = 'district'
+  }
   Promise.all([
     studentQuery({
       raw: true,
@@ -54,10 +68,78 @@ module.exports.student = function (req, res) {
         }
       },
       group: "grade"
+    }),
+    studentQuery({
+      raw: true,
+      include: [{
+        model: models.school_info,
+        as: "SI",
+        attributes: [],
+        required: true,
+        where: req.query
+      }],
+      attributes: [
+        [sequelize.fn("SUM", sequelize.col("student.sum")), "sum"],
+        [sequelize.fn("SUM", sequelize.col("student.max_marks")), "max_marks"],
+        "subject",
+        "SI."+group
+      ],
+      where: {
+        grade: {
+          $ne: null
+        }
+      },
+      group: ["subject", "SI."+group]
+    }),
+    studentQuery({
+      raw: true,
+      include: [{
+        model: models.school_info,
+        as: "SI",
+        attributes: [],
+        required: true,
+        where: req.query
+      }],
+      attributes: [
+        [sequelize.fn("SUM", sequelize.col("student.sum")), "sum"],
+        [sequelize.fn("SUM", sequelize.col("student.max_marks")), "max_marks"],
+        "class_code",
+        "SI."+group
+      ],
+      where: {
+        grade: {
+          $ne: null
+        }
+      },
+      group: ["class_code", "SI."+group]
+    }),
+    studentQuery({
+      raw: true,
+      include: [{
+        model: models.school_info,
+        as: "SI",
+        attributes: [],
+        required: true,
+        where: req.query
+      }],
+      attributes: [
+        [sequelize.fn("COUNT", sequelize.col("student.grade")), "count"],
+        "grade",
+        "SI."+group
+      ],
+      where: {
+        grade: {
+          $ne: null
+        }
+      },
+      group: ["grade", "SI."+group]
     })
   ]).then(function (data) {
     let response = {
-      data: data[0]
+      gradePie: data[0],
+      subjectStack: data[1],
+      classStack: data[2],
+      gradeStack: data[3],
     };
     log.info(response);
     res.json({"message": "Data", "result": response, "error": false});
