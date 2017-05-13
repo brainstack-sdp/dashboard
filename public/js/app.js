@@ -14,7 +14,13 @@ HPD.urls = {
 
     var el = {
         $filter : $('.js-filter')
-        }, filterList = {}, filters = {}, $scope={};
+        }, filterList = {}, filters = {}, $scope={},
+        filterAheadMap = {
+            district : ['block', 'cluster', 'school_name'],
+            block : ['cluster', 'school_name'],
+            cluster : ['school_name']
+        }
+
 
     var loadFilters = function($el) {
         var type= $el.data('type');
@@ -26,7 +32,10 @@ HPD.urls = {
             success: function(res) {
                 var key = Object.keys(res.result)[0];
                 filterList[key] = res.result[key];
-                filters[key] = '';
+                filterAheadMap[type].forEach(function(item) {
+                 delete filters[item];
+                $('.js-filter[data-type="'+item+'"]').html('');
+                })
                 $('.js-filter[data-type="'+key+'"]').html(createOptions(filterList[key],key))
                 chartInit();
             }
@@ -34,7 +43,7 @@ HPD.urls = {
     };
 
     var createOptions = function(filters, key) {
-        var options = '';
+        var options = '<option value="">All</option>';
         for (var i=0;i<filters.length;i++) {
             options += '<option value="'+ filters[i][key] +'">' + filters[i][key] + '</option>'
         }
