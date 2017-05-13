@@ -1,0 +1,15 @@
+.al-sidebar-list {
+    padding: 0 15px;
+}
+.al-sidebar-list  li {
+    margin-bottom: 15px;
+}
+
+.al-sidebar-list  h4 {
+    color:#fff;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+.al-sidebar-list  .form-control {
+    height: 30px;
+}

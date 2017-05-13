@@ -14,7 +14,15 @@ HPD.urls = {
 
     var el = {
         $filter : $('.js-filter')
-        }, filterList = {}, filters = {}, $scope={};
+        }, filterList = {}, filters = {}, $scope={},
+        filterAheadMap = {
+            district : ['block', 'cluster', 'school_name'],
+            block : ['cluster', 'school_name'],
+            cluster : ['school_name']
+        }, gradeMap = {
+
+        }
+
 
     var loadFilters = function($el) {
         var type= $el.data('type');
@@ -26,21 +34,24 @@ HPD.urls = {
             success: function(res) {
                 var key = Object.keys(res.result)[0];
                 filterList[key] = res.result[key];
-                filters[key] = '';
+                filterAheadMap[type].forEach(function(item) {
+                 delete filters[item];
+                $('.js-filter[data-type="'+item+'"]').html('');
+                })
                 $('.js-filter[data-type="'+key+'"]').html(createOptions(filterList[key],key))
-                chartInit();
+                chartInit(key);
             }
         })
     };
 
     var createOptions = function(filters, key) {
-        var options = '';
+        var options = '<option value="">All</option>';
         for (var i=0;i<filters.length;i++) {
             options += '<option value="'+ filters[i][key] +'">' + filters[i][key] + '</option>'
         }
         return options;
     }
-    var chartInit = function() {
+    var chartInit = function(filterKey) {
 
         var filterQuery = function() {
             var queryString = '?', paramList, index;
@@ -59,10 +70,12 @@ HPD.urls = {
                 }
 
             } else {
-                queryString = '?district=HAMIRPUR'
+                queryString = ''
             }
             return queryString
         }
+        Morris.Grid.prototype.gridDefaults.gridLineColor = "#888";
+        Morris.Grid.prototype.gridDefaults.gridTextColor = '#333';
         $scope.simpleLineOptions = {
             color: '#666666',
             fullWidth: true,
@@ -133,33 +146,6 @@ HPD.urls = {
             height: "300px"
         };
 
-        $scope.multiBarData = {
-            labels: ['Quarter 1', 'Quarter 2', 'Quarter 3', 'Quarter 4'],
-            series: [
-                [5, 4, 3, 7],
-                [3, 2, 9, 5],
-                [1, 5, 8, 4],
-                [2, 3, 4, 6],
-                [4, 1, 2, 1]
-            ]
-        };
-
-        $scope.multiBarOptions = {
-            fullWidth: true,
-            height: "300px",
-            stackBars: true,
-            axisX: {
-                labelInterpolationFnc: function (value) {
-                    return value.split(/\s+/).map(function (word) {
-                        return word[0];
-                    }).join('');
-                }
-            },
-            axisY: {
-                offset: 20
-            }
-        };
-
         $scope.multiBarResponsive = [
             ['screen and (min-width: 400px)', {
                 reverseData: true,
@@ -216,11 +202,8 @@ HPD.urls = {
             method: 'GET',
             url : HPD.urls.chartRecord + filterQuery(),
             success: function(res) {
-                var key = Object.keys(res.result)[0];
-                filterList[key] = res.result[key];
-                console.log(filterList)
-                var gradeItems = res.result.data, labels= [], series= [];
-                gradeItems.forEach(function(item) {
+                var chartItems = res.result.gradePie, labels= [], series= [];
+                chartItems.forEach(function(item) {
                     labels.push(item.grade)
                     series.push(item.count)
                 });
@@ -238,8 +221,150 @@ HPD.urls = {
                         return value[0];
                     }
                 };
-
                 new Chartist.Pie('#label-pie', $scope.labelsPieData, $scope.labelsPieOptions);
+
+                chartItems = res.result.subjectStack, labels= [], series= [];
+                var subjects ={}, filterLevel ={},filterLevelItems={}, seriesObj={}, subjectObject ={};
+                chartItems.forEach(function(item) {
+                    subjects[item.subject]= 1;
+                    if(filterLevel[item[filterKey]]) {
+                        filterLevel[item[filterKey]].push(item)
+                    } else {
+                        filterLevel[item[filterKey]] = [item];
+                    }
+
+
+                });
+                for(var i in filterLevel){
+                    seriesObj={};
+                    filterLevel[i].forEach(function(item) {
+                        subjectObject[item.subject] = {
+                            sum:0,total:0, percentage :0
+                        };
+                        subjectObject[item.subject].sum += item.sum;
+                        subjectObject[item.subject].total += item.max_marks;
+                        subjectObject[item.subject].percentage = Math.round((subjectObject[item.subject].sum/subjectObject[item.subject].total)*100);
+                        if(subjectObject[item.subject].percentage >= 80){
+                            seriesObj[item.subject]  = 5
+                        } else if(subjectObject[item.subject].percentage >= 65 && subjectObject[item.subject].percentage <=79){
+                            seriesObj[item.subject]  = 4
+                        } else if(subjectObject[item.subject].percentage >= 50 && subjectObject[item.subject].percentage <=64){
+                            seriesObj[item.subject]  = 3
+                        } else if(subjectObject[item.subject].percentage >= 35 && subjectObject[item.subject].percentage <=49){
+                            seriesObj[item.subject]  = 2
+                        } else if(subjectObject[item.subject].percentage >=34 && subjectObject[item.subject].percentage >=0){
+                            seriesObj[item.subject]  = 1
+                        } else{
+                        }
+                    });
+                    seriesObj.level = i;
+
+                series.push(seriesObj)
+                }
+                $('#subjectStack').empty();
+                new Morris.Bar({
+                    element: 'subjectStack',
+                    data: series,
+                    xkey: 'level',
+                    ykeys: Object.keys(subjects),
+                    labels: Object.keys(subjects)
+                });
+
+                chartItems = res.result.classStack, labels= [], series= [], filterLevel ={},filterLevelItems={}, seriesObj={};
+                var classes = {}, classObject ={};
+                chartItems.forEach(function(item) {
+                    classes[item.class_code]= 1;
+                    if(filterLevel[item[filterKey]]) {
+                        filterLevel[item[filterKey]].push(item)
+                    } else {
+                        filterLevel[item[filterKey]] = [item];
+                    }
+
+
+                });
+                for(var i in filterLevel){
+                    seriesObj={};
+                    filterLevel[i].forEach(function(item) {
+                        classObject[item.class_code] = {
+                            sum:0,total:0, percentage :0
+                        };
+                        classObject[item.class_code].sum += item.sum;
+                        classObject[item.class_code].total += item.max_marks;
+                        classObject[item.class_code].percentage = Math.round((classObject[item.class_code].sum/classObject[item.class_code].total)*100);
+                        if(classObject[item.class_code].percentage >= 80){
+                            seriesObj[item.class_code]  = 5
+                        } else if(classObject[item.class_code].percentage >= 65 && classObject[item.class_code].percentage <=79){
+                            seriesObj[item.class_code]  = 4
+                        } else if(classObject[item.class_code].percentage >= 50 && classObject[item.class_code].percentage <=64){
+                            seriesObj[item.class_code]  = 3
+                        } else if(classObject[item.class_code].percentage >= 35 && classObject[item.class_code].percentage <=49){
+                            seriesObj[item.class_code]  = 2
+                        } else if(classObject[item.class_code].percentage >=34 && classObject[item.class_code].percentage >=0){
+                            seriesObj[item.class_code]  = 1
+                        } else{
+                        }
+                    });
+                    seriesObj.level = i;
+
+                    series.push(seriesObj)
+                }
+                $('#classStack').empty();
+                new Morris.Bar({
+                    element: 'classStack',
+                    data: series,
+                    xkey: 'level',
+                    ykeys: Object.keys(classes),
+                    labels: Object.keys(classes)
+                });
+
+                chartItems = res.result.gradeStack, labels= [], series= [], filterLevel={};
+                var gradeObj = {A: {},B:{},C:{},D:{},E:{}},grades = {},gradeData=[],total = 0;
+                chartItems.forEach(function(item) {
+                    if(filterLevel[item[filterKey]]) {
+                        filterLevel[item[filterKey]].push(item)
+                    } else {
+                        filterLevel[item[filterKey]] = [item];
+                    }
+                });
+                for(var i in filterLevel){
+                    total = 0;
+                    grades = {A: 0,B:0,C:0,D:0,E:0}
+                    filterLevel[i].forEach(function(item) {
+                        total += item.count;
+                        grades[item.grade] = item.count;
+                    });
+                    gradeObj.A[i] = (grades.A*100 || 0)/total;
+                    gradeObj.B[i] = (grades.B*100 || 0)/total;
+                    gradeObj.C[i] = (grades.C*100 || 0)/total;
+                    gradeObj.D[i] = (grades.D*100 || 0)/total;
+                    gradeObj.E[i] = (grades.E*100 || 0)/total;
+                }
+                for(var i in gradeObj){
+                    gradeData =[];
+
+                    for(var j in filterLevel){
+                        gradeData.push(gradeObj[i][j])
+                    }
+                series.push(gradeData)
+                }
+
+                $scope.stackedBarData = {
+                    labels: Object.keys(filterLevel),
+                    series: series
+                };
+                $scope.stackedBarOptions = {
+                    fullWidth: true,
+                    height: "300px",
+                    stackBars: true,
+                    axisY: {
+                        labelInterpolationFnc: function (value) {
+                            return (value) + '%';
+                        }
+                    }
+                };
+
+
+                new Chartist.Bar('#gradeStack', $scope.stackedBarData, $scope.stackedBarOptions);
             }
         })
 
@@ -280,10 +405,6 @@ HPD.urls = {
         new Chartist.Line('#bi-chart', $scope.biLineData, $scope.biLineOptions);
 
         new Chartist.Bar('#simple-bar', $scope.simpleBarData, $scope.simpleBarOptions);
-        new Chartist.Bar('#multi-bar', $scope.multiBarData, $scope.multiBarOptions, $scope.multiBarResponsive);
-        new Chartist.Bar('#stacked-bar', $scope.stackedBarData, $scope.stackedBarOptions);
-
-        new Chartist.Pie('#simple-pie', $scope.simplePieData, $scope.simplePieOptions, $scope.pieResponsive);
     }
 
     el.$filter.on('change', function() {
@@ -301,7 +422,7 @@ HPD.urls = {
                 console.log(filterList)
             }
         })
-        chartInit();
+        chartInit('district');
 
     }
     init();

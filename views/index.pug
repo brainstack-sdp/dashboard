@@ -4,6 +4,7 @@ html
         title HP Education Analysis
         link(rel="stylesheet" href="styles/vendor-aa67210ead.css")
         link(rel="stylesheet" href="assets/chartist.min.css")
+        link(rel="stylesheet" href="assets/morris.css")
         link(rel="stylesheet" href="styles/app-fe96e7be2d.css")
         link(rel="stylesheet" href="styles/style.css")
     body
@@ -16,46 +17,86 @@ html
         .body-bg
         main
             aside.al-sidebar
-                h4 Use Filters
                 ul.al-sidebar-list
                     li
-                        h3 District
-                        select(class="js-filter" data-type="district")
+                        h4 District
+                        select(class="form-control js-filter" data-type="district")
                     li
-                        h3 Block
-                        select(class="js-filter" data-type="block")
+                        h4 Block
+                        select(class="form-control js-filter" data-type="block")
                     li
-                        h3 Cluster
-                        select(class="js-filter" data-type="cluster")
+                        h4 Cluster
+                        select(class="form-control js-filter" data-type="cluster")
                     li
-                        h3 School
-                        select(class="js-filter" data-type="school_name")
+                        h4 School
+                        select(class="form-control js-filter" data-type="school_name")
+                    li
+                        h4 Summer/Winter
+                        select(class="form-control js-filter" data-type="summer_winter")
+                    li
+                        h4 Class
+                        select(class="form-control js-filter" data-type="class")
+                    li
+                        h4 Subject
+                        select(class="form-control js-filter" data-type="subject")
+                    li
+                        h4 Gender
+                        select(class="form-control js-filter" data-type="gender")
+                            option(value="1") Male
+                            option(value="2") Female
+                    li
+                        h4 Caste
+                        select(class="form-control js-filter" data-type="caste")
+                            option(value="0") SC
+                            option(value="1") ST
+                            option(value="2") OBC
+                            option(value="3") Muslim
+                            option(value="4") General
+                    li
+                        h4 Competency
+                        select(class="form-control js-filter" data-type="competency")
 
             .chart-main.al-main
                 .al-content
                     section.chartist
                     .col-md-12
-                        h3 Overall Grade Distribution (#OGD)
-                        .ct-chart(id="label-pie")
+                        .panel
+                            .panel-heading
+                                h3.panel-title Overall Grade Distribution (#OGD)
+                            .panel-body
+                                .ct-chart(id="label-pie")
                     .col-md-12
-                        h3 Districtwise Subject Learning Achievement (#DSLA)
-                        .ct-chart(id="multi-bar")
+                        .panel
+                            .panel-heading
+                                h3.panel-title Districtwise Subject Learning Achievement (#DSLA)
+                            .panel-body
+                                div(id='subjectStack')
                     .col-md-12
-                        h3 Districtwise Subject Learning Achievement (#DSLA)
-                        .ct-chart(id="multi-bar")
+                        .panel
+                            .panel-heading
+                                h3.panel-title Districtwise Class Learning Achievement (#DSLA)
+                            .panel-body
+                                div(id="classStack")
                     .col-md-12
-                        h3 Districtwise Subject Learning Achievement (#DSLA)
-                        .ct-chart(id="multi-bar")
+                        .panel
+                            .panel-heading
+                                h3.panel-title Districtwise Grade Distribution (#DGD)
+                            .panel-body
+                                .ct-chart(id="gradeStack")
                     .col-md-12
-                        h3 Districtwise Subject Learning Achievement (#DSLA)
-                        .ct-chart(id="line-chart")
+                        .panel
+                            h3 Districtwise Subject Learning Achievement (#DSLA)
+                            .panel-body
+                            .ct-chart(id="line-chart")
                     .col-md-12
-                        h3 Districtwise Subject Learning Achievement (#DSLA)
-                        .ct-chart.stacked-bar(id="stacked-bar")
+                        .panel
+                            h3 Districtwise Subject Learning Achievement (#DSLA)
+                            .ct-chart.stacked-bar(id="stacked-bar")
         footer.al-footer.clearfix
             .al-footer-right Created with&nbsp;
                 i(class="ion-heart")
                 | in India
-        script(src="assets/chartist.min.js")
         script(src="js/vendor-727ff9d081.js")
+        script(src="assets/chartist.min.js")
+        script(src="assets/morris.min.js")
         script(src="js/app.js")
