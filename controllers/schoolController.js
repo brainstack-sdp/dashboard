@@ -43,6 +43,12 @@ module.exports.school = function (req, res) {
   } else if(req.query.cluster) {
     attributes = ['school_name']
     group = 'school_name'
+  } else if(req.query.school_name) {
+    attributes = ['summer_winter']
+    group = 'summer_winter'
+  } else if(req.query.class_code) {
+    attributes = ['class_'+req.query.class]
+    group = 'class_'+req.query.class
   } else {
     attributes = ['district']
     group = 'district'
