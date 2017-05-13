@@ -55,9 +55,8 @@ module.exports.school = function (req, res) {
       group: group
     })
   ]).then(function (data) {
-    let response = {
-      data: data[0]
-    };
+      let response = {};
+      response[group] = data[0];
     log.info(response);
     res.json({"message": "Data", "result": response, "error": false});
   }).catch(function (err) {

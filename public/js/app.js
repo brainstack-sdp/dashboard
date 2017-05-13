@@ -26,7 +26,9 @@ HPD.urls = {
             success: function(res) {
                 var key = Object.keys(res.result)[0];
                 filterList[key] = res.result[key];
+                filters[key] = '';
                 $('.js-filter[data-type="'+key+'"]').html(createOptions(filterList[key],key))
+                chartInit();
             }
         })
     };
@@ -39,6 +41,28 @@ HPD.urls = {
         return options;
     }
     var chartInit = function() {
+
+        var filterQuery = function() {
+            var queryString = '?', paramList, index;
+            if(filters.district) {
+                for(var key in filters) {
+                    if(filters[key].constructor === Array) {
+                        paramList = filters[key];
+                        index = paramList.length;
+                        while(index) {
+                            index -=1;
+                            queryString += key + '[]=' +paramList[index] + '&';
+                        }
+                    } else {
+                        queryString += key + '=' +filters[key] + '&';
+                    }
+                }
+
+            } else {
+                queryString = '?district=HAMIRPUR'
+            }
+            return queryString
+        }
         $scope.simpleLineOptions = {
             color: '#666666',
             fullWidth: true,
@@ -190,7 +214,7 @@ HPD.urls = {
 
         $.ajax({
             method: 'GET',
-            url : HPD.urls.chartRecord + '?district=HAMIRPUR',
+            url : HPD.urls.chartRecord + filterQuery(),
             success: function(res) {
                 var key = Object.keys(res.result)[0];
                 filterList[key] = res.result[key];
