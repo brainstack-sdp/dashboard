@@ -16,11 +16,11 @@ HPD.urls = {
         $filter : $('.js-filter')
         }, filterList = {}, filters = {}, $scope={},
         filterAheadMap = {
-            district : ['block', 'cluster', 'school_name', 'summer_winter', 'class'],
-            block : ['cluster', 'school_name', 'summer_winter', 'class'],
-            cluster : ['school_name', 'summer_winter', 'class'],
-            school_name : ['summer_winter', 'class'],
-            summer_winter : ['class']
+            district : ['block', 'cluster', 'school_name', 'summer_winter', 'class_code'],
+            block : ['cluster', 'school_name', 'summer_winter', 'class_code'],
+            cluster : ['school_name', 'summer_winter', 'class_code'],
+            school_name : ['summer_winter', 'class_code'],
+            summer_winter : ['class_code']
         }, gradeMap = {
 
         }
@@ -204,10 +204,12 @@ HPD.urls = {
             method: 'GET',
             url : HPD.urls.chartRecord + filterQuery(),
             success: function(res) {
-                var chartItems = res.result.gradePie, labels= [], series= [];
+                var chartItems = res.result.gradePie, labels= [], series= [], sum= 0, gradeMap ={};
                 chartItems.forEach(function(item) {
-                    labels.push(item.grade)
+                    labels.push(item.grade);
                     series.push(item.count)
+                    gradeMap[item.grade] = item.count;
+                    sum +=item.count;
                 });
                 $scope.labelsPieData = {
                     labels: labels,
@@ -218,9 +220,11 @@ HPD.urls = {
                     fullWidth: true,
                     height: "300px",
                     weight: "300px",
+                    labelOffset: 50,
+                    chartPadding: 10,
                     labelDirection: 'explode',
                     labelInterpolationFnc: function (value) {
-                        return value[0];
+                        return value[0] + ' ' + Math.round(gradeMap[value] /sum * 100) + '%';
                     }
                 };
                 new Chartist.Pie('#label-pie', $scope.labelsPieData, $scope.labelsPieOptions);
@@ -355,9 +359,12 @@ HPD.urls = {
                     series: series
                 };
                 $scope.stackedBarOptions = {
-                    fullWidth: true,
+                    fullWidth: false,
                     height: "300px",
                     stackBars: true,
+                    isFixedWidth:false,
+                    //Number - Pixel width of the bar
+                    barWidth:30,
                     axisY: {
                         labelInterpolationFnc: function (value) {
                             return (value) + '%';
@@ -366,7 +373,7 @@ HPD.urls = {
                 };
 
 
-                new Chartist.Bar('#gradeStack', $scope.stackedBarData, $scope.stackedBarOptions);
+                new Chartist.Bar('#gradeStack', $scope.stackedBarData, $scope.stackedBarOptions)
             }
         })
 
