@@ -46,6 +46,7 @@
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
     "passport-local-sequelize": "^0.6.0",
+    "pug": "^2.0.0-rc.1",
     "request": "^2.75.0",
     "request-promise": "^4.1.1",
     "sequelize": "^3.23.3",
