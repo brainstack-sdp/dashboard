@@ -36,11 +36,19 @@ HPD.urls = {
             success: function(res) {
                 var key = Object.keys(res.result)[0];
                 filterList[key] = res.result[key];
-                filterAheadMap[type].forEach(function(item) {
-                 delete filters[item];
-                $('.js-filter[data-type="'+item+'"]').html('');
-                })
-                $('.js-filter[data-type="'+key+'"]').html(createOptions(filterList[key],key))
+                if(filterAheadMap[type]) {
+                    filterAheadMap[type].forEach(function(item) {
+                        delete filters[item];
+                        $('.js-filter[data-type="'+item+'"]').html('');
+                    })
+                    $('.js-filter[data-type="'+key+'"]').html(createOptions(filterList[key],key))
+                } else {
+                    filterAheadMap.district.forEach(function(item) {
+                        delete filters[item];
+                        $('.js-filter[data-type="'+item+'"]').html('');
+                    })
+                }
+
                 chartInit(key, type, $el.val());
             }
         })
