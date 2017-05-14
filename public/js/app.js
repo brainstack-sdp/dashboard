@@ -16,11 +16,11 @@ HPD.urls = {
         $filter : $('.js-filter')
         }, filterList = {}, filters = {}, $scope={},
         filterAheadMap = {
-            district : ['block', 'cluster', 'school_name', 'summer_winter', 'class_code'],
-            block : ['cluster', 'school_name', 'summer_winter', 'class_code'],
-            cluster : ['school_name', 'summer_winter', 'class_code'],
-            school_name : ['summer_winter', 'class_code'],
-            summer_winter : ['class_code']
+            district : ['block', 'cluster', 'school_name', 'summer_winter'],
+            block : ['cluster', 'school_name', 'summer_winter'],
+            cluster : ['school_name', 'summer_winter'],
+            school_name : ['summer_winter'],
+            summer_winter : []
         }, gradeMap = {
 
         }

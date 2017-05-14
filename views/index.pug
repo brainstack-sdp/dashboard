@@ -36,17 +36,32 @@ html
                     li
                         h4 Class
                         select(class="form-control js-filter" data-type="class_code")
+                            option(value="") All
+                            option(value="1") Class 1
+                            option(value="2") Class 2
+                            option(value="3") Class 3
+                            option(value="4") Class 4
+                            option(value="6") Class 6
+                            option(value="7") Class 7
                     li
                         h4 Subject
                         select(class="form-control js-filter" data-type="subject")
+                            option(value="") All
+                            option(value="1") Hindi
+                            option(value="2") Maths
+                            option(value="3") EVS
+                            option(value="4") English
+                            option(value="5") SST
                     li
                         h4 Gender
-                        select(class="form-control js-filter" data-type="gender")
+                        select(class="form-control js-filter" data-type="sex")
+                            option(value="") All
                             option(value="1") Male
                             option(value="2") Female
                     li
                         h4 Caste
-                        select(class="form-control js-filter" data-type="caste")
+                        select(class="form-control js-filter" data-type="category")
+                            option(value="") All
                             option(value="0") SC
                             option(value="1") ST
                             option(value="2") OBC
