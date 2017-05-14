@@ -47,9 +47,21 @@ module.exports.student = function (req, res) {
   } else if(req.query.school_name) {
     attributes = ['summer_winter']
     group = 'summer_winter'
-  } else if(req.query.class) {
-    attributes = ['class_'+req.query.class]
-    group = 'class_'+req.query.class
+  } else if(req.query.summer_winter) {
+    attributes = ['class_code']
+    group = 'class_code'
+  } else if(req.query.class_code) {
+    attributes = ['subject']
+    group = 'district'
+  } else if(req.query.subject) {
+    attributes = ['subject']
+    group = 'district'
+  } else if(req.query.sex) {
+    attributes = ['sex']
+    group = 'district'
+  } else if(req.query.category) {
+    attributes = ['category']
+    group = 'district'
   } else {
     attributes = ['district']
     group = 'district'
