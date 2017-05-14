@@ -137,7 +137,7 @@ module.exports = function (sequelize, DataTypes) {
       }
     },
   }, {
-    tableName: "student_1",
+    tableName: "student_2",
     classMethods: {
       associate: function (models) {
         models.student.belongsTo(models.school_info, {foreignKey: "u_dise", targetKey: "school_code", as: "SI"});
