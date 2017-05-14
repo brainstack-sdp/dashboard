@@ -33,38 +33,51 @@ let studentQuery = function (queryObj) {
 exports.studentQuery = studentQuery;
 
 module.exports.student = function (req, res) {
-  var attributes = [];
-  var group = '';
+  let attributes = [];
+  let group = '';
+  let where_school_info = undefined;
+  let where_student = {grade: {$ne: null}};
+  req.query = {"student.subject":4};
+  console.log(req.query);
   if(req.query.district) {
-    attributes = ['block']
-    group = 'block'
+    attributes = ['block'];
+    group = 'block';
+    where_school_info = req.query;
   } else if(req.query.block) {
-    attributes = ['cluster']
-    group = 'cluster'
+    attributes = ['cluster'];
+    group = 'cluster';
+    where_school_info = req.query;
   } else if(req.query.cluster) {
-    attributes = ['school_name']
-    group = 'school_name'
+    attributes = ['school_name'];
+    group = 'school_name';
+    where_school_info = req.query;
   } else if(req.query.school_name) {
-    attributes = ['summer_winter']
-    group = 'summer_winter'
+    attributes = ['summer_winter'];
+    group = 'summer_winter';
+    where_school_info = req.query;
   } else if(req.query.summer_winter) {
-    attributes = ['class_code']
-    group = 'class_code'
+    attributes = ['class_code'];
+    group = 'class_code';
+    where_school_info = req.query;
   } else if(req.query.class_code) {
-    attributes = ['subject']
-    group = 'district'
+    attributes = ['subject'];
+    group = 'district';
+    where_student['class_code'] = req.query.class_code;
   } else if(req.query.subject) {
-    attributes = ['subject']
-    group = 'district'
+    attributes = ['subject'];
+    group = 'district';
+    where_student['subject'] = req.query.subject;
   } else if(req.query.sex) {
-    attributes = ['sex']
-    group = 'district'
+    attributes = ['sex'];
+    group = 'district';
+    where_student['sex'] = req.query.sex;
   } else if(req.query.category) {
-    attributes = ['category']
-    group = 'district'
+    attributes = ['category'];
+    group = 'district';
+    where_student['category'] = req.query.category;
   } else {
-    attributes = ['district']
-    group = 'district'
+    attributes = ['district'];
+    group = 'district';
   }
   Promise.all([
     studentQuery({
@@ -74,17 +87,13 @@ module.exports.student = function (req, res) {
         as: "SI",
         attributes: [],
         required: true,
-        where: req.query
+        where: where_school_info
       }],
       attributes: [
         [sequelize.fn("COUNT", sequelize.col("student.id")), "count"],
         "grade"
       ],
-      where: {
-        grade: {
-          $ne: null
-        }
-      },
+      where: where_student,
       group: "grade"
     }),
     studentQuery({
@@ -94,7 +103,7 @@ module.exports.student = function (req, res) {
         as: "SI",
         attributes: [],
         required: true,
-        where: req.query
+        where: where_school_info
       }],
       attributes: [
         [sequelize.fn("SUM", sequelize.col("student.sum")), "sum"],
@@ -102,11 +111,7 @@ module.exports.student = function (req, res) {
         "subject",
         "SI."+group
       ],
-      where: {
-        subject: {
-          $ne: null
-        }
-      },
+      where: where_student,
       group: ["subject", "SI."+group]
     }),
     studentQuery({
@@ -116,7 +121,7 @@ module.exports.student = function (req, res) {
         as: "SI",
         attributes: [],
         required: true,
-        where: req.query
+        where: where_school_info
       }],
       attributes: [
         [sequelize.fn("SUM", sequelize.col("student.sum")), "sum"],
@@ -124,11 +129,7 @@ module.exports.student = function (req, res) {
         "class_code",
         "SI."+group
       ],
-      where: {
-        class_code: {
-          $ne: null
-        }
-      },
+      where: where_student,
       group: ["class_code", "SI."+group]
     }),
     studentQuery({
@@ -138,18 +139,14 @@ module.exports.student = function (req, res) {
         as: "SI",
         attributes: [],
         required: true,
-        where: req.query
+        where: where_school_info
       }],
       attributes: [
         [sequelize.fn("COUNT", sequelize.col("student.grade")), "count"],
         "grade",
         "SI."+group
       ],
-      where: {
-        grade: {
-          $ne: null
-        }
-      },
+      where: where_student,
       group: ["grade", "SI."+group]
     })
   ]).then(function (data) {
