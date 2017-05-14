@@ -41,7 +41,7 @@ HPD.urls = {
                 $('.js-filter[data-type="'+item+'"]').html('');
                 })
                 $('.js-filter[data-type="'+key+'"]').html(createOptions(filterList[key],key))
-                chartInit(key);
+                chartInit(key, type, $el.val());
             }
         })
     };
@@ -53,23 +53,12 @@ HPD.urls = {
         }
         return options;
     }
-    var chartInit = function(filterKey) {
+    var chartInit = function(filterKey, type, val) {
 
         var filterQuery = function() {
             var queryString = '?', paramList, index;
             if(filters.district) {
-                for(var key in filters) {
-                    if(filters[key].constructor === Array) {
-                        paramList = filters[key];
-                        index = paramList.length;
-                        while(index) {
-                            index -=1;
-                            queryString += key + '[]=' +paramList[index] + '&';
-                        }
-                    } else {
-                        queryString += key + '=' +filters[key] + '&';
-                    }
-                }
+                queryString = '?'+ type + '=' + val;
 
             } else {
                 queryString = ''
@@ -371,7 +360,6 @@ HPD.urls = {
                         }
                     }
                 };
-
 
                 new Chartist.Bar('#gradeStack', $scope.stackedBarData, $scope.stackedBarOptions)
             }
