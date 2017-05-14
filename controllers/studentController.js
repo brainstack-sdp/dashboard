@@ -37,7 +37,6 @@ module.exports.student = function (req, res) {
   let group = '';
   let where_school_info = undefined;
   let where_student = {grade: {$ne: null}};
-  req.query = {"student.subject":4};
   console.log(req.query);
   if(req.query.district) {
     attributes = ['block'];
@@ -79,6 +78,7 @@ module.exports.student = function (req, res) {
     attributes = ['district'];
     group = 'district';
   }
+  console.log(where_student);
   Promise.all([
     studentQuery({
       raw: true,
