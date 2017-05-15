@@ -38,7 +38,6 @@ HPD.urls = {
                 marginRight: 100,
                 autoMargins: false
             },
-            innerRadius: '0%',
             defs: {
                 filter: [
                     {
@@ -80,7 +79,7 @@ HPD.urls = {
             marginRight: 0,
             pullOutRadius: 0,
             responsive: {
-                enabled: true
+                enabled: false
             }
         });
     }
@@ -93,7 +92,7 @@ HPD.urls = {
 
         $.ajax({
             method: 'GET',
-            url : HPD.urls.filterList + '?' + type +'=' +$el.val(),
+            url : HPD.urls.filterList + '?' + type +'=' +encodeURIComponent($el.val()),
             success: function(res) {
                 var key = Object.keys(res.result)[0];
                 filterList[key] = res.result[key];
@@ -126,7 +125,7 @@ HPD.urls = {
         var filterQuery = function (index) {
             var queryString = '?', paramList;
             if (filters.district) {
-                queryString = '?' + type + '=' + val +'&graph' + '=' + index;
+                queryString = '?' + type + '=' + encodeURIComponent(val) +'&graph' + '=' + index;
 
             } else {
                 queryString = '?graph' + '=' + index;
@@ -135,6 +134,14 @@ HPD.urls = {
         }
         Morris.Grid.prototype.gridDefaults.gridLineColor = "#888";
         Morris.Grid.prototype.gridDefaults.gridTextColor = '#333';
+        $.ajax({
+            method: 'GET',
+            url: HPD.urls.chartRecord + filterQuery(8),
+            success: function (res) {
+                $('.js-access').html(res.studentsAccessed);
+
+            }
+        });
 
         $.ajax({
             method: 'GET',
