@@ -13,3 +13,7 @@
 .al-sidebar-list  .form-control {
     height: 30px;
 }
+
+#preloader {
+    background:rgba(0,0,0,.6);
+}

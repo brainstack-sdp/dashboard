@@ -3,9 +3,11 @@ html
     head
         title HP Education Analysis
         link(rel="stylesheet" href="styles/vendor-aa67210ead.css")
+        link(rel="stylesheet" href="assets/chartist.min.css")
+        link(rel="stylesheet" href="assets/morris.css")
         link(rel="stylesheet" href="styles/app-fe96e7be2d.css")
         link(rel="stylesheet" href="styles/style.css")
-    body.blur-theme
+    body
         header
             .page-top.clearfix(scroll-position="scrolled" max-height="50")
                 a(href="#/dashboard" class="al-logo clearfix")
@@ -75,62 +77,17 @@ html
                     .col-md-12
                         .panel
                             .panel-heading
-                                h3.panel-title Overall Grade Distribution (#OGD)
+                                h3.panel-title Login to view the analytics
                             .panel-body
-                                .ct-chart(id="gradePie" style="width: 640px; height: 400px;")
-                    .col-md-12
-                        .panel
-                            .panel-heading
-                                h3.panel-title Districtwise Subject Learning Achievement (#DSLA)
-                            .panel-body
-                                div(id='subjectStack')
-                    .col-md-12
-                        .panel
-                            .panel-heading
-                                h3.panel-title Districtwise Class Learning Achievement (#DSLA)
-                            .panel-body
-                                div(id="classStack")
-                    .col-md-12
-                        .panel
-                            .panel-heading
-                                h3.panel-title Districtwise Grade Distribution (#DGD)
-                            .panel-body
-                                .ct-chart(id="gradeStack" style="width: 100%; height: 400px;")
-                    .col-md-12
-                        .panel
-                            .panel-heading
-                                h3.panel-title Overall Competency Trends (#OCT)
-                            .panel-body
-                                .ct-chart(id="competencyTrends" style="width: 100%; height: 400px;")
-                    .col-md-12
-                        .panel
-                            .panel-heading
-                                h3.panel-title Competency Category Analysis (#CCA)
-                            .panel-body
-                                .ct-chart(id="competencyCategory" style="width: 100%; height: 400px;")
-                    .col-md-12
-                        .panel
-                            .panel-heading
-                                h3.panel-title Districtwise Competency Achievement (#DCA)
-                            .panel-body
-                                .ct-chart(id="competency" style="width: 100%; height: 400px;")
-                    .col-md-12
-                        .panel
-                            .panel-heading
-                                h3.panel-title Competencywise Achievement (#DCA)
-                            .panel-body
-                                .ct-chart(id="competencyAcheivement" style="width: 100%; height: 400px;")
-                    //.col-md-12
-                    //    .panel
-                    //        h3 Districtwise Subject Learning Achievement (#DSLA)
-                    //        .ct-chart.stacked-bar(id="stacked-bar")
-            footer.al-footer.clearfix
-                .al-footer-right Created with&nbsp;
-                    i(class="ion-heart")
-                    | in India
-        div( id="preloader")
-            div
-        script(src="js/vendor-727ff9d081.js")
-        script(src="assets/chartist.min.js")
-        script(src="assets/morris.min.js")
-        script(src="js/app.js")
+                                form
+                                    label Username
+                                        input.form-control(type="text" placeholder="Username")
+                                    label Password
+                                        input.form-control(type="password" placeholder="Password")
+
+                                    input.btn.btn-primary(type="submit" value="Login")
+
+        footer.al-footer.clearfix
+            .al-footer-right Created with&nbsp;
+                i(class="ion-heart")
+                | in India
