@@ -13,7 +13,7 @@ HPD.urls = {
 (function() {
 
     var el = {
-        $filter : $('.js-filter')
+        $filter : $('.js-filter'), $preLoader : $('#preloader')
         }, filterList = {}, filters = {}, $scope={},
         filterAheadMap = {
             district : ['block', 'cluster', 'school_name', 'summer_winter'],
@@ -89,6 +89,7 @@ HPD.urls = {
     var loadFilters = function($el) {
         var type= $el.data('type');
         filters[type] = $el.val();
+        el.$preLoader.show();
 
         $.ajax({
             method: 'GET',
@@ -439,54 +440,145 @@ HPD.urls = {
 
                 });
 
-                new Chartist.Line('#competencyTrends', $scope.simpleLineData, $scope.simpleLineOptions);
-                new Chartist.Line('#competencyCategory', $scope.simpleLineData, $scope.simpleLineOptions);
-                new Chartist.Bar('#competencyAcheivement', $scope.simpleBarData, $scope.simpleBarOptions);
+                chartItems = res.result.competencyType, series=[], filterLevel ={}, gradeObj= {};
+
+                chartItems.forEach(function (item) {
+                    item.type = 'Type '+ item.type;
+                    if (filterLevel[item.class_code]) {
+                        filterLevel[item.class_code].push(item)
+                    } else {
+                        filterLevel[item.class_code] = [item];
+                    }
+                });
+                for (var i in filterLevel) {
+                    gradeObj = {'Type 1': 0, 'Type 2': 0, 'Type 3': 0};
+
+                    filterLevel[i].forEach(function (item) {
+                        gradeObj[item.type] = Math.round(item.success/item.total*100);
+                    });
+                    gradeObj.class = 'Class '+ i;
+                    series.push(gradeObj)
+                }
+
+
+                AmCharts.makeChart('competencyTrends', {
+                    "type": "serial",
+                    "categoryField": "class",
+                    "startDuration": 1,
+                    "theme": "light",
+                    "categoryAxis": {
+                    "gridPosition": "start"
+                },
+                    "trendLines": [],
+                    "graphs": [
+                    {
+                        "balloonText": "[[title]] of [[category]]:[[value]]",
+                        "bullet": "round",
+                        "id": "AmGraph-1",
+                        "title": "Type 1",
+                        "valueField": "Type 1"
+                    },
+                    {
+                        "balloonText": "[[title]] of [[category]]:[[value]]",
+                        "bullet": "square",
+                        "id": "AmGraph-2",
+                        "title": "Type 2",
+                        "valueField": "Type 2"
+                    },
+                    {
+                        "balloonText": "[[title]] of [[category]]:[[value]]",
+                        "bullet": "square",
+                        "id": "AmGraph-3",
+                        "title": "Type 3",
+                        "valueField": "Type 3"
+                    },
+                ],
+                    "guides": [],
+                    "valueAxes": [
+                    {
+                        "id": "ValueAxis-1",
+                        "title": "Success Percentage"
+                    }
+                ],
+                    "allLabels": [],
+                    "balloon": {},
+                    "legend": {
+                    "enabled": true,
+                        "useGraphSettings": true
+                },
+                    "dataProvider": series
+                });
+
+                chartItems = res.result.competencyCategory, series=[], filterLevel ={}, gradeObj= {};
+
+                chartItems.forEach(function (item) {
+                    gradeObj ={};
+                    if (item.competency_category) {
+                        gradeObj.category = item.competency_category;
+                        gradeObj.success = Math.round(item.success/item.total*100);
+                        series.push(gradeObj)
+                    }
+                });
+
+
+                AmCharts.makeChart('competencyCategory', {
+                    "type": "serial",
+                    "categoryField": "category",
+                    "startDuration": 1,
+                    "theme": "light",
+                    "categoryAxis": {
+                        "gridPosition": "start",
+                        labelRotation: 45
+                    },
+                    "trendLines": [],
+                    "graphs": [
+                        {
+                            "balloonText": "[[category]]:[[value]]",
+                            "bullet": "round",
+                            "id": "AmGraph-1",
+                            "title": "",
+                            "valueField": "success"
+                        }
+                    ],
+                    "guides": [],
+                    "valueAxes": [
+                        {
+                            "id": "ValueAxis-1",
+                            "title": "Success Percentage"
+                        }
+                    ],
+                    "allLabels": [],
+                    "balloon": {},
+                    "legend": {
+                        "enabled": true,
+                        "useGraphSettings": true
+                    },
+                    "dataProvider": series
+                });
+
+
+                chartItems = res.result.competencyDistribution, series=[], filterLevel ={}, gradeObj= {};
+
+                chartItems.forEach(function (item) {
+                    gradeObj ={};
+                    if (item.district) {
+                        gradeObj.district = item.district;
+                        gradeObj.success = Math.round(item.success/item.total*100);
+                        series.push(gradeObj)
+                    }
+                });
 
                 AmCharts.makeChart('competency', {
                     type: 'serial',
                     theme: 'blur',
                     color: '#333',
-                    dataProvider: [
-                        {
-                            country: 'USA',
-                            visits: 3025,
-                            color: '#209e91'
-                        },
-                        {
-                            country: 'China',
-                            visits: 1882,
-                            color: '#209e91'
-
-                        },
-                        {
-                            country: 'Japan',
-                            visits: 1809,
-                            color: '#209e91'
-                        },
-                        {
-                            country: 'Germany',
-                            visits: 1322,
-                            color: '#209e91'
-                        },
-                        {
-                            country: 'UK',
-                            visits: 1122,
-                            color: '#209e91'
-                        },
-                        {
-                            country: 'France',
-                            visits: 1114,
-                            color: '#209e91'
-                        }
-                    ],
+                    dataProvider: series,
                     valueAxes: [
                         {
                             axisAlpha: 0,
                             position: 'left',
-                            title: 'Visitors from country',
-                            gridAlpha: 0.5,
-                            color: '#f0fef1'
+                            title: 'Success Percentage',
+                            color: '#333'
                         }
                     ],
                     startDuration: 1,
@@ -494,10 +586,10 @@ HPD.urls = {
                         {
                             balloonText: '<b>[[category]]: [[value]]</b>',
                             fillColorsField: 'color',
-                            fillAlphas: 0.7,
+                            fillAlphas: 0.9,
                             lineAlpha: 0.2,
                             type: 'column',
-                            valueField: 'visits'
+                            valueField: 'success'
                         }
                     ],
                     chartCursor: {
@@ -505,7 +597,7 @@ HPD.urls = {
                         cursorAlpha: 0,
                         zoomable: false
                     },
-                    categoryField: 'country',
+                    categoryField: 'district',
                     categoryAxis: {
                         gridPosition: 'start',
                         labelRotation: 45,
@@ -518,9 +610,62 @@ HPD.urls = {
                     creditsPosition: 'top-right'
                 });
 
+                chartItems = res.result.competencyAnalysis, series=[], filterLevel ={}, gradeObj= {};
 
+                chartItems.forEach(function (item) {
+                    gradeObj ={};
+                    if (item.competency) {
+                        gradeObj.competency = item.competency;
+                        gradeObj.success = Math.round(item.success/item.total*100);
+                        series.push(gradeObj)
+                    }
+                });
 
+                AmCharts.makeChart('competencyAcheivement', {
+                    type: 'serial',
+                    theme: 'blur',
+                    color: '#333',
+                    valueAxes: [
+                        {
+                            axisAlpha: 0,
+                            position: 'left',
+                            title: 'Success Percentage',
+                            gridAlpha: 0.5,
+                            color: '#f0fef1'
+                        }
+                    ],
+                    startDuration: 1,
+                    graphs: [
+                        {
+                            balloonText: '<b>[[category]]: [[value]]</b>',
+                            fillColorsField: 'color',
+                            fillAlphas: 0.7,
+                            lineAlpha: 0.2,
+                            type: 'column',
+                            valueField: 'success'
+                        }
+                    ],
+                    chartCursor: {
+                        categoryBalloonEnabled: false,
+                        cursorAlpha: 0,
+                        zoomable: false
+                    },
+                    categoryField: 'competency',
+                    categoryAxis: {
+                        gridPosition: 'start',
+                        labelRotation: 45,
+                        gridAlpha: 0.5,
+                        gridColor: '#f0fef1'
+                    },
+                    export: {
+                        enabled: true
+                    },
+                    creditsPosition: 'top-right',
+                    "dataProvider": series
+                });
+                el.$preLoader.hide();
             }
+
         })
 
 
