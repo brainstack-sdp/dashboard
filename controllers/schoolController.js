@@ -20,7 +20,7 @@ module.exports.index = function (req, res) {
 
 let schoolQuery = function (queryObj) {
   return new Promise(function (resolve, reject) {
-    models.school_info.findAll(queryObj).then(function (data) {
+    models.school.findAll(queryObj).then(function (data) {
       return resolve(data);
     }).catch(function (err) {
       log.error(err);
@@ -34,23 +34,23 @@ exports.schoolQuery = schoolQuery;
 module.exports.school = function (req, res) {
   let attributes = [];
   let group = '';
-  let where_school_info = undefined;
+  let where_school = undefined;
   if(req.query.district) {
     attributes = ['block'];
     group = 'block';
-    where_school_info = req.query;
+    where_school = req.query;
   } else if(req.query.block) {
     attributes = ['cluster'];
     group = 'cluster';
-    where_school_info = req.query;
+    where_school = req.query;
   } else if(req.query.cluster) {
     attributes = ['school_name'];
     group = 'school_name';
-    where_school_info = req.query;
+    where_school = req.query;
   } else if(req.query.school_name) {
     attributes = ['summer_winter'];
     group = 'summer_winter';
-    where_school_info = req.query;
+    where_school = req.query;
   } else {
     attributes = ['district']
     group = 'district'
@@ -59,7 +59,7 @@ module.exports.school = function (req, res) {
     schoolQuery({
       raw: true,
       attributes: attributes,
-      where: where_school_info,
+      where: where_school,
       group: group
     })
   ]).then(function (data) {

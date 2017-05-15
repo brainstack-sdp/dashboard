@@ -140,7 +140,7 @@ module.exports = function (sequelize, DataTypes) {
     tableName: "student",
     classMethods: {
       associate: function (models) {
-        models.student.belongsTo(models.school_info, {foreignKey: "school_code", targetKey: "school_code", as: "SI"});
+        models.student.belongsTo(models.school, {foreignKey: "school_code", targetKey: "school_code", as: "SI"});
         models.student.hasMany(models.student_competency, {foreignKey: "student_id", sourceKey: "id", as: "SC"});
       }
     }

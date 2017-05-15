@@ -97,24 +97,24 @@ passport.serializeUser(function (user, cb) {
 });
 
 passport.deserializeUser(function (id, cb) {
-  models.agents.findById(id, function (err, user) {
+  models.user.findById(id, function (err, user) {
     if (err) { return cb(err); }
     cb(null, user);
   });
 });
 
 passport.use(new Strategy({
-  usernameField: "email",
+  usernameField: "user_name",
   passwordField: "password",
   session: false,
   passReqToCallback: true
 },
-    function (req, email, password, done) {
-      models.agents.findOne({where: {email: email}}).then(function (user) {
+    function (req, user_name, password, done) {
+      models.user.findOne({where: {user_name: user_name, password: password}}).then(function (user) {
         // if (err) { return done(err); }
         if (!user) {
-          console.log("Incorrect email.");
-          return done(null, false, { message: "Incorrect email." });
+          console.log("Incorrect user_name.");
+          return done(null, false, { message: "Incorrect user_name." });
         }
       }).catch(function (err) {
         console.log(err);
@@ -140,23 +140,16 @@ app.post("/login", function (req, res, next) {
   passport.authenticate("local", function (err, user, info) {
     if (err) { return next(err); }
     if (!user) { return res.redirect(process.env.UI_URL+"/auth.html"); }
-    Promise.all([brandQuery(user)])
-    .then(function (data) {
-      req.logIn(user, function (err) {
-        if (err) { return next(err); }
-        log.error(err);
-        return res.redirect(process.env.UI_URL);
-      });
-    }).catch(function (err) {
-      console.log(err);
-    });
+    else{
+      sessionUtils.setData(req, res, "user", user);
+    }
 
   })(req, res, next);
 });
 
 app.use(function (req, res, next) {
   // res.locals.login = req.isAuthenticated();
-  // if (sessionUtils.checkExists(req, res, "restaurants")) {
+  // if (sessionUtils.checkExists(req, res, "user")) {
   //   let user = sessionUtils.getData(req, res, "user");
   //   req.user = user;
     next();

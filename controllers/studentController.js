@@ -45,28 +45,28 @@ exports.studentQuery = studentQuery;
 module.exports.student = function (req, res) {
   let attributes = [];
   let group = '';
-  let where_school_info = undefined;
+  let where_school = undefined;
   let where_student = {grade: {$ne: null}};
   if(req.query.district) {
     attributes = ['block'];
     group = 'block';
-    where_school_info = req.query;
+    where_school = req.query;
   } else if(req.query.block) {
     attributes = ['cluster'];
     group = 'cluster';
-    where_school_info = req.query;
+    where_school = req.query;
   } else if(req.query.cluster) {
     attributes = ['school_name'];
     group = 'school_name';
-    where_school_info = req.query;
+    where_school = req.query;
   } else if(req.query.school_name) {
     attributes = ['summer_winter'];
     group = 'summer_winter';
-    where_school_info = req.query;
+    where_school = req.query;
   } else if(req.query.summer_winter) {
     attributes = ['class_code'];
     group = 'class_code';
-    where_school_info = req.query;
+    where_school = req.query;
   } else if(req.query.class_code) {
     attributes = ['subject'];
     group = 'district';
@@ -91,11 +91,11 @@ module.exports.student = function (req, res) {
     studentQuery({
       raw: true,
       include: [{
-        model: models.school_info,
+        model: models.school,
         as: "SI",
         attributes: [],
         required: true,
-        where: where_school_info
+        where: where_school
       }],
       attributes: [
         [sequelize.fn("COUNT", sequelize.col("student.id")), "count"],
@@ -107,11 +107,11 @@ module.exports.student = function (req, res) {
     studentQuery({
       raw: true,
       include: [{
-        model: models.school_info,
+        model: models.school,
         as: "SI",
         attributes: [],
         required: true,
-        where: where_school_info
+        where: where_school
       }],
       attributes: [
         [sequelize.fn("SUM", sequelize.col("student.sum")), "sum"],
@@ -125,11 +125,11 @@ module.exports.student = function (req, res) {
     studentQuery({
       raw: true,
       include: [{
-        model: models.school_info,
+        model: models.school,
         as: "SI",
         attributes: [],
         required: true,
-        where: where_school_info
+        where: where_school
       }],
       attributes: [
         [sequelize.fn("SUM", sequelize.col("student.sum")), "sum"],
@@ -143,11 +143,11 @@ module.exports.student = function (req, res) {
     studentQuery({
       raw: true,
       include: [{
-        model: models.school_info,
+        model: models.school,
         as: "SI",
         attributes: [],
         required: true,
-        where: where_school_info
+        where: where_school
       }],
       attributes: [
         [sequelize.fn("COUNT", sequelize.col("student.grade")), "count"],
@@ -160,11 +160,11 @@ module.exports.student = function (req, res) {
     studentQuery({
       raw: true,
       include: [{
-        model: models.school_info,
+        model: models.school,
         as: "SI",
         attributes: [],
         required: true,
-        where: where_school_info
+        where: where_school
       }, {
         model: models.student_competency,
         as: "SC",
@@ -183,11 +183,11 @@ module.exports.student = function (req, res) {
     studentQuery({
       raw: true,
       include: [{
-        model: models.school_info,
+        model: models.school,
         as: "SI",
         attributes: [],
         required: true,
-        where: where_school_info
+        where: where_school
       }, {
         model: models.student_competency,
         as: "SC",
@@ -205,11 +205,11 @@ module.exports.student = function (req, res) {
     studentQuery({
       raw: true,
       include: [{
-        model: models.school_info,
+        model: models.school,
         as: "SI",
         attributes: [],
         required: true,
-        where: where_school_info
+        where: where_school
       }, {
         model: models.student_competency,
         as: "SC",
@@ -227,11 +227,11 @@ module.exports.student = function (req, res) {
     studentQuery({
       raw: true,
       include: [{
-        model: models.school_info,
+        model: models.school,
         as: "SI",
         attributes: [],
         required: true,
-        where: where_school_info
+        where: where_school
       }, {
         model: models.student_competency,
         as: "SC",
@@ -249,11 +249,11 @@ module.exports.student = function (req, res) {
     studentQuery({
       raw: true,
       include: [{
-        model: models.school_info,
+        model: models.school,
         as: "SI",
         attributes: [],
         required: true,
-        where: where_school_info
+        where: where_school
       }],
       attributes: [
         [sequelize.fn("COUNT", sequelize.col("student.id")), "total"]

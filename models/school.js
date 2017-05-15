@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 
 module.exports = function (sequelize, DataTypes) {
-  return sequelize.define("school_info", {
+  return sequelize.define("school", {
     id: {
       type: DataTypes.INTEGER(20),
       allowNull: false,
@@ -89,10 +89,10 @@ module.exports = function (sequelize, DataTypes) {
       allowNull: true
     }
   }, {
-    tableName: "school_info",
+    tableName: "school",
     classMethods: {
       associate: function (models) {
-        models.school_info.hasMany(models.student, {foreignKey: "school_code", sourceKey: "school_code"});
+        models.school.hasMany(models.student, {foreignKey: "school_code", sourceKey: "school_code"});
       }
     }
   });

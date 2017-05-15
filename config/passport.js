@@ -2,14 +2,14 @@
 
 // load all the things we need
 var LocalStrategy = require("passport-local").Strategy;
-var hashers = require("node-django-hashers");
-var h = new hashers.PBKDF2PasswordHasher();
-var hash1 = h.encode("123", "dejvbjkdvjbsjkvbjdbsvjsv");
-console.log(hash1);
-console.log(h.verify("123", hash1));
+// var hashers = require("node-django-hashers");
+// var h = new hashers.PBKDF2PasswordHasher();
+// var hash1 = h.encode("123", "dejvbjkdvjbsjkvbjdbsvjsv");
+// console.log(hash1);
+// console.log(h.verify("123", hash1));
 
 // load up the user model
-var Agent = require("../models").agents;
+var User = require("../models").user;
 
 // expose this function to our app using module.exports
 module.exports = function (passport) {
@@ -27,22 +27,21 @@ module.exports = function (passport) {
 
     // used to deserialize the user
   passport.deserializeUser(function (id, done) {
-    Agent.findById(id, function (err, user) {
+    User.findById(id, function (err, user) {
       done(err, user);
     });
   });
 
   passport.use("local-login", new LocalStrategy({
-        // by default, local strategy uses username and password, we will override with email
-    usernameField: "email",
-        // passwordField : 'password',
+    usernameField: "user_name",
+    passwordField : 'password',
     passReqToCallback: true // allows us to pass back the entire request to the callback
   },
-    function (req, email, password, done) { // callback with email and password from our form
+    function (req, user_name, password, done) { // callback with user_name and password from our form
       console.log(password);
-        // find a user whose email is the same as the forms email
+        // find a user whose user_name is the same as the forms user_name
         // we are checking to see if the user trying to login already exists
-      Agent.findOne({ "local.email": email }, function (err, user) {
+      User.findOne({ "local.user_name": user_name }, function (err, user) {
             // if there are any errors, return the error before anything else
         if (err)
                 { return done(err); }
