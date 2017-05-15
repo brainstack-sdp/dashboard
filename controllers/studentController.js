@@ -245,6 +245,20 @@ module.exports.student = function (req, res) {
       ],
       where: where_student,
       group: ["SC.competency"]
+    }),
+    studentQuery({
+      raw: true,
+      include: [{
+        model: models.school_info,
+        as: "SI",
+        attributes: [],
+        required: true,
+        where: where_school_info
+      }],
+      attributes: [
+        [sequelize.fn("COUNT", sequelize.col("student.id")), "total"]
+      ],
+      where: where_student
     })
   ]).then(function (data) {
     let response = {
@@ -255,7 +269,8 @@ module.exports.student = function (req, res) {
       competencyType: data[4],
       competencyCategory: data[5],
       competencyDistribution: data[6],
-      competencyAnalysis: data[7]
+      competencyAnalysis: data[7],
+      studentsAccessed: data[8]
     };
     log.info(response);
     res.json({"message": "Data", "result": response, "error": false});
