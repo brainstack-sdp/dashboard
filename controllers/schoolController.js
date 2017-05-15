@@ -34,23 +34,23 @@ exports.schoolQuery = schoolQuery;
 module.exports.school = function (req, res) {
   let attributes = [];
   let group = '';
-  let where_school = undefined;
+  let whereSchool = undefined;
   if(req.query.district) {
     attributes = ['block'];
     group = 'block';
-    where_school = req.query;
+    whereSchool = req.query;
   } else if(req.query.block) {
     attributes = ['cluster'];
     group = 'cluster';
-    where_school = req.query;
+    whereSchool = req.query;
   } else if(req.query.cluster) {
     attributes = ['school_name'];
     group = 'school_name';
-    where_school = req.query;
+    whereSchool = req.query;
   } else if(req.query.school_name) {
     attributes = ['summer_winter'];
     group = 'summer_winter';
-    where_school = req.query;
+    whereSchool = req.query;
   } else {
     attributes = ['district']
     group = 'district'
@@ -59,7 +59,7 @@ module.exports.school = function (req, res) {
     schoolQuery({
       raw: true,
       attributes: attributes,
-      where: where_school,
+      where: whereSchool,
       group: group
     })
   ]).then(function (data) {
