@@ -43,6 +43,7 @@ let studentCompetencyQuery = function (queryObj) {
 exports.studentQuery = studentQuery;
 
 module.exports.student = function (req, res) {
+  console.log(req.query);
   let attributes = [];
   let group = '';
   let whereSchool = undefined;
@@ -91,7 +92,7 @@ module.exports.student = function (req, res) {
   }
 
   let graphArray = [
-    studentQuery({
+    {
       raw: true,
       include: [{
         model: models.school,
@@ -106,8 +107,8 @@ module.exports.student = function (req, res) {
       ],
       where: whereStudent,
       group: "grade"
-    }),
-    studentQuery({
+    },
+   {
       raw: true,
       include: [{
         model: models.school,
@@ -124,8 +125,8 @@ module.exports.student = function (req, res) {
       ],
       where: whereStudent,
       group: ["subject", "SI."+group]
-    }),
-    studentQuery({
+    },
+    {
       raw: true,
       include: [{
         model: models.school,
@@ -142,8 +143,8 @@ module.exports.student = function (req, res) {
       ],
       where: whereStudent,
       group: ["class_code", "SI."+group]
-    }),
-    studentQuery({
+    },
+    {
       raw: true,
       include: [{
         model: models.school,
@@ -159,8 +160,8 @@ module.exports.student = function (req, res) {
       ],
       where: whereStudent,
       group: ["grade", "SI."+group]
-    }),
-    studentQuery({
+    },
+    {
       raw: true,
       include: [{
         model: models.school,
@@ -182,8 +183,8 @@ module.exports.student = function (req, res) {
       ],
       where: whereStudent,
       group: ["class_code", "SC.type"]
-    }),
-    studentQuery({
+    },
+    {
       raw: true,
       include: [{
         model: models.school,
@@ -204,8 +205,8 @@ module.exports.student = function (req, res) {
       ],
       where: whereStudent,
       group: ["SC.competency_category"]
-    }),
-    studentQuery({
+    },
+    {
       raw: true,
       include: [{
         model: models.school,
@@ -226,8 +227,8 @@ module.exports.student = function (req, res) {
       ],
       where: whereStudent,
       group: ["SI.district"]
-    }),
-    studentQuery({
+    },
+    {
       raw: true,
       include: [{
         model: models.school,
@@ -248,8 +249,8 @@ module.exports.student = function (req, res) {
       ],
       where: whereStudent,
       group: ["SC.competency"]
-    }),
-    studentQuery({
+    },
+    {
       raw: true,
       include: [{
         model: models.school,
@@ -262,20 +263,15 @@ module.exports.student = function (req, res) {
         [sequelize.fn("COUNT", sequelize.col("student.id")), "total"]
       ],
       where: whereStudent
-    })];
+    }];
 
-  let responseArray = ['gradePie',
-      'subjectStack',
-      'classStack',
-      'gradeStack',
-      'competencyType',
-      'competencyCategory',
-      'competencyDistribution',
-      'competencyAnalysis',
-      'studentsAccessed'];
-  log.info(graphArray);
+  let responseArray = ['gradePie', 'subjectStack', 'classStack', 'gradeStack',
+      'competencyType', 'competencyCategory', 'competencyDistribution',
+      'competencyAnalysis', 'studentsAccessed'];
+  log.info(typeof graphArray);
+  log.info(graphArray.length);
   log.info(graph);
-  Promise.all([graphArray[graph]]).then(function (data) {
+  Promise.all([studentQuery(graphArray[graph])]).then(function (data) {
     let response = {
       // gradePie: data[0],
       // subjectStack: data[1],

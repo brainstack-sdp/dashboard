@@ -110,11 +110,14 @@ passport.use(new Strategy({
   passReqToCallback: true
 },
     function (req, user_name, password, done) {
+      console.log(user_name);
       models.user.findOne({where: {user_name: user_name, password: password}}).then(function (user) {
         // if (err) { return done(err); }
         if (!user) {
           console.log("Incorrect user_name.");
           return done(null, false, { message: "Incorrect user_name." });
+        } else {
+          sessionUtils.setData(req, {}, "user", user);
         }
       }).catch(function (err) {
         console.log(err);
@@ -139,7 +142,7 @@ if (app.get("env") === "dev") {
 app.post("/login", function (req, res, next) {
   passport.authenticate("local", function (err, user, info) {
     if (err) { return next(err); }
-    if (!user) { return res.redirect(process.env.UI_URL+"/auth.html"); }
+    if (!user) { return res.render("login"); }
     else{
       sessionUtils.setData(req, res, "user", user);
     }
@@ -150,8 +153,8 @@ app.post("/login", function (req, res, next) {
 app.use(function (req, res, next) {
   // res.locals.login = req.isAuthenticated();
   // if (sessionUtils.checkExists(req, res, "user")) {
-  //   let user = sessionUtils.getData(req, res, "user");
-  //   req.user = user;
+    // let user = /sessionUtils.getData(req, res, "user");
+    // req.user = user;
     next();
   // } else {
   //   res.status(401).json({"message": "Unauthorised", "err": {}, "error": true});

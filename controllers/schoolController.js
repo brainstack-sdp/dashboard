@@ -15,7 +15,7 @@ let moment = require("moment");
 let log = require("../helpers/logger");
 
 module.exports.index = function (req, res) {
-  res.render('index');
+  res.render('login');
 };
 
 let schoolQuery = function (queryObj) {

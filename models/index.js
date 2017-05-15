@@ -16,7 +16,10 @@ let sequelize = new Sequelize(process.env.SQL_DB_DATABASE, process.env.SQL_DB_US
     idle: 10000
   },
   timezone: "asia/calcutta",
-  logging: console.log
+  logging: console.log,
+  define: {
+    timestamps: false
+  }
 });
 
 fs

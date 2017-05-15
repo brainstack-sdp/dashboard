@@ -42,6 +42,7 @@ module.exports = function (sequelize, DataTypes) {
       associate: function (models) {
         models.student_competency.belongsTo(models.student, {foreignKey: "student_id", targetKey: "id", as: "S"});
       }
-    }
+    },
+    timestamps: false
   });
 };

@@ -79,11 +79,11 @@ html
                             .panel-heading
                                 h3.panel-title Login to view the analytics
                             .panel-body
-                                form
+                                form(action="/login" method="POST")
                                     label Username
-                                        input.form-control(type="text" placeholder="Username")
+                                        input.form-control(type="text" placeholder="Username" name="user_name")
                                     label Password
-                                        input.form-control(type="password" placeholder="Password")
+                                        input.form-control(type="password" placeholder="Password", name="password")
 
                                     input.btn.btn-primary(type="submit" value="Login")
 
