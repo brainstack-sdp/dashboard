@@ -29,6 +29,16 @@ let studentQuery = function (queryObj) {
   });
 };
 
+let studentCompetencyQuery = function (queryObj) {
+  return new Promise(function (resolve, reject) {
+    models.student_competency.findAll(queryObj).then(function (data) {
+      return resolve(data);
+    }).catch(function (err) {
+      log.error(err);
+      return reject(err);
+    });
+  });
+};
 
 exports.studentQuery = studentQuery;
 
@@ -37,7 +47,6 @@ module.exports.student = function (req, res) {
   let group = '';
   let where_school_info = undefined;
   let where_student = {grade: {$ne: null}};
-  console.log(req.query);
   if(req.query.district) {
     attributes = ['block'];
     group = 'block';
@@ -78,7 +87,6 @@ module.exports.student = function (req, res) {
     attributes = ['district'];
     group = 'district';
   }
-  console.log(where_student);
   Promise.all([
     studentQuery({
       raw: true,
@@ -148,6 +156,95 @@ module.exports.student = function (req, res) {
       ],
       where: where_student,
       group: ["grade", "SI."+group]
+    }),
+    studentQuery({
+      raw: true,
+      include: [{
+        model: models.school_info,
+        as: "SI",
+        attributes: [],
+        required: true,
+        where: where_school_info
+      }, {
+        model: models.student_competency,
+        as: "SC",
+        attributes: [],
+        required: true
+      }],
+      attributes: [
+        [sequelize.fn("SUM", sequelize.col("SC.success")), "success"],
+        [sequelize.fn("COUNT", sequelize.col("student.id")), "total"],
+        "class_code",
+        "SC.type"
+      ],
+      where: where_student,
+      group: ["class_code", "SC.type"]
+    }),
+    studentQuery({
+      raw: true,
+      include: [{
+        model: models.school_info,
+        as: "SI",
+        attributes: [],
+        required: true,
+        where: where_school_info
+      }, {
+        model: models.student_competency,
+        as: "SC",
+        attributes: [],
+        required: true
+      }],
+      attributes: [
+        [sequelize.fn("SUM", sequelize.col("SC.success")), "success"],
+        [sequelize.fn("COUNT", sequelize.col("student.id")), "total"],
+        "SC.competency_category"
+      ],
+      where: where_student,
+      group: ["SC.competency_category"]
+    }),
+    studentQuery({
+      raw: true,
+      include: [{
+        model: models.school_info,
+        as: "SI",
+        attributes: [],
+        required: true,
+        where: where_school_info
+      }, {
+        model: models.student_competency,
+        as: "SC",
+        attributes: [],
+        required: true
+      }],
+      attributes: [
+        [sequelize.fn("SUM", sequelize.col("SC.success")), "success"],
+        [sequelize.fn("COUNT", sequelize.col("student.id")), "total"],
+        "SI.district"
+      ],
+      where: where_student,
+      group: ["SI.district"]
+    }),
+    studentQuery({
+      raw: true,
+      include: [{
+        model: models.school_info,
+        as: "SI",
+        attributes: [],
+        required: true,
+        where: where_school_info
+      }, {
+        model: models.student_competency,
+        as: "SC",
+        attributes: [],
+        required: true
+      }],
+      attributes: [
+        [sequelize.fn("SUM", sequelize.col("SC.success")), "success"],
+        [sequelize.fn("COUNT", sequelize.col("student.id")), "total"],
+        "SC.competency"
+      ],
+      where: where_student,
+      group: ["SC.competency"]
     })
   ]).then(function (data) {
     let response = {
@@ -155,6 +252,10 @@ module.exports.student = function (req, res) {
       subjectStack: data[1],
       classStack: data[2],
       gradeStack: data[3],
+      competencyType: data[4],
+      competencyCategory: data[5],
+      competencyDistribution: data[6],
+      competencyAnalysis: data[7]
     };
     log.info(response);
     res.json({"message": "Data", "result": response, "error": false});

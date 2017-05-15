@@ -137,10 +137,11 @@ module.exports = function (sequelize, DataTypes) {
       }
     },
   }, {
-    tableName: "student_2",
+    tableName: "student",
     classMethods: {
       associate: function (models) {
         models.student.belongsTo(models.school_info, {foreignKey: "u_dise", targetKey: "school_code", as: "SI"});
+        models.student.hasMany(models.student_competency, {foreignKey: "student_id", sourceKey: "id", as: "SC"});
       }
     }
   });
