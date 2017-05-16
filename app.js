@@ -109,21 +109,21 @@ passport.use(new Strategy({
   session: false,
   passReqToCallback: true
 },
-    function (req, user_name, password, done) {
-      console.log(user_name);
-      models.user.findOne({where: {user_name: user_name, password: password}}).then(function (user) {
-        // if (err) { return done(err); }
-        if (!user) {
-          console.log("Incorrect user_name.");
-          return done(null, false, { message: "Incorrect user_name." });
-        } else {
-          sessionUtils.setData(req, {}, "user", user);
-        }
-      }).catch(function (err) {
-        console.log(err);
-        if (err) { return done(err); }
-      });
-    }
+  function (req, user_name, password, done) {
+    console.log(user_name);
+    console.log(password);
+    models.user.findOne({where: {user_name: user_name, password: password}}).then(function (user) {
+      console.log(user);
+      if (!user) {
+        console.log("Incorrect user_name.");
+        return done(null, false, { message: "Incorrect user_name." });
+      } 
+      return done(null, user);
+    }).catch(function (err) {
+      console.log(err);
+      if (err) { return done(err); }
+    });
+  }
 ));
 
 app.use(passport.initialize());
@@ -145,20 +145,19 @@ app.post("/login", function (req, res, next) {
     if (!user) { return res.render("login"); }
     else{
       sessionUtils.setData(req, res, "user", user);
+      res.redirect('/');
     }
-
   })(req, res, next);
 });
 
 app.use(function (req, res, next) {
-  // res.locals.login = req.isAuthenticated();
-  // if (sessionUtils.checkExists(req, res, "user")) {
-    // let user = /sessionUtils.getData(req, res, "user");
-    // req.user = user;
+  res.locals.login = req.isAuthenticated();
+  if (sessionUtils.checkExists(req, res, "user")) {
+    req.user = sessionUtils.getData(req, res, "user");
     next();
-  // } else {
-  //   res.status(401).json({"message": "Unauthorised", "err": {}, "error": true});
-  // }
+  } else {
+    res.render('login');
+  }
 });
 
 /**
