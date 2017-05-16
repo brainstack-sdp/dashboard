@@ -92,7 +92,7 @@ module.exports.student = function (req, res) {
       $and: [{
         $notLike: '*'
       }, {
-        $notLike: ''
+        $notLike: ' '
       }]
     }
   }
