@@ -240,12 +240,19 @@ module.exports.student = function (req, res) {
         model: models.student_competency,
         as: "SC",
         attributes: [],
+        required: true,
+        include: [{
+        model: models.competency,
+        as: "C",
+        attributes: [],
         required: true
+      }]
       }],
       attributes: [
         [sequelize.fn("SUM", sequelize.col("SC.success")), "success"],
         [sequelize.fn("COUNT", sequelize.col("student.id")), "total"],
-        "SC.competency"
+        "SC.competency",
+        "SC.C.competency_description"
       ],
       where: whereStudent,
       group: ["SC.competency"]
