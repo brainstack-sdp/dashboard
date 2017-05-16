@@ -40,7 +40,6 @@ let studentCompetencyQuery = function (queryObj) {
 exports.studentQuery = studentQuery;
 
 module.exports.student = function (req, res) {
-  console.log(req.query);
   let attributes = [];
   let group = '';
   let whereSchool = undefined;

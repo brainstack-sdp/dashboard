@@ -74,7 +74,6 @@ module.exports.school = function (req, res) {
   ]).then(function (data) {
       let response = {};
       response[group] = data[0];
-    log.info(response);
     res.json({"message": "Data", "result": response, "error": false});
   }).catch(function (err) {
     log.error(err);
@@ -127,7 +126,6 @@ module.exports.enrollment = function (req, res) {
           response['student_enrolled'] += data[0][0][cls];
         }
       }
-    log.info(response);
     res.json({"message": "Data", "result": response, "error": false});
   }).catch(function (err) {
     log.error(err);
