@@ -223,7 +223,7 @@ module.exports.student = function (req, res) {
       attributes: [
         [sequelize.fn("SUM", sequelize.col("SC.success")), "success"],
         [sequelize.fn("COUNT", sequelize.col("student.id")), "total"],
-        "SI.district"
+        "SI."+group
       ],
       where: whereStudent,
       group: ["SI."+group]
