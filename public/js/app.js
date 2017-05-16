@@ -14,7 +14,7 @@ HPD.urls = {
 (function() {
 
     var el = {
-        $filter : $('.js-filter'), $preLoader : $('#preloader')
+        $filter : $('.js-filter'), $preLoader : $('#preloader'), $modal: $('.js-modal')
         }, filterList = {}, filters = {}, $scope={},
         filterAheadMap = {
             district : ['block', 'cluster', 'school_name', 'summer_winter'],
@@ -672,14 +672,84 @@ HPD.urls = {
                             enabled: true
                         },
                         creditsPosition: 'top-right'
-                    });
+                    }).addListener("clickGraphItem", function(event) {
+                        var category = event.item.category;
+                        el.$modal.addClass('in');
+                        el.$modal.show();
+                        $.ajax({
+                            method: 'GET',
+                            url: HPD.urls.chartRecord + filterQuery(9) + '&competency_category='+category,
+                            //url: HPD.urls.chartRecord + filterQuery(7),
+                            success: function (res) {
+                                var chartItems = res.result.competencyAnalysis, series = [], filterLevel = {}, gradeObj = {};
+
+                                chartItems.forEach(function (item) {
+                                    gradeObj = {};
+                                    if (item.competency) {
+                                        gradeObj.competency = item.competency;
+                                        gradeObj.description = item.competency_description;
+                                        gradeObj.success = Math.round(item.success / item.total * 100);
+                                        series.push(gradeObj)
+                                    }
+                                });
+
+                                AmCharts.makeChart('catDrill', {
+                                    type: 'serial',
+                                    theme: 'blur',
+                                    color: '#333',
+                                    dataProvider: series,
+                                    valueAxes: [
+                                        {
+                                            position: 'left',
+                                            title: 'Success Percentage',
+                                            unit: '%',
+                                            'minimium': 0,'maximum': 100
+                                        }
+                                    ],
+                                    startDuration: 1,
+                                    graphs: [
+                                        {
+                                            balloonText: '<b>[[description]]: [[value]]</b>',
+                                            fillColorsField: 'color',
+                                            fillAlphas: 0.9,
+                                            lineAlpha: 0.2,
+                                            type: 'column',
+                                            valueField: 'success'
+                                        }
+                                    ],
+                                    chartCursor: {
+                                        categoryBalloonEnabled: false,
+                                        cursorAlpha: 0,
+                                        zoomable: false
+                                    },
+                                    categoryField: 'competency',
+                                    categoryAxis: {
+                                        gridPosition: 'start',
+                                        labelRotation: 0,
+                                        gridAlpha: 0.5,
+                                        gridColor: '#f0fef1'
+                                    },
+                                    export: {
+                                        enabled: true
+                                    },
+                                    "chartScrollbar": {
+                                        "enabled": true,
+                                        "selectedBackgroundColor" : '#333',
+                                        "gridCount" : 10
+                                    },
+                                    creditsPosition: 'top-right'
+                                });
+                            }
+                        });
+
+                    })
+                    ;
                 }
             });
             $.ajax({
                 method: 'GET',
                 url: HPD.urls.chartRecord + filterQuery(6),
                 success: function (res) {
-
 
                     var chartItems = res.result.competencyDistribution, series = [], filterLevel = {}, gradeObj = {};
 
@@ -783,7 +853,7 @@ HPD.urls = {
                         categoryField: 'competency',
                         categoryAxis: {
                             gridPosition: 'start',
-                            labelRotation: 45,
+                            labelRotation: 90,
                             gridAlpha: 0.5,
                             gridColor: '#f0fef1'
                         },
@@ -803,7 +873,13 @@ HPD.urls = {
     }
     el.$filter.on('change', function() {
         loadFilters($(this));
+    });
+    $('.js-close').on('click', function() {
+        el.$modal.hide();
+        el.$modal.removeClass('in');
     })
+
+
 
     var init = function() {
         $.ajax({
