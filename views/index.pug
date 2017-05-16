@@ -8,10 +8,15 @@ html
     body.blur-theme
         header
             .page-top.clearfix(scroll-position="scrolled" max-height="50")
-                a(href="/" class="al-logo clearfix")
-                    span HP
-                    | Data
-                a(href="/") Reset Filters
+                .col-xs-4
+                    a(href="/" class="al-logo clearfix")
+                        img(src="/assets/img/himachal-pradesh-sarkar.png")
+                        span HP
+                        | Assessement Data
+                .col-xs-4.text-center
+                    img(src="/assets/img/samarth-logo-v9---lowres.png")
+                .col-xs-4.text-right
+                    img(src="/assets/img/ssabglogo.jpg")
         .body-bg
         main
             aside.al-sidebar
@@ -72,6 +77,8 @@ html
 
             .chart-main.al-main
                 .al-content
+                    .pull-right
+                        a.btn(href="/") Reset Filters
                     section.chartist
                     .col-md-12
                         .panel.panel-blur
@@ -153,4 +160,5 @@ html
         //div( id="preloader")
             div
         script(src="js/vendor-727ff9d081.js")
+        script(src="/amcharts/amcharts.js")
         script(src="js/app.js")

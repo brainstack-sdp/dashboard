@@ -31,7 +31,14 @@ HPD.urls = {
             4: 'English',
             5: 'SST',
             6: 'Science'
+        }, gradeColors = {
+            A : "#76FF03",
+            B: "#00C853",
+            C: "#ffff00",
+            D: "#ee7810",
+            E: "#e85656"
         }
+
 
     var createPieChart = function(id, data) {
         AmCharts.makeChart(id, {
@@ -41,11 +48,11 @@ HPD.urls = {
             addClassNames: true,
             color: '#fff',
             "colors": [
-                "#209e91",
-                "#90b900",
-                "#e0e004",
-                "#ee7810",
-                "#e85656"
+                gradeColors.A,
+                gradeColors.B,
+                gradeColors.C,
+                gradeColors.D,
+                gradeColors.E
             ],
             labelTickColor: '#fff',
             legend: {
@@ -214,7 +221,7 @@ HPD.urls = {
                                 case 'E' : sum += 1*item.count;
                                     break;
                             }
-                            seriesObj[item.subject] =(sum/total).toFixed(2);
+                            seriesObj[item.subject] =(sum/total).toFixed(1);
                         });
                         seriesObj.level = i;
 
@@ -225,11 +232,12 @@ HPD.urls = {
                         "theme": "light",
                         color: '#fff',
                         "colors": [
-                            "#e85656",
-                            "#ee7810",
-                            "#e0e004",
-                            "#90b900",
-                            "#209e91"
+                            gradeColors.E,
+                            gradeColors.D,
+                            gradeColors.C,
+                            gradeColors.B,
+                            gradeColors.A,
+
                         ],
                         "legend": {
                             "horizontalGap": 10,
@@ -257,7 +265,9 @@ HPD.urls = {
                             "enabled": true
                         },
                         "chartScrollbar": {
-                            "enabled": true
+                            "enabled": true,
+                            "selectedBackgroundColor" : '#333',
+                            "gridCount" : 10
                         }
 
                     });
@@ -289,7 +299,7 @@ HPD.urls = {
                             "lineAlpha": 0.3,
                             "title": "Class " + class_code,
                             "type": "column",
-                            "color": "#000000",
+                            "color": "#fff",
                             "valueField": class_code
                         })
                     }
@@ -310,7 +320,7 @@ HPD.urls = {
                                 case 'E' : sum += 1*item.count;
                                     break;
                             }
-                            seriesObj[item.class_code] =(sum/total).toFixed(2);
+                            seriesObj[item.class_code] =(sum/total).toFixed(1);
                         });
                         seriesObj.level = i;
 
@@ -353,7 +363,9 @@ HPD.urls = {
                             "enabled": true
                         },
                         "chartScrollbar": {
-                            "enabled": true
+                            "enabled": true,
+                            "selectedBackgroundColor" : '#333',
+                            "gridCount" : 10
                         }
 
                     });
@@ -393,12 +405,13 @@ HPD.urls = {
                     AmCharts.makeChart("gradeStack", {
                         "type": "serial",
                         "theme": "light",
+                        color: '#fff',
                         "colors": [
-                            "#e85656",
-                            "#ee7810",
-                            "#e0e004",
-                            "#90b900",
-                            "#209e91"
+                            gradeColors.E,
+                            gradeColors.D,
+                            gradeColors.C,
+                            gradeColors.B,
+                            gradeColors.A,
                         ],
                         "legend": {
                             "horizontalGap": 10,
@@ -412,6 +425,7 @@ HPD.urls = {
                             {
                                 "id": "ValueAxis-1",
                                 "stackType": "100%",
+                                "unit" :'%',
                                 "title": "Grade Distribution"
                             }
                         ],
@@ -477,7 +491,9 @@ HPD.urls = {
                             "enabled": true
                         },
                         "chartScrollbar": {
-                            "enabled": true
+                            "enabled": true,
+                            "selectedBackgroundColor" : '#333',
+                            "gridCount" : 10
                         }
 
                     });
@@ -725,6 +741,11 @@ HPD.urls = {
                         },
                         export: {
                             enabled: true
+                        },
+                        "chartScrollbar": {
+                            "enabled": true,
+                            "selectedBackgroundColor" : '#333',
+                            "gridCount" : 10
                         },
                         creditsPosition: 'top-right'
                     });
