@@ -11,11 +11,20 @@
 let models = require("../models/index");
 let sequelize = require("sequelize");
 let moment = require("moment");
-// let sessionUtils = require("../utils/sessionUtils");
+let sessionUtils = require("../utils/sessionUtils");
 let log = require("../helpers/logger");
 
 module.exports.index = function (req, res) {
-  res.render('index');
+  if (sessionUtils.checkExists(req, res, "user")) {
+    res.render('index');
+  } else {
+    console.log("ind");
+    res.redirect('/login');
+  }
+};
+
+module.exports.login = function (req, res) {
+  res.render('login');
 };
 
 let schoolQuery = function (queryObj) {

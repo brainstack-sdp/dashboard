@@ -17,5 +17,6 @@ let schoolController = require("../controllers/schoolController");
  * @return {Object} json
  */
 router.get("/", schoolController.index);
+router.get("/login", schoolController.login);
 
 module.exports = router;
