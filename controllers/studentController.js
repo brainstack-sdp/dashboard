@@ -67,14 +67,15 @@ module.exports.student = function (req, res) {
     group = 'class_code';
     whereSchool = req.query;
   }
+  else{
+    group = 'district';
+  }
   if(req.query.class_code) {
     attributes = ['subject'];
-    group = 'district';
     whereStudent['class_code'] = req.query.class_code;
   } 
   if(req.query.subject) {
     attributes = ['subject'];
-    group = 'district';
     whereStudent['subject'] = req.query.subject;
   } 
   else if (graph==1) {
@@ -88,16 +89,13 @@ module.exports.student = function (req, res) {
   }
   if(req.query.sex) {
     attributes = ['sex'];
-    group = 'district';
     whereStudent['sex'] = req.query.sex;
   } 
   if(req.query.category) {
     attributes = ['category'];
-    group = 'district';
     whereStudent['category'] = req.query.category;
   } else {
     attributes = ['district'];
-    group = 'district';
   }
  
   console.log(whereStudent);
