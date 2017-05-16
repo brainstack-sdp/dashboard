@@ -69,7 +69,7 @@ module.exports.student = function (req, res) {
   } else{
     group = 'district';
   }
-  
+
   if(req.query.class_code) {
     attributes = ['subject'];
     whereStudent['class_code'] = req.query.class_code;
@@ -272,9 +272,33 @@ module.exports.student = function (req, res) {
         where: whereSchool
       }],
       attributes: [
-        [sequelize.fn("COUNT", sequelize.col("student.id")), "total"]
+        [sequelize.fn("COUNT", sequelize.fn('DISTINCT', sequelize.col("student.id"))), "total"]
       ],
       where: whereStudent
+    }, {
+        model: models.student_competency,
+        as: "SC",
+        attributes: [],
+        required: true,
+        include: [{
+          model: models.competency,
+          as: "C",
+          attributes: [],
+          required: true
+        }],
+        where: {
+          in_final: 1
+          competency_category: req.query.competency_category
+        }
+      }],
+      attributes: [
+        [sequelize.fn("SUM", sequelize.col("SC.success")), "success"],
+        [sequelize.fn("COUNT", sequelize.col("student.id")), "total"],
+        "SC.competency",
+        "SC.C.competency_description"
+      ],
+      where: whereStudent,
+      group: ["SC.competency"]
     }];
 
   Promise.all([studentQuery(graphArray[graph])]).then(function (data) {
