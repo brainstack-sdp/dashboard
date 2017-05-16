@@ -276,6 +276,14 @@ module.exports.student = function (req, res) {
       ],
       where: whereStudent
     }, {
+      raw: true,
+      include: [{
+        model: models.school,
+        as: "SI",
+        attributes: [],
+        required: true,
+        where: whereSchool
+      }, {
         model: models.student_competency,
         as: "SC",
         attributes: [],
