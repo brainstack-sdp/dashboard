@@ -32,6 +32,14 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.STRING,
       allowNull: false
     },
+    success: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
+    in_final: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
     student_id: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -41,7 +49,7 @@ module.exports = function (sequelize, DataTypes) {
       }
     },
   }, {
-    tableName: "student_competency",
+    tableName: "student_result_competency",
     classMethods: {
       associate: function (models) {
         models.student_competency.belongsTo(models.student, {foreignKey: "student_id", targetKey: "id", as: "S"});
