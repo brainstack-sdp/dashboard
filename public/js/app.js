@@ -291,35 +291,6 @@ HPD.urls = {
                         gradeObj[filterKey] = i;
                         series.push(gradeObj)
                     }
-                    //for (var i in gradeObj) {
-                    //    gradeData = [];
-                    //
-                    //    for (var j in filterLevel) {
-                    //        gradeObj[j] = filterLevel[j];
-                    //        gradeData.push(gradeObj[i][j])
-                    //    }
-                    //    series.push(gradeData)
-                    //}
-
-                    $scope.stackedBarData = {
-                        labels: Object.keys(filterLevel),
-                        series: series
-                    };
-                    $scope.stackedBarOptions = {
-                        fullWidth: false,
-                        height: "300px",
-                        stackBars: true,
-                        isFixedWidth: false,
-                        //Number - Pixel width of the bar
-                        barWidth: 30,
-                        axisY: {
-                            labelInterpolationFnc: function (value) {
-                                return (value) + '%';
-                            }
-                        }
-                    };
-
-                    //new Chartist.Bar('#gradeStack', $scope.stackedBarData, $scope.stackedBarOptions)
                     AmCharts.makeChart("gradeStack", {
                         "type": "serial",
                         "theme": "light",
@@ -338,43 +309,7 @@ HPD.urls = {
                                 "title": "Grade Distribution"
                             }
                         ],
-                        "graphs": [{
-                            "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
-                            "fillAlphas": 0.8,
-                            "labelText": "[[value]]",
-                            "lineAlpha": 0.3,
-                            "title": "A",
-                            "type": "column",
-                            "color": "#000000",
-                            "valueField": "A"
-                        }, {
-                            "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
-                            "fillAlphas": 0.8,
-                            "labelText": "[[value]]",
-                            "lineAlpha": 0.3,
-                            "title": "B",
-                            "type": "column",
-                            "color": "#000000",
-                            "valueField": "B"
-                        }, {
-                            "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
-                            "fillAlphas": 0.8,
-                            "labelText": "[[value]]",
-                            "lineAlpha": 0.3,
-                            "title": "C",
-                            "type": "column",
-                            "color": "#000000",
-                            "valueField": "C"
-                        }, {
-                            "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
-                            "fillAlphas": 0.8,
-                            "labelText": "[[value]]",
-                            "lineAlpha": 0.3,
-                            "title": "D",
-                            "type": "column",
-                            "color": "#000000",
-                            "valueField": "D"
-                        }, {
+                        "graphs": [  {
                             "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
                             "fillAlphas": 0.8,
                             "labelText": "[[value]]",
@@ -383,7 +318,47 @@ HPD.urls = {
                             "type": "column",
                             "color": "#000000",
                             "valueField": "E"
-                        }],
+                        },
+                            {
+                                "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
+                                "fillAlphas": 0.8,
+                                "labelText": "[[value]]",
+                                "lineAlpha": 0.3,
+                                "title": "D",
+                                "type": "column",
+                                "color": "#000000",
+                                "valueField": "D"
+                            },
+                            {
+                                "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
+                                "fillAlphas": 0.8,
+                                "labelText": "[[value]]",
+                                "lineAlpha": 0.3,
+                                "title": "C",
+                                "type": "column",
+                                "color": "#000000",
+                                "valueField": "C"
+                            },
+                            {
+                                "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
+                                "fillAlphas": 0.8,
+                                "labelText": "[[value]]",
+                                "lineAlpha": 0.3,
+                                "title": "B",
+                                "type": "column",
+                                "color": "#000000",
+                                "valueField": "B"
+                            },
+                            {
+                                "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
+                                "fillAlphas": 0.8,
+                                "labelText": "[[value]]",
+                                "lineAlpha": 0.3,
+                                "title": "A",
+                                "type": "column",
+                                "color": "#000000",
+                                "valueField": "A"
+                            }],
                         "categoryField": filterKey,
                         "categoryAxis": {
                             "gridPosition": "start",
@@ -611,21 +586,21 @@ HPD.urls = {
                         type: 'serial',
                         theme: 'blur',
                         color: '#333',
+                        dataProvider: series,
                         valueAxes: [
                             {
                                 axisAlpha: 0,
                                 position: 'left',
                                 title: 'Success Percentage',
-                                gridAlpha: 0.5,
-                                color: '#f0fef1'
+                                color: '#333'
                             }
                         ],
                         startDuration: 1,
                         graphs: [
                             {
-                                balloonText: '<b>[[description]]: [[value]]%</b>',
+                                balloonText: '<b>[[description]]: [[value]]</b>',
                                 fillColorsField: 'color',
-                                fillAlphas: 0.7,
+                                fillAlphas: 0.9,
                                 lineAlpha: 0.2,
                                 type: 'column',
                                 valueField: 'success'
@@ -646,8 +621,7 @@ HPD.urls = {
                         export: {
                             enabled: true
                         },
-                        creditsPosition: 'top-right',
-                        "dataProvider": series
+                        creditsPosition: 'top-right'
                     });
                 }
             });
