@@ -83,3 +83,56 @@ module.exports.school = function (req, res) {
 };
 
 
+module.exports.enrollment = function (req, res) {
+  let attributes = [];
+  let group = '';
+  let whereSchool = undefined;
+  if(req.query.district) {
+    group = 'block';
+    whereSchool = req.query;
+  } else if(req.query.block) {
+    group = 'cluster';
+    whereSchool = req.query;
+  } else if(req.query.cluster) {
+    group = 'school_name';
+    whereSchool = req.query;
+  } else if(req.query.school_name) {
+    group = 'summer_winter';
+    whereSchool = req.query;
+  } else {
+    group = 'district'
+  }
+  Promise.all([
+    schoolQuery({
+      raw: true,
+      attributes: [
+        [sequelize.fn("SUM", sequelize.col("class_1")), "class_1"],
+        [sequelize.fn("SUM", sequelize.col("class_2")), "class_2"],
+        [sequelize.fn("SUM", sequelize.col("class_3")), "class_3"],
+        [sequelize.fn("SUM", sequelize.col("class_4")), "class_4"],
+        [sequelize.fn("SUM", sequelize.col("class_5")), "class_5"],
+        [sequelize.fn("SUM", sequelize.col("class_6")), "class_6"],
+        [sequelize.fn("SUM", sequelize.col("class_7")), "class_7"],
+        [sequelize.fn("SUM", sequelize.col("class_8")), "class_8"],
+        [sequelize.fn("SUM", sequelize.col("class_9")), "class_9"],
+        [sequelize.fn("SUM", sequelize.col("class_10")), "class_10"],
+        [sequelize.fn("SUM", sequelize.col("class_11")), "class_11"],
+      ],
+      where: whereSchool
+    })
+  ]).then(function (data) {
+      let response = {student_enrolled:0};
+      for(let cls in data[0][0]){
+        if(cls!= 'class_'+req.query.class_code){
+          response['student_enrolled'] += data[0][0][cls];
+        }
+      }
+    log.info(response);
+    res.json({"message": "Data", "result": response, "error": false});
+  }).catch(function (err) {
+    log.error(err);
+    res.status(500).json({"message": "err", "err": err, "error": true});
+  });
+};
+
+
