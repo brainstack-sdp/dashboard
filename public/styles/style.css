@@ -1,3 +1,17 @@
+.page-top {
+    padding-top: 10px;
+}
+.page-top img{
+    width: 100%;
+    max-width: 120px;
+    margin: auto;
+}
+.page-top .al-logo img{
+    width: 100%;
+    max-width: 60px;
+    display: inline-block;
+    vertical-align: baseline;
+}
 .al-sidebar-list {
     padding: 0 15px;
 }

@@ -8,10 +8,15 @@ html
     body.blur-theme
         header
             .page-top.clearfix(scroll-position="scrolled" max-height="50")
-                a(href="/" class="al-logo clearfix")
-                    span HP
-                    | Data
-                a(href="/") Reset Filters
+                .col-xs-4
+                    a(href="/" class="al-logo clearfix")
+                        img(src="/assets/img/himachal-pradesh-sarkar.png")
+                        span HP
+                        | Assessement Data
+                .col-xs-4.text-center
+                    img(src="/assets/img/samarth-logo-v9---lowres.png")
+                .col-xs-4.text-right
+                    img(src="/assets/img/ssabglogo.jpg")
         .body-bg
         main
             aside.al-sidebar
@@ -72,84 +77,93 @@ html
 
             .chart-main.al-main
                 .al-content
+                    .pull-right
+                        a.btn(href="/") Reset Filters
                     section.chartist
                     .col-md-12
                         .panel.panel-blur
                             .panel-heading
-                                h3.panel-title Overall Grade Distribution (#OGD)
+                                h3.panel-title 1. Overall Grade Distribution
                             .panel-body
                                 .ct-chart(id="gradePie" style="width: 100%; height: 400px;")
-                                .text-right No. of students accessed:&nbsp;
+                                .text-right No. of students assessed:&nbsp;
                                     span.js-access
-                                .text-right No. of students enrolled: 1462192
+                                .text-right No. of students enrolled:&nbsp;
+                                    span.js-enroll -
                     .col-md-12
                         .panel.panel-blur
                             .panel-heading
-                                h3.panel-title Subject Learning Achievement (#DSLA)
+                                h3.panel-title 2. Subject Learning Achievement
                             .panel-body
                                 div(id='subjectStack' style="width: 100%; height: 400px;")
-                                .text-right No. of students accessed:&nbsp;
+                                .text-right No. of students assessed:&nbsp;
                                     span.js-access
-                                .text-right No. of students enrolled: 1462192
+                                .text-right No. of students enrolled:&nbsp;
+                                    span.js-enroll -
                     .col-md-12
                         .panel.panel-blur
                             .panel-heading
-                                h3.panel-title Districtwise Class Learning Achievement (#DSLA)
+                                h3.panel-title 3. Districtwise Class Learning Achievement
                             .panel-body
                                 div(id="classStack" style="width: 100%; height: 400px;")
-                                .text-right No. of students accessed:&nbsp;
+                                .text-right No. of students assessed:&nbsp;
                                     .js-access
-                                .text-right No. of students enrolled: 1462192
+                                .text-right No. of students enrolled:&nbsp;
+                                    span.js-enroll -
 
 
                     .col-md-12
                         .panel.panel-blur
                             .panel-heading
-                                h3.panel-title Districtwise Grade Distribution (#DGD)
+                                h3.panel-title 4. Districtwise Grade Distribution
                             .panel-body
                                 .ct-chart(id="gradeStack" style="width: 100%; height: 400px;")
-                                .text-right No. of students accessed:&nbsp;
+                                .text-right No. of students assessed:&nbsp;
                                     span.js-access
-                                .text-right No. of students enrolled: 1462192
+                                .text-right No. of students enrolled:&nbsp;
+                                    span.js-enroll
                     .col-md-12
                         .panel.panel-blur
                             .panel-heading
-                                h3.panel-title Overall Competency Trends (#OCT)
+                                h3.panel-title 5. Overall Competency Trends
                             .panel-body
                                 .ct-chart(id="competencyTrends" style="width: 100%; height: 400px;")
-                                .text-right No. of students accessed:&nbsp;
+                                .text-right No. of students assessed:&nbsp;
                                     span.js-access
-                                .text-right No. of students enrolled: 1462192
+                                .text-right No. of students enrolled:&nbsp;
+                                    span.js-enroll
                     .col-md-12
                         .panel.panel-blur
                             .panel-heading
-                                h3.panel-title Competency Category Analysis (#CCA)
+                                h3.panel-title 6. Competency Category Analysis
                             .panel-body
                                 .ct-chart(id="competencyCategory" style="width: 100%; height: 400px;")
-                                .text-right No. of students accessed:&nbsp;
+                                .text-right No. of students assessed:&nbsp;
                                     span.js-access
-                                .text-right No. of students enrolled: 1462192
+                                .text-right No. of students enrolled:&nbsp;
+                                    span.js-enroll
                     .col-md-12
                         .panel.panel-blur
                             .panel-heading
-                                h3.panel-title Competency Achievement (#DCA)
+                                h3.panel-title 7. Competency Achievement
                             .panel-body
                                 .ct-chart(id="competency" style="width: 100%; height: 400px;")
-                                .text-right No. of students accessed:&nbsp;
+                                .text-right No. of students assessed:&nbsp;
                                     span.js-access
-                                .text-right No. of students enrolled: 1462192
+                                .text-right No. of students enrolled:&nbsp;
+                                    span.js-enroll -
                     .col-md-12
                         .panel.panel-blur
                             .panel-heading
-                                h3.panel-title Competencywise Achievement (#DCA)
+                                h3.panel-title 8. Competencywise Achievement
                             .panel-body
                                 .ct-chart(id="competencyAcheivement" style="width: 100%; height: 400px;")
-                                .text-right No. of students accessed:&nbsp;
+                                .text-right No. of students assessed:&nbsp;
                                     span.js-access
-                                .text-right No. of students enrolled: 1462192
+                                .text-right No. of students enrolled:&nbsp;
+                                    span.js-enroll -
             footer.al-footer.clearfix
-                .al-footer-right Created by Samgra with&nbsp;
-                    i(class="ion-heart")
+                .al-footer-right Created by Samarth
         //div( id="preloader")
             div
         script(src="js/vendor-727ff9d081.js")

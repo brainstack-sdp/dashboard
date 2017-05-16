@@ -6,6 +6,7 @@ var HPD = {};
 
 HPD.urls = {
     filterList: 'school',
+    studentsEnrolled : 'school/enrollment',
     chartRecord : 'student'
 };
 
@@ -31,7 +32,14 @@ HPD.urls = {
             4: 'English',
             5: 'SST',
             6: 'Science'
+        }, gradeColors = {
+            A : "#76FF03",
+            B: "#00C853",
+            C: "#ffff00",
+            D: "#ee7810",
+            E: "#e85656"
         }
+
 
     var createPieChart = function(id, data) {
         AmCharts.makeChart(id, {
@@ -41,11 +49,11 @@ HPD.urls = {
             addClassNames: true,
             color: '#fff',
             "colors": [
-                "#209e91",
-                "#90b900",
-                "#e0e004",
-                "#ee7810",
-                "#e85656"
+                gradeColors.A,
+                gradeColors.B,
+                gradeColors.C,
+                gradeColors.D,
+                gradeColors.E
             ],
             labelTickColor: '#fff',
             legend: {
@@ -149,11 +157,27 @@ HPD.urls = {
             }
             return queryString
         }
+        var filterEnrollQuery = function () {
+            var queryString = '?', paramList;
+            if (filters.district) {
+                queryString = '?' + type + '=' + encodeURIComponent(val)
+
+            }
+            return queryString
+        }
         $.ajax({
             method: 'GET',
             url: HPD.urls.chartRecord + filterQuery(8),
             success: function (res) {
                 $('.js-access').html(res.result.studentsAccessed[0].total);
+
+            }
+        });
+        $.ajax({
+            method: 'GET',
+            url: HPD.urls.studentsEnrolled + filterEnrollQuery(),
+            success: function (res) {
+                $('.js-enroll').html(res.result.student_enrolled);
 
             }
         });
@@ -214,7 +238,7 @@ HPD.urls = {
                                 case 'E' : sum += 1*item.count;
                                     break;
                             }
-                            seriesObj[item.subject] =(sum/total).toFixed(2);
+                            seriesObj[item.subject] =(sum/total).toFixed(1);
                         });
                         seriesObj.level = i;
 
@@ -225,11 +249,12 @@ HPD.urls = {
                         "theme": "light",
                         color: '#fff',
                         "colors": [
-                            "#e85656",
-                            "#ee7810",
-                            "#e0e004",
-                            "#90b900",
-                            "#209e91"
+                            gradeColors.E,
+                            gradeColors.D,
+                            gradeColors.C,
+                            gradeColors.B,
+                            gradeColors.A,
+
                         ],
                         "legend": {
                             "horizontalGap": 10,
@@ -257,7 +282,9 @@ HPD.urls = {
                             "enabled": true
                         },
                         "chartScrollbar": {
-                            "enabled": true
+                            "enabled": true,
+                            "selectedBackgroundColor" : '#333',
+                            "gridCount" : 5
                         }
 
                     });
@@ -289,7 +316,7 @@ HPD.urls = {
                             "lineAlpha": 0.3,
                             "title": "Class " + class_code,
                             "type": "column",
-                            "color": "#000000",
+                            "color": "#fff",
                             "valueField": class_code
                         })
                     }
@@ -310,7 +337,7 @@ HPD.urls = {
                                 case 'E' : sum += 1*item.count;
                                     break;
                             }
-                            seriesObj[item.class_code] =(sum/total).toFixed(2);
+                            seriesObj[item.class_code] =(sum/total).toFixed(1);
                         });
                         seriesObj.level = i;
 
@@ -353,7 +380,9 @@ HPD.urls = {
                             "enabled": true
                         },
                         "chartScrollbar": {
-                            "enabled": true
+                            "enabled": true,
+                            "selectedBackgroundColor" : '#333',
+                            "gridCount" : 5
                         }
 
                     });
@@ -393,12 +422,13 @@ HPD.urls = {
                     AmCharts.makeChart("gradeStack", {
                         "type": "serial",
                         "theme": "light",
+                        color: '#fff',
                         "colors": [
-                            "#e85656",
-                            "#ee7810",
-                            "#e0e004",
-                            "#90b900",
-                            "#209e91"
+                            gradeColors.E,
+                            gradeColors.D,
+                            gradeColors.C,
+                            gradeColors.B,
+                            gradeColors.A
                         ],
                         "legend": {
                             "horizontalGap": 10,
@@ -412,6 +442,7 @@ HPD.urls = {
                             {
                                 "id": "ValueAxis-1",
                                 "stackType": "100%",
+                                "unit" :'%',
                                 "title": "Grade Distribution"
                             }
                         ],
@@ -477,7 +508,9 @@ HPD.urls = {
                             "enabled": true
                         },
                         "chartScrollbar": {
-                            "enabled": true
+                            "enabled": true,
+                            "selectedBackgroundColor" : '#333',
+                            "gridCount" : 10
                         }
 
                     });
@@ -514,8 +547,29 @@ HPD.urls = {
                         "categoryField": "class",
                         "startDuration": 1,
                         "theme": "light",
+                        color: '#fff',
+                        "colors": [
+                            "#e85656",
+                            "#ee7810",
+                            "#e0e004",
+                            "#90b900",
+                            "#209e91"
+                        ],
+                        "legend": {
+                            "horizontalGap": 10,
+                            "maxColumns": 1,
+                            "position": "right",
+                            "useGraphSettings": true,
+                            "markerSize": 10
+                        },
+                        "dataProvider": series,
+
                         "categoryAxis": {
-                            "gridPosition": "start"
+                            "gridPosition": "start",
+                            "axisAlpha": 0,
+                            "gridAlpha": 0,
+                            "position": "left",
+                            labelRotation: 45
                         },
                         "trendLines": [],
                         "graphs": [
@@ -545,69 +599,79 @@ HPD.urls = {
                         "valueAxes": [
                             {
                                 "id": "ValueAxis-1",
-                                "title": "Success Percentage",
-                                unit: '%',
-                                'minimium': 0,'maximum': 100
+                            "title": "Success Percentage",
+                            unit: '%',
+                            'minimium': 0,'maximum': 100
                             }
                         ],
                         "allLabels": [],
-                        "balloon": {},
-                        "legend": {
-                            "enabled": true,
-                            "useGraphSettings": true
-                        },
-                        "dataProvider": series
+                        "balloon": {}
                     });
+
 
                 }
             });
+
+        /**
+         * 7. Competency Category
+         */
             $.ajax({
                 method: 'GET',
                 url: HPD.urls.chartRecord + filterQuery(5),
                 success: function (res) {
-                    var chartItems = res.result.competencyCategory, series = [], filterLevel = {}, gradeObj = {};
+                    var chartItems = res.result.competencyCategory, series = [], labels=[], categoryList = {}, gradeObj = {};
 
                     chartItems.forEach(function (item) {
                         gradeObj = {};
                         if (item.competency_category) {
+                            categoryList[item.competency_category] =1;
                             gradeObj.category = item.competency_category;
                             gradeObj.success = Math.round(item.success / item.total * 100);
                             series.push(gradeObj)
                         }
                     });
+
                     AmCharts.makeChart('competencyCategory', {
-                        "type": "serial",
-                        "categoryField": "category",
-                        "startDuration": 1,
-                        "theme": "light",
-                        "categoryAxis": {
-                            "gridPosition": "start",
-                            labelRotation: 45
-                        },
-                        "trendLines": [],
-                        "graphs": [
+                        type: 'serial',
+                        theme: 'blur',
+                        color: '#fff',
+                        dataProvider: series,
+                        valueAxes: [
                             {
-                                "balloonText": "[[category]]:[[value]]",
-                                "bullet": "round",
-                                "id": "AmGraph-1",
-                                "title": "",
-                                "valueField": "success"
+                                axisAlpha: 0,
+                                position: 'left',
+                                title: 'Success Percentage',
+                                unit: '%',
+                                'minimium': 0,'maximum': 100
                             }
                         ],
-                        "guides": [],
-                        "valueAxes": [
+                        startDuration: 1,
+                        graphs: [
                             {
-                                "id": "ValueAxis-1",
-                                "title": "Success Percentage"
+                                balloonText: '<b>[[category]]: [[value]]</b>',
+                                fillColorsField: 'color',
+                                fillAlphas: 0.9,
+                                lineAlpha: 0.2,
+                                type: 'column',
+                                valueField: 'success'
                             }
                         ],
-                        "allLabels": [],
-                        "balloon": {},
-                        "legend": {
-                            "enabled": true,
-                            "useGraphSettings": true
+                        chartCursor: {
+                            categoryBalloonEnabled: false,
+                            cursorAlpha: 0,
+                            zoomable: false
                         },
-                        "dataProvider": series
+                        categoryField: 'category',
+                        categoryAxis: {
+                            gridPosition: 'start',
+                            labelRotation: 45,
+                            gridAlpha: 0.5,
+                            gridColor: '#f0fef1'
+                        },
+                        export: {
+                            enabled: true
+                        },
+                        creditsPosition: 'top-right'
                     });
                 }
             });
@@ -725,6 +789,11 @@ HPD.urls = {
                         },
                         export: {
                             enabled: true
+                        },
+                        "chartScrollbar": {
+                            "enabled": true,
+                            "selectedBackgroundColor" : '#333',
+                            "gridCount" : 10
                         },
                         creditsPosition: 'top-right'
                     });
