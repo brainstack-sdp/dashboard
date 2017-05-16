@@ -280,8 +280,9 @@ module.exports.student = function (req, res) {
         where: whereSchool
       }],
       attributes: [
-        [sequelize.fn("COUNT", sequelize.fn('DISTINCT', sequelize.col("student.sheet_id"), 
-          sequelize.col("student.student_id"))), "total"]
+        [sequelize.literal('Count(DISTINCT "student.student_id", student.sheet_id)'), "total"] 
+        // [sequelize.fn("COUNT", sequelize.fn('DISTINCT', sequelize.col("student.sheet_id"), 
+          // sequelize.col("student.student_id"))), "total"]
       ],
       where: whereStudent
     }, {
