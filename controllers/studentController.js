@@ -13,7 +13,7 @@ let sequelize = require("sequelize");
 let log = require("../helpers/logger");
 let responseArray = ['gradePie', 'subjectStack', 'classStack', 'gradeStack',
     'competencyType', 'competencyCategory', 'competencyDistribution',
-    'competencyAnalysis', 'studentsAccessed'];
+    'competencyAnalysis', 'studentsAccessed', 'competencyAnalysis'];
 
 let studentQuery = function (queryObj) {
   return new Promise(function (resolve, reject) {
@@ -97,7 +97,10 @@ module.exports.student = function (req, res) {
   } else {
     attributes = ['district'];
   }
- 
+  if(graph==9){
+    delete whereSchool['competency_category']; 
+  }
+  console.log(whereSchool);
   console.log(whereStudent);
   let graphArray = [{
       raw: true,
@@ -272,7 +275,8 @@ module.exports.student = function (req, res) {
         where: whereSchool
       }],
       attributes: [
-        [sequelize.fn("COUNT", sequelize.fn('DISTINCT', sequelize.col("student.id"))), "total"]
+        [sequelize.fn("COUNT", sequelize.fn('DISTINCT', sequelize.col("student.sheet_id"), 
+          sequelize.col("student.student_id"))), "total"]
       ],
       where: whereStudent
     }, {
@@ -292,7 +296,7 @@ module.exports.student = function (req, res) {
           model: models.competency,
           as: "C",
           attributes: [],
-          required: true
+          required: true,
         }],
         where: {
           in_final: 1,
