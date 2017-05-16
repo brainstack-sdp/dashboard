@@ -116,6 +116,7 @@ module.exports.enrollment = function (req, res) {
         [sequelize.fn("SUM", sequelize.col("class_9")), "class_9"],
         [sequelize.fn("SUM", sequelize.col("class_10")), "class_10"],
         [sequelize.fn("SUM", sequelize.col("class_11")), "class_11"],
+        [sequelize.fn("SUM", sequelize.col("class_11")), "class_12"],
       ],
       where: whereSchool
     })

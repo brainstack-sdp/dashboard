@@ -66,10 +66,10 @@ module.exports.student = function (req, res) {
     attributes = ['class_code'];
     group = 'class_code';
     whereSchool = req.query;
-  }
-  else{
+  } else{
     group = 'district';
   }
+  
   if(req.query.class_code) {
     attributes = ['subject'];
     whereStudent['class_code'] = req.query.class_code;
