@@ -10,13 +10,10 @@
 
 let models = require("../models/index");
 let sequelize = require("sequelize");
-let moment = require("moment");
-// let sessionUtils = require("../utils/sessionUtils");
 let log = require("../helpers/logger");
-
-module.exports.index = function (req, res) {
-  res.json({"message": "Home", "result": {}, "error": false});
-};
+let responseArray = ['gradePie', 'subjectStack', 'classStack', 'gradeStack',
+    'competencyType', 'competencyCategory', 'competencyDistribution',
+    'competencyAnalysis', 'studentsAccessed'];
 
 let studentQuery = function (queryObj) {
   return new Promise(function (resolve, reject) {
@@ -90,7 +87,16 @@ module.exports.student = function (req, res) {
     attributes = ['district'];
     group = 'district';
   }
-
+  if(graph==1) {
+    whereStudent['subject'] = {
+      $and: [{
+        $notLike: '*'
+      }, {
+        $notLike: ''
+      }]
+    }
+  }
+  console.log(whereStudent);
   let graphArray = [
     {
       raw: true,
@@ -118,13 +124,13 @@ module.exports.student = function (req, res) {
         where: whereSchool
       }],
       attributes: [
-        [sequelize.fn("SUM", sequelize.col("student.sum")), "sum"],
-        [sequelize.fn("SUM", sequelize.col("student.max_marks")), "max_marks"],
+        [sequelize.fn("COUNT", sequelize.col("student.grade")), "count"],
+        "grade",
         "subject",
         "SI."+group
       ],
       where: whereStudent,
-      group: ["subject", "SI."+group]
+      group: ["subject", "grade", "SI."+group]
     },
     {
       raw: true,
@@ -136,13 +142,13 @@ module.exports.student = function (req, res) {
         where: whereSchool
       }],
       attributes: [
-        [sequelize.fn("SUM", sequelize.col("student.sum")), "sum"],
-        [sequelize.fn("SUM", sequelize.col("student.max_marks")), "max_marks"],
+        [sequelize.fn("COUNT", sequelize.col("student.grade")), "count"],
+        "grade",
         "class_code",
         "SI."+group
       ],
       where: whereStudent,
-      group: ["class_code", "SI."+group]
+      group: ["class_code", "grade", "SI."+group]
     },
     {
       raw: true,
@@ -272,26 +278,9 @@ module.exports.student = function (req, res) {
       where: whereStudent
     }];
 
-  let responseArray = ['gradePie', 'subjectStack', 'classStack', 'gradeStack',
-      'competencyType', 'competencyCategory', 'competencyDistribution',
-      'competencyAnalysis', 'studentsAccessed'];
-  log.info(typeof graphArray);
-  log.info(graphArray.length);
-  log.info(graph);
   Promise.all([studentQuery(graphArray[graph])]).then(function (data) {
-    let response = {
-      // gradePie: data[0],
-      // subjectStack: data[1],
-      // classStack: data[2],
-      // gradeStack: data[3],
-      // competencyType: data[4],
-      // competencyCategory: data[5],
-      // competencyDistribution: data[6],
-      // competencyAnalysis: data[7],
-      // studentsAccessed: data[8]
-    };
+    let response = {};
     response[responseArray[graph]] = data[0];
-    log.info(response);
     res.json({"message": "Data", "result": response, "error": false});
   }).catch(function (err) {
     log.error(err);
