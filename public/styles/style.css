@@ -14,6 +14,16 @@
     height: 30px;
 }
 
+.panel {
+    color: #fff !important;
+}
+.panel a[title="JavaScript charts"] {
+    display: none !important;
+}
+.panel .panel-heading {
+    color: #fff !important;
+}
+
 #preloader {
     background:rgba(0,0,0,.6);
 }
