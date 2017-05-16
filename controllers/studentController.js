@@ -40,9 +40,11 @@ let studentCompetencyQuery = function (queryObj) {
 exports.studentQuery = studentQuery;
 
 module.exports.student = function (req, res) {
+  console.log(req.query)
   let attributes = [];
   let group = '';
   let whereSchool = undefined;
+  let competency_category = '';
   let whereStudent = {grade: {$ne: null}};
   let graph = req.query.graph;
   delete req.query.graph;
@@ -97,11 +99,14 @@ module.exports.student = function (req, res) {
   } else {
     attributes = ['district'];
   }
+  console.log(req.query);
   if(graph==9){
+    competency_category = req.query.competency_category;
     delete whereSchool['competency_category']; 
   }
   console.log(whereSchool);
   console.log(whereStudent);
+  console.log(req.query.competency_category);
   let graphArray = [{
       raw: true,
       include: [{
@@ -300,7 +305,7 @@ module.exports.student = function (req, res) {
         }],
         where: {
           in_final: 1,
-          competency_category: req.query.competency_category
+          competency_category: competency_category
         }
       }],
       attributes: [
