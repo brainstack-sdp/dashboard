@@ -67,27 +67,18 @@ module.exports.student = function (req, res) {
     attributes = ['class_code'];
     group = 'class_code';
     whereSchool = req.query;
-  } else if(req.query.class_code) {
+  }
+  if(req.query.class_code) {
     attributes = ['subject'];
     group = 'district';
     whereStudent['class_code'] = req.query.class_code;
-  } else if(req.query.subject) {
+  } 
+  if(req.query.subject) {
     attributes = ['subject'];
     group = 'district';
     whereStudent['subject'] = req.query.subject;
-  } else if(req.query.sex) {
-    attributes = ['sex'];
-    group = 'district';
-    whereStudent['sex'] = req.query.sex;
-  } else if(req.query.category) {
-    attributes = ['category'];
-    group = 'district';
-    whereStudent['category'] = req.query.category;
-  } else {
-    attributes = ['district'];
-    group = 'district';
-  }
-  if(graph==1) {
+  } 
+  else if (graph==1) {
     whereStudent['subject'] = {
       $and: [{
         $notLike: '*'
@@ -96,9 +87,22 @@ module.exports.student = function (req, res) {
       }]
     }
   }
+  if(req.query.sex) {
+    attributes = ['sex'];
+    group = 'district';
+    whereStudent['sex'] = req.query.sex;
+  } 
+  if(req.query.category) {
+    attributes = ['category'];
+    group = 'district';
+    whereStudent['category'] = req.query.category;
+  } else {
+    attributes = ['district'];
+    group = 'district';
+  }
+ 
   console.log(whereStudent);
-  let graphArray = [
-    {
+  let graphArray = [{
       raw: true,
       include: [{
         model: models.school,
@@ -113,8 +117,7 @@ module.exports.student = function (req, res) {
       ],
       where: whereStudent,
       group: "grade"
-    },
-   {
+    }, {
       raw: true,
       include: [{
         model: models.school,
@@ -131,8 +134,7 @@ module.exports.student = function (req, res) {
       ],
       where: whereStudent,
       group: ["subject", "grade", "SI."+group]
-    },
-    {
+    }, {
       raw: true,
       include: [{
         model: models.school,
@@ -149,8 +151,7 @@ module.exports.student = function (req, res) {
       ],
       where: whereStudent,
       group: ["class_code", "grade", "SI."+group]
-    },
-    {
+    }, {
       raw: true,
       include: [{
         model: models.school,
@@ -166,8 +167,7 @@ module.exports.student = function (req, res) {
       ],
       where: whereStudent,
       group: ["grade", "SI."+group]
-    },
-    {
+    }, {
       raw: true,
       include: [{
         model: models.school,
@@ -189,8 +189,7 @@ module.exports.student = function (req, res) {
       ],
       where: whereStudent,
       group: ["class_code", "SC.type"]
-    },
-    {
+    }, {
       raw: true,
       include: [{
         model: models.school,
@@ -202,7 +201,10 @@ module.exports.student = function (req, res) {
         model: models.student_competency,
         as: "SC",
         attributes: [],
-        required: true
+        required: true,
+        where: {
+          in_final: 1
+        }
       }],
       attributes: [
         [sequelize.fn("SUM", sequelize.col("SC.success")), "success"],
@@ -211,8 +213,7 @@ module.exports.student = function (req, res) {
       ],
       where: whereStudent,
       group: ["SC.competency_category"]
-    },
-    {
+    }, {
       raw: true,
       include: [{
         model: models.school,
@@ -233,8 +234,7 @@ module.exports.student = function (req, res) {
       ],
       where: whereStudent,
       group: ["SI."+group]
-    },
-    {
+    }, {
       raw: true,
       include: [{
         model: models.school,
@@ -248,11 +248,14 @@ module.exports.student = function (req, res) {
         attributes: [],
         required: true,
         include: [{
-        model: models.competency,
-        as: "C",
-        attributes: [],
-        required: true
-      }]
+          model: models.competency,
+          as: "C",
+          attributes: [],
+          required: true
+        }],
+        where: {
+          in_final: 1
+        }
       }],
       attributes: [
         [sequelize.fn("SUM", sequelize.col("SC.success")), "success"],
@@ -262,8 +265,7 @@ module.exports.student = function (req, res) {
       ],
       where: whereStudent,
       group: ["SC.competency"]
-    },
-    {
+    }, {
       raw: true,
       include: [{
         model: models.school,
