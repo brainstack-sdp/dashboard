@@ -32,16 +32,6 @@ try:
             print(sql)
             cursor.execute(sql)
             connection.commit()
-    # # connection is not autocommit by default. So you must commit to save
-    # # your changes.
-    # connection.commit()
-
-    # with connection.cursor() as cursor:
-        # Read a single record
-        # sql = "SELECT `id`, `password` FROM `user` WHERE `user_name`=%s"
-        # cursor.execute(sql, ('admin',))
-        # result = cursor.fetchone()
-        # print(result)
 except Exception as e:
     print(e)
 finally:
