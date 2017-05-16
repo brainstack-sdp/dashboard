@@ -226,7 +226,7 @@ module.exports.student = function (req, res) {
         "SI.district"
       ],
       where: whereStudent,
-      group: ["SI.district"]
+      group: ["SI."+group]
     },
     {
       raw: true,

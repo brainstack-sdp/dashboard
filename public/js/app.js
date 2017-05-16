@@ -467,8 +467,6 @@ HPD.urls = {
                             series.push(gradeObj)
                         }
                     });
-
-
                     AmCharts.makeChart('competencyCategory', {
                         "type": "serial",
                         "categoryField": "category",
