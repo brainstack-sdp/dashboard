@@ -51,6 +51,7 @@ HPD.urls = {
             legend: {
                 position: 'right',
                 marginRight: 100,
+                valueText: '',
                 autoMargins: false
             },
             defs: {
@@ -148,8 +149,6 @@ HPD.urls = {
             }
             return queryString
         }
-        Morris.Grid.prototype.gridDefaults.gridLineColor = "#888";
-        Morris.Grid.prototype.gridDefaults.gridTextColor = '#333';
         $.ajax({
             method: 'GET',
             url: HPD.urls.chartRecord + filterQuery(8),
