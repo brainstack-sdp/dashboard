@@ -287,7 +287,7 @@ module.exports.student = function (req, res) {
           required: true
         }],
         where: {
-          in_final: 1
+          in_final: 1,
           competency_category: req.query.competency_category
         }
       }],
