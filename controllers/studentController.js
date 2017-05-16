@@ -99,14 +99,14 @@ module.exports.student = function (req, res) {
   } else {
     attributes = ['district'];
   }
-  console.log(req.query);
-  if(graph==9){
+  
+  if(graph==9 && req.query.competency_category){
     competency_category = req.query.competency_category;
-    delete whereSchool['competency_category']; 
+    if(whereSchool){
+      delete whereSchool['competency_category']; 
+    }
   }
-  console.log(whereSchool);
-  console.log(whereStudent);
-  console.log(req.query.competency_category);
+  log.info(competency_category);
   let graphArray = [{
       raw: true,
       include: [{
@@ -317,7 +317,7 @@ module.exports.student = function (req, res) {
       where: whereStudent,
       group: ["SC.competency"]
     }];
-
+    log.info(competency_category);
   Promise.all([studentQuery(graphArray[graph])]).then(function (data) {
     let response = {};
     response[responseArray[graph]] = data[0];
