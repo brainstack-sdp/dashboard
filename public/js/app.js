@@ -138,7 +138,7 @@ HPD.urls = {
             method: 'GET',
             url: HPD.urls.chartRecord + filterQuery(8),
             success: function (res) {
-                $('.js-access').html(res.studentsAccessed);
+                $('.js-access').html(res.result.studentsAccessed[0].total);
 
             }
         });
@@ -389,9 +389,13 @@ HPD.urls = {
                             "gridPosition": "start",
                             "axisAlpha": 0,
                             "gridAlpha": 0,
-                            "position": "left"
+                            "position": "left",
+                            labelRotation: 45
                         },
                         "export": {
+                            "enabled": true
+                        },
+                        "chartScrollbar": {
                             "enabled": true
                         }
 
@@ -597,6 +601,7 @@ HPD.urls = {
                         gradeObj = {};
                         if (item.competency) {
                             gradeObj.competency = item.competency;
+                            gradeObj.description = item.competency_description;
                             gradeObj.success = Math.round(item.success / item.total * 100);
                             series.push(gradeObj)
                         }
@@ -618,7 +623,7 @@ HPD.urls = {
                         startDuration: 1,
                         graphs: [
                             {
-                                balloonText: '<b>[[category]]: [[value]]</b>',
+                                balloonText: '<b>[[description]]: [[value]]%</b>',
                                 fillColorsField: 'color',
                                 fillAlphas: 0.7,
                                 lineAlpha: 0.2,
