@@ -69,7 +69,7 @@ module.exports.student = function (req, res) {
   } 
   if(req.query.summer_winter && whereSchool) {
     whereSchool['summer_winter'] = req.query.summer_winter;
-  } else{
+  } else if (req.query.summer_winter){
     whereSchool = {
       'summer_winter':req.query.summer_winter
     };
