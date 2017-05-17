@@ -12,6 +12,17 @@
     display: inline-block;
     vertical-align: baseline;
 }
+
+ul.nav.nav-tabs li.uib-tab.nav-item{
+    width: 50%;
+    text-align: center;
+}
+
+ul.nav.nav-tabs li.uib-tab.nav-item >a{
+    color: #fff;
+}
+
+
 .al-sidebar-list {
     padding: 0 15px;
 }
