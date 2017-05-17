@@ -101,13 +101,13 @@ module.exports.enrollment = function (req, res) {
   } else {
     group = 'district'
   }
-  if(whereSchool){
-    whereSchool['school_management'] = 'Department of Education'
-  } else{
-    whereSchool = {
-      school_management : 'Department of Education';
-    };
-  }
+  // if(whereSchool){
+  //   whereSchool['school_management'] = 'Department of Education';
+  // } else{
+  //   whereSchool = {
+  //     school_management : 'Department of Education';
+  //   };
+  // }
   Promise.all([
     schoolQuery({
       raw: true,
