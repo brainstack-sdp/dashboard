@@ -81,7 +81,7 @@ module.exports = function (sequelize, DataTypes) {
       allowNull: true
     },
     school_name: {
-      type: DataTypes.DECIMAL,
+      type: DataTypes.STRING,
       allowNull: true
     },
     summer_winter: {

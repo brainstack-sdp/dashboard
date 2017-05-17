@@ -64,12 +64,15 @@ module.exports.student = function (req, res) {
     attributes = ['summer_winter'];
     group = 'summer_winter';
     whereSchool = req.query;
-  } else if(req.query.summer_winter) {
-    attributes = ['class_code'];
-    group = 'class_code';
-    whereSchool = req.query;
   } else{
     group = 'district';
+  } 
+  if(req.query.summer_winter && whereSchool) {
+    whereSchool['summer_winter'] = req.query.summer_winter;
+  } else{
+    whereSchool = {
+      'summer_winter':req.query.summer_winter
+    };
   }
 
   if(req.query.class_code) {

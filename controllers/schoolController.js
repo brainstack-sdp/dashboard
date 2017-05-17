@@ -137,9 +137,7 @@ module.exports.enrollment = function (req, res) {
     })
   ]).then(function (data) {
       let response = {student_enrolled:0};
-      Object.assign(data[0][0], data[0][0]);
-      console.log(data[0][0]);
-      console.log(Object.assign(data[0][0], data[0][0]));
+
       for(let cls in Object.assign(data[0][0], data[0][0])){
         if(cls!= 'class_'+req.query.class_code){
           response['student_enrolled'] += data[0][0][cls];

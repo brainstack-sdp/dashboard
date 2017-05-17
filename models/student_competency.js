@@ -40,6 +40,34 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.INTEGER,
       allowNull: false
     },
+    block: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    cluster: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    district: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    school_code: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    school_name: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    summer_winter: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true
+    },
+    subject: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
     student_id: {
       type: DataTypes.STRING,
       allowNull: false,
