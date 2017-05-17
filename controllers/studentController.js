@@ -171,7 +171,7 @@ module.exports.student = function (req, res) {
         "SI."+group
       ],
       where: whereStudent,
-      group: ["grade", "SI."+group]
+      group: ["student.grade", "SI."+group]
     }, {
       raw: true,
       include: [{
@@ -193,7 +193,7 @@ module.exports.student = function (req, res) {
         "SC.type"
       ],
       where: whereStudent,
-      group: ["class_code", "SC.type"]
+      group: ["student.class_code", "SC.type"]
     }, {
       raw: true,
       include: [{
@@ -208,7 +208,14 @@ module.exports.student = function (req, res) {
         attributes: [],
         required: true,
         where: {
-          in_final: 1
+          in_final: 1,
+          competency_category: {
+             $and: [{
+              $notLike: '?'
+            }, {
+              $ne: null
+            }]
+          }
         }
       }],
       attributes: [
