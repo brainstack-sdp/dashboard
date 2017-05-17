@@ -51,19 +51,27 @@ module.exports.student = function (req, res) {
   if(req.query.district) {
     attributes = ['block'];
     group = 'block';
-    whereSchool = req.query;
+    whereSchool = {
+      'district': req.query.district
+    };
   } else if(req.query.block) {
     attributes = ['cluster'];
     group = 'cluster';
-    whereSchool = req.query;
+    whereSchool = {
+      'block': req.query.block
+    };
   } else if(req.query.cluster) {
     attributes = ['school_name'];
     group = 'school_name';
-    whereSchool = req.query;
+    whereSchool = {
+      'cluster': req.query.cluster
+    };
   } else if(req.query.school_name) {
     attributes = ['summer_winter'];
     group = 'summer_winter';
-    whereSchool = req.query;
+    whereSchool = {
+      'school_name': req.query.school_name
+    };
   } else{
     group = 'district';
   } 
