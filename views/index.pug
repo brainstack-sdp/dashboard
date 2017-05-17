@@ -5,6 +5,7 @@ html
         link(rel="stylesheet" href="styles/vendor-aa67210ead.css")
         link(rel="stylesheet" href="styles/app-fe96e7be2d.css")
         link(rel="stylesheet" href="styles/style.css")
+        link(rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all")
     body.blur-theme
         header
             .page-top.clearfix(scroll-position="scrolled" max-height="50")
@@ -23,24 +24,25 @@ html
                 ul.al-sidebar-list
                     li
                         h4 District
-                        select(class="form-control js-filter" data-type="district")
+                        select(class="form-control js-filter" data-cat="upper" data-type="district")
                     li
                         h4 Block
-                        select(class="form-control js-filter" data-type="block")
+                        select(class="form-control js-filter" data-cat="upper" data-type="block")
                     li
                         h4 Cluster
-                        select(class="form-control js-filter" data-type="cluster")
+                        select(class="form-control js-filter" data-cat="upper" data-type="cluster")
                     li
                         h4 School
-                        select(class="form-control js-filter" data-type="school_name")
+                        select(class="form-control js-filter" data-cat="upper" data-type="school_name")
                     li
                         h4 Summer/Winter
-                        select(class="form-control js-filter" data-type="summer_winter")
-                            option(value="summer") Summer
-                            option(value="winter") Winter
+                        select(class="form-control js-iFilter" data-cat="lower" data-type="summer_winter")
+                            option(value="") All
+                            option(value="Summer") Summer
+                            option(value="Winter") Winter
                     li
                         h4 Class
-                        select(class="form-control js-filter" data-type="class_code")
+                        select(class="form-control js-iFilter"  data-type="class_code")
                             option(value="") All
                             option(value="1") Class 1
                             option(value="2") Class 2
@@ -50,7 +52,7 @@ html
                             option(value="7") Class 7
                     li
                         h4 Subject
-                        select(class="form-control js-filter" data-type="subject")
+                        select(class="form-control js-iFilter" data-type="subject")
                             option(value="") All
                             option(value="1") Hindi
                             option(value="2") Maths
@@ -60,7 +62,7 @@ html
                             option(value="6") Science
                     li
                         h4 Gender
-                        select(class="form-control js-filter" data-type="sex")
+                        select(class="form-control js-iFilter" data-type="sex")
                             option(value="") All
                             option(value="1") Male
                             option(value="2") Female
@@ -81,105 +83,105 @@ html
                 .al-content
                     .pull-right
                         a.btn(href="/") Reset Filters
-                    section.chartist
                     .col-md-12
-                        .panel.panel-blur
-                            .panel-heading
-                                h3.panel-title 1. Overall Grade Distribution
-                            .panel-body
-                                .ct-chart(id="gradePie" style="width: 100%; height: 400px;")
-                                .text-right No. of students assessed(approx.):&nbsp;
-                                    span.js-access
-                                .text-right No. of students enrolled:&nbsp;
-                                    span.js-enroll -
-                                .preloader.js-loader.js-gradePie
-                                    div
-                    .col-md-12
-                        .panel.panel-blur
-                            .panel-heading
-                                h3.panel-title 2. Subject Learning Achievement
-                            .panel-body
-                                div(id='subjectStack' style="width: 100%; height: 400px;")
-                                .text-right No. of students assessed(approx.):&nbsp;
-                                    span.js-access
-                                .text-right No. of students enrolled:&nbsp;
-                                    span.js-enroll -
-                                .preloader.js-loader.js-subjectStack
-                                    div
-                    .col-md-12
-                        .panel.panel-blur
-                            .panel-heading
-                                h3.panel-title 3. Class Learning Achievement
-                            .panel-body
-                                div(id="classStack" style="width: 100%; height: 400px;")
-                                .text-right No. of students assessed(approx.):&nbsp;
-                                    .js-access
-                                .text-right No. of students enrolled:&nbsp;
-                                    span.js-enroll -
+                        ul.nav.nav-tabs
+                            li.uib-tab.nav-item.active
+                                a.nav-link(href="#" aria-controls="grades" role="tab" data-toggle="tab") Grades
+                            li.uib-tab.nav-item
+                                a.nav-link(href="#" aria-controls="competency" role="tab" data-toggle="tab") Competency
+                        .tab-content
+                            .tab-pane.active(id='grades')
+                                .panel.panel-blur
+                                    .panel-heading
+                                        h3.panel-title 1. Overall Grade Distribution
+                                    .panel-body
+                                        .ct-chart(id="gradePie" style="width: 100%; height: 400px;")
+                                        .text-right No. of students assessed(approx.):&nbsp;
+                                            span.js-access
+                                        .text-right No. of students enrolled:&nbsp;
+                                            span.js-enroll -
+                                        .preloader.js-loader.js-gradePie
+                                            div
+                                .panel.panel-blur
+                                    .panel-heading
+                                        h3.panel-title 2. Subject Learning Achievement
+                                    .panel-body
+                                        div(id='subjectStack' style="width: 100%; height: 400px;")
+                                        .text-right No. of students assessed(approx.):&nbsp;
+                                            span.js-access
+                                        .text-right No. of students enrolled:&nbsp;
+                                            span.js-enroll -
+                                        .preloader.js-loader.js-subjectStack
+                                            div
+                                .panel.panel-blur
+                                    .panel-heading
+                                        h3.panel-title 3. Class Learning Achievement
+                                    .panel-body
+                                        div(id="classStack" style="width: 100%; height: 400px;")
+                                        .text-right No. of students assessed(approx.):&nbsp;
+                                            .js-access
+                                        .text-right No. of students enrolled:&nbsp;
+                                            span.js-enroll -
 
-                                .preloader.js-loader.js-classStack
-                                    div
+                                        .preloader.js-loader.js-classStack
+                                            div
 
-                    .col-md-12
-                        .panel.panel-blur
-                            .panel-heading
-                                h3.panel-title 4. Districtwise Grade Distribution
-                            .panel-body
-                                .ct-chart(id="gradeStack" style="width: 100%; height: 400px;")
-                                .text-right No. of students assessed(approx.):&nbsp;
-                                    span.js-access
-                                .text-right No. of students enrolled:&nbsp;
-                                    span.js-enroll
-                                .preloader.js-loader.js-gradeStack
-                                    div
-                    .col-md-12
-                        .panel.panel-blur
-                            .panel-heading
-                                h3.panel-title 5. Overall Competency Trends
-                            .panel-body
-                                .ct-chart(id="competencyTrends" style="width: 100%; height: 400px;")
-                                .text-right No. of students assessed(approx.):&nbsp;
-                                    span.js-access
-                                .text-right No. of students enrolled:&nbsp;
-                                    span.js-enroll
-                                .preloader.js-loader.js-competencyTrends
-                                    div
-                    .col-md-12
-                        .panel.panel-blur
-                            .panel-heading
-                                h3.panel-title 6. Competency Category Analysis
-                            .panel-body
-                                .ct-chart(id="competencyCategory" style="width: 100%; height: 400px;")
-                                .text-right No. of students assessed(approx.):&nbsp;
-                                    span.js-access
-                                .text-right No. of students enrolled:&nbsp;
-                                    span.js-enroll
-                                .preloader.js-loader.js-competencyCategory
-                                    div
-                    .col-md-12
-                        .panel.panel-blur
-                            .panel-heading
-                                h3.panel-title 7. Competency Achievement
-                            .panel-body
-                                .ct-chart(id="competency" style="width: 100%; height: 400px;")
-                                .text-right No. of students assessed(approx.):&nbsp;
-                                    span.js-access
-                                .text-right No. of students enrolled:&nbsp;
-                                    span.js-enroll -
-                                .preloader.js-loader.js-competency
-                                    div
-                    .col-md-12
-                        .panel.panel-blur
-                            .panel-heading
-                                h3.panel-title 8. Competencywise Achievement
-                            .panel-body
-                                .ct-chart(id="competencyAcheivement" style="width: 100%; height: 400px;")
-                                .text-right No. of students assessed(approx.):&nbsp;
-                                    span.js-access
-                                .text-right No. of students enrolled:&nbsp;
-                                    span.js-enroll -
-                                .preloader.js-loader.js-competencyAcheivement
-                                    div
+                                .panel.panel-blur
+                                    .panel-heading
+                                        h3.panel-title 4. Districtwise Grade Distribution
+                                    .panel-body
+                                        .ct-chart(id="gradeStack" style="width: 100%; height: 400px;")
+                                        .text-right No. of students assessed(approx.):&nbsp;
+                                            span.js-access
+                                        .text-right No. of students enrolled:&nbsp;
+                                            span.js-enroll
+                                        .preloader.js-loader.js-gradeStack
+                                            div
+                            .tab-pane(id="competency")
+                                .panel.panel-blur
+                                    .panel-heading
+                                        h3.panel-title 5. Overall Competency Trends
+                                    .panel-body
+                                        .ct-chart(id="competencyTrends" style="width: 100%; height: 400px;")
+                                        .text-right No. of students assessed(approx.):&nbsp;
+                                            span.js-access
+                                        .text-right No. of students enrolled:&nbsp;
+                                            span.js-enroll
+                                        .preloader.js-loader.js-competencyTrends
+                                            div
+                                .panel.panel-blur
+                                    .panel-heading
+                                        h3.panel-title 6. Competency Category Analysis
+                                    .panel-body
+                                        .ct-chart(id="competencyCategory" style="width: 100%; height: 400px;")
+                                        .text-right No. of students assessed(approx.):&nbsp;
+                                            span.js-access
+                                        .text-right No. of students enrolled:&nbsp;
+                                            span.js-enroll
+                                        .preloader.js-loader.js-competencyCategory
+                                            div
+                                .panel.panel-blur
+                                    .panel-heading
+                                        h3.panel-title 7. Competency Achievement
+                                    .panel-body
+                                        .ct-chart(id="competency" style="width: 100%; height: 400px;")
+                                        .text-right No. of students assessed(approx.):&nbsp;
+                                            span.js-access
+                                        .text-right No. of students enrolled:&nbsp;
+                                            span.js-enroll -
+                                        .preloader.js-loader.js-competency
+                                            div
+                                .panel.panel-blur
+                                    .panel-heading
+                                        h3.panel-title 8. Competencywise Achievement
+                                    .panel-body
+                                        .ct-chart(id="competencyAcheivement" style="width: 100%; height: 400px;")
+                                        .text-right No. of students assessed(approx.):&nbsp;
+                                            span.js-access
+                                        .text-right No. of students enrolled:&nbsp;
+                                            span.js-enroll -
+                                        .preloader.js-loader.js-competencyAcheivement
+                                            div
             footer.al-footer.clearfix
                 .al-footer-right Created by Samarth
             .modal.fade.js-modal
@@ -196,4 +198,5 @@ html
         //div( id="preloader")
             div
         script(src="js/vendor-727ff9d081.js")
+        script(src="https://www.amcharts.com/lib/3/plugins/export/export.min.js")
         script(src="js/app.js")
