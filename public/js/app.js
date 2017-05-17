@@ -17,11 +17,10 @@ HPD.urls = {
         $filter : $('.js-filter'), $preLoader : $('#preloader'), $modal: $('.js-modal')
         }, filterList = {}, filters = {}, $scope={},
         filterAheadMap = {
-            district : ['block', 'cluster', 'school_name', 'summer_winter'],
-            block : ['cluster', 'school_name', 'summer_winter'],
-            cluster : ['school_name', 'summer_winter'],
-            school_name : ['summer_winter'],
-            summer_winter : []
+            district : ['block', 'cluster', 'school_name'],
+            block : ['cluster', 'school_name'],
+            cluster : ['school_name'],
+            school_name : []
         }, gradeMap = {
 
         },
@@ -146,6 +145,7 @@ HPD.urls = {
         return options;
     }
     var chartInit = function(filterKey, type, val) {
+        $('.js-loader').show();
 
         var filterQuery = function (index) {
             var queryString = '?', paramList;
@@ -187,7 +187,9 @@ HPD.urls = {
             url: HPD.urls.chartRecord + filterQuery(0),
             success: function (res) {
                 var chartItems = res.result.gradePie, pieData = {}, series = [], sum = 0, gradeMap = {};
-                createPieChart('gradePie', chartItems)
+                createPieChart('gradePie', chartItems);
+                $('.js-gradePie.js-loader').hide();
+
 
             }
             });
@@ -212,7 +214,7 @@ HPD.urls = {
                         labels.push({
                             "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
                             "fillAlphas": 0.8,
-                            "labelText": "[[value]]",
+                            "labelText": "",
                             "lineAlpha": 0.3,
                             "title": subjectMap[subject],
                             "type": "column",
@@ -288,6 +290,7 @@ HPD.urls = {
                         }
 
                     });
+                    $('.js-subjectStack.js-loader').hide();
                 }
             });
 
@@ -312,7 +315,7 @@ HPD.urls = {
                         labels.push({
                             "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
                             "fillAlphas": 0.8,
-                            "labelText": "[[value]]",
+                            "labelText": "",
                             "lineAlpha": 0.3,
                             "title": "Class " + class_code,
                             "type": "column",
@@ -386,6 +389,7 @@ HPD.urls = {
                         }
 
                     });
+                    $('.js-classStack.js-loader').hide();
                 }
             });
             $.ajax({
@@ -510,10 +514,11 @@ HPD.urls = {
                         "chartScrollbar": {
                             "enabled": true,
                             "selectedBackgroundColor" : '#333',
-                            "gridCount" : 10
+                            "gridCount" : 4
                         }
 
                     });
+                    $('.js-gradeStack.js-loader').hide();
 
                 }
             });
@@ -607,6 +612,7 @@ HPD.urls = {
                         "allLabels": [],
                         "balloon": {}
                     });
+                    $('.js-competencyTrends.js-loader').hide();
 
 
                 }
@@ -676,6 +682,7 @@ HPD.urls = {
                         var category = event.item.category;
                         el.$modal.addClass('in');
                         el.$modal.show();
+                        $('.js-catDrill.js-loader').show();
                         $.ajax({
                             method: 'GET',
                             url: HPD.urls.chartRecord + filterQuery(9) + '&competency_category='+category,
@@ -739,13 +746,15 @@ HPD.urls = {
                                     },
                                     creditsPosition: 'top-right'
                                 });
+                                $('.js-catDrill.js-loader').hide();
                             }
                         });
 
-                    })
-                    ;
+                    });
+                    $('.js-competencyCategory.js-loader').hide();
                 }
-            });
+            }); // end of ajax call
+
             $.ajax({
                 method: 'GET',
                 url: HPD.urls.chartRecord + filterQuery(6),
@@ -802,8 +811,10 @@ HPD.urls = {
                         },
                         creditsPosition: 'top-right'
                     });
+                    $('.js-competency.js-loader').hide();
                 }
             });
+//----------------------------------------------------------------------------------------------------------------------
             $.ajax({
                 method: 'GET',
                 url: HPD.urls.chartRecord + filterQuery(7),
@@ -867,6 +878,7 @@ HPD.urls = {
                         },
                         creditsPosition: 'top-right'
                     });
+                    $('.js-competencyAcheivement.js-loader').hide();
                 }
             });
 
