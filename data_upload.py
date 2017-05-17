@@ -15,7 +15,7 @@ try:
     with connection.cursor() as cursor:
     #     # Create a new record
         # for i in range(65,100):
-        for i in range(300,400):
+        for i in range(400,500):
         # for i in range(65,1670):
         # for i in range(65,14):
         # if True: 
@@ -37,9 +37,10 @@ try:
                     INNER JOIN school SH on SH.school_code=S.school_code 
                     LIMIT {0},1000 """.format(str(i*1000))
             print(sql)
+            print("\n\n\n\n\n\n\n\n\n\n\n\n\n")
             cursor.execute(sql)
             result = cursor.fetchall()
-            print(result)
+            # print(result)
             for j in result:
                 print(j)
                 sql = """UPDATE `student_result_competency` SRC
@@ -113,6 +114,7 @@ try:
             # print(sql)
             # cursor.execute(sql)
             # connection.commit()
+        print("done")
 except Exception as e:
     print(e)
 finally:
