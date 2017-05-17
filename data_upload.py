@@ -14,7 +14,10 @@ connection = pymysql.connect(host='education.cztr5jruorah.ap-south-1.rds.amazona
 try:
     with connection.cursor() as cursor:
     #     # Create a new record
-        for i in range(0,1670):
+        # for i in range(65,100):
+        for i in range(300,400):
+        # for i in range(65,1670):
+        # for i in range(65,14):
         # if True: 
             # sql = """INSERT INTO `student_result_competency_copy` (`competency`, `question`, `class_code`, 
             #     `student_id`, `competency_category`, `type`,`success_criteria`,`success`, `in_final` ) 
@@ -39,7 +42,6 @@ try:
             print(result)
             for j in result:
                 print(j)
-     
                 sql = """UPDATE `student_result_competency` SRC
                     SET SRC.school_code={1},
                     SRC.summer_winter='{2}', 
@@ -49,7 +51,7 @@ try:
                     SRC.block='{6}',
                     SRC.subject='{7}' WHERE SRC.student_id = {0}""".format(str(j['id']), str(j['school_code']), 
                         j['summer_winter'], j['school_name'], j['district'], j['cluster'], j['block'], j['subject'])
-                print(sql)
+                # print(sql)
                 cursor.execute(sql)
             # result = cursor.fetchone()
             # print(result)
@@ -89,6 +91,7 @@ try:
             sql = """UPDATE `student_result_competency` SRC
                 INNER JOIN student S on S.id = SRC.student_id 
                 INNER JOIN result1 R on R.question={0} 
+                AND SRC.question = {0}
                 AND R.class_code=S.class_code 
                 AND R.success_criteria=0.5
                 AND R.subject= S.subject 
@@ -101,6 +104,7 @@ try:
             sql = """UPDATE `student_result_competency` SRC
                 INNER JOIN student S on S.id = SRC.student_id 
                 INNER JOIN result1 R on R.question={0} 
+                AND SRC.question = {0}
                 AND R.class_code=S.class_code 
                 AND R.success_criteria=0.5
                 AND R.subject=S.subject 

@@ -99,6 +99,9 @@ module.exports.enrollment = function (req, res) {
   } else if(req.query.school_name) {
     group = 'summer_winter';
     whereSchool = req.query;
+  } else if(req.query.summer_winter) {
+    group = 'summer_winter';
+    whereSchool = req.query;
   } else {
     group = 'district'
   }
