@@ -7,7 +7,8 @@ var HPD = {};
 HPD.urls = {
     filterList: 'school',
     studentsEnrolled : 'school/enrollment',
-    chartRecord : 'student'
+    chartRecord : 'student',
+    competencyRecord : 'competency'
 };
 
 
@@ -160,7 +161,7 @@ HPD.urls = {
     var chartInit = function(filterKey, type, val, iQuery) {
         $('.js-loader').show();
 
-        var filterQuery = function (index) {
+        var filterQuery = function (index, isCompetency) {
             var queryString = '?', paramList;
             if (filters.district) {
                 queryString = '?' + type + '=' + encodeURIComponent(val) +'&graph' + '=' + index;
@@ -168,7 +169,10 @@ HPD.urls = {
             } else {
                 queryString = '?graph' + '=' + index;
             }
-            return queryString + iQuery
+            if(!isCompetency){
+                queryString += iQuery;
+            }
+            return queryString;
         }
         var filterEnrollQuery = function () {
             var queryString = '?', paramList;
@@ -580,7 +584,7 @@ HPD.urls = {
             });
             $.ajax({
                 method: 'GET',
-                url: HPD.urls.chartRecord + filterQuery(4),
+                url: HPD.urls.competencyRecord + filterQuery(0, true),
                 success: function (res) {
                     var chartItems = res.result.competencyType, series = [], filterLevel = {}, gradeObj = {};
 
@@ -683,7 +687,7 @@ HPD.urls = {
          */
             $.ajax({
                 method: 'GET',
-                url: HPD.urls.chartRecord + filterQuery(5),
+                url: HPD.urls.competencyRecord + filterQuery(1, true),
                 success: function (res) {
                     var chartItems = res.result.competencyCategory, series = [], labels=[], categoryList = {}, gradeObj = {};
 
@@ -751,7 +755,7 @@ HPD.urls = {
                             $('.js-catDrill.js-loader').show();
                             $.ajax({
                                 method: 'GET',
-                                url: HPD.urls.chartRecord + filterQuery(9) + '&competency_category='+category,
+                                url: HPD.urls.competencyRecord + filterQuery(4, true) + '&competency_category='+category,
                                 //url: HPD.urls.chartRecord + filterQuery(7),
                                 success: function (res) {
                                     var chartItems = res.result.competencyAnalysis, series = [], filterLevel = {}, gradeObj = {};
@@ -831,7 +835,7 @@ HPD.urls = {
 
             $.ajax({
                 method: 'GET',
-                url: HPD.urls.chartRecord + filterQuery(6),
+                url: HPD.urls.competencyRecord + filterQuery(2, true),
                 success: function (res) {
 
                     var chartItems = res.result.competencyDistribution, series = [], filterLevel = {}, gradeObj = {};
@@ -900,7 +904,7 @@ HPD.urls = {
 //----------------------------------------------------------------------------------------------------------------------
             $.ajax({
                 method: 'GET',
-                url: HPD.urls.chartRecord + filterQuery(7),
+                url: HPD.urls.competencyRecord + filterQuery(3, true),
                 success: function (res) {
 
                     var chartItems = res.result.competencyAnalysis, series = [], filterLevel = {}, gradeObj = {};
