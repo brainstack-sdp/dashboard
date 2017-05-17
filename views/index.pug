@@ -90,6 +90,8 @@ html
                                     span.js-access
                                 .text-right No. of students enrolled:&nbsp;
                                     span.js-enroll -
+                                .preloader.js-loader.js-gradePie
+                                    div
                     .col-md-12
                         .panel.panel-blur
                             .panel-heading
@@ -100,10 +102,12 @@ html
                                     span.js-access
                                 .text-right No. of students enrolled:&nbsp;
                                     span.js-enroll -
+                                .preloader.js-loader.js-subjectStack
+                                    div
                     .col-md-12
                         .panel.panel-blur
                             .panel-heading
-                                h3.panel-title 3. Districtwise Class Learning Achievement
+                                h3.panel-title 3. Class Learning Achievement
                             .panel-body
                                 div(id="classStack" style="width: 100%; height: 400px;")
                                 .text-right No. of students assessed:&nbsp;
@@ -111,6 +115,8 @@ html
                                 .text-right No. of students enrolled:&nbsp;
                                     span.js-enroll -
 
+                                .preloader.js-loader.js-classStack
+                                    div
 
                     .col-md-12
                         .panel.panel-blur
@@ -122,6 +128,8 @@ html
                                     span.js-access
                                 .text-right No. of students enrolled:&nbsp;
                                     span.js-enroll
+                                .preloader.js-loader.js-gradeStack
+                                    div
                     .col-md-12
                         .panel.panel-blur
                             .panel-heading
@@ -132,6 +140,8 @@ html
                                     span.js-access
                                 .text-right No. of students enrolled:&nbsp;
                                     span.js-enroll
+                                .preloader.js-loader.js-competencyTrends
+                                    div
                     .col-md-12
                         .panel.panel-blur
                             .panel-heading
@@ -142,6 +152,8 @@ html
                                     span.js-access
                                 .text-right No. of students enrolled:&nbsp;
                                     span.js-enroll
+                                .preloader.js-loader.js-competencyCategory
+                                    div
                     .col-md-12
                         .panel.panel-blur
                             .panel-heading
@@ -152,6 +164,8 @@ html
                                     span.js-access
                                 .text-right No. of students enrolled:&nbsp;
                                     span.js-enroll -
+                                .preloader.js-loader.js-competency
+                                    div
                     .col-md-12
                         .panel.panel-blur
                             .panel-heading
@@ -162,6 +176,8 @@ html
                                     span.js-access
                                 .text-right No. of students enrolled:&nbsp;
                                     span.js-enroll -
+                                .preloader.js-loader.js-competencyAcheivement
+                                    div
             footer.al-footer.clearfix
                 .al-footer-right Created by Samarth
             .modal.fade.js-modal
@@ -171,8 +187,9 @@ html
                             button(type="button" class="close js-close"  aria-label="Close")
                                 em(class="ion-ios-close-empty sn-link-close")
                             h4.modal-title Competency Category Drilldown
-                        .modal-body(id="catDrill" style="width: 640px; height: 300px;")
-                            div( id="preloader")
+                        .modal-body
+                            div(id="catDrill" style="width: 640px; height: 300px;")
+                            .preloader.js-loader.js-catDrill
                                 div
         //div( id="preloader")
             div
