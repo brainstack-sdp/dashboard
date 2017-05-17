@@ -116,6 +116,7 @@ HPD.urls = {
 
     var loadFilters = function($el) {
         var type= $el.data('type');
+        filters[type] = $el.val();
         appliedFilter.type = type;
         appliedFilter.value = $el.val();
 
