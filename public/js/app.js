@@ -169,7 +169,7 @@ HPD.urls = {
             } else {
                 queryString = '?graph' + '=' + index;
             }
-            if(isCompetency){
+            if(!isCompetency){
                 queryString += iQuery;
             }
             return queryString;
