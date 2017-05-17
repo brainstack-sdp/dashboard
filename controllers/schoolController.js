@@ -86,6 +86,7 @@ module.exports.enrollment = function (req, res) {
   let attributes = [];
   let group = '';
   let whereSchool = undefined;
+  let whereSchoolManagement = undefined;
   if(req.query.district) {
     group = 'block';
     whereSchool = req.query;
@@ -101,6 +102,14 @@ module.exports.enrollment = function (req, res) {
   } else {
     group = 'district'
   }
+  whereSchoolManagement = whereSchool;
+  if(whereSchool){
+    whereSchoolManagement['school_management'] = 'Department of Education';
+  } else{
+    whereSchoolManagement = {
+      school_management: 'Department of Education'
+    };
+  }
   Promise.all([
     schoolQuery({
       raw: true,
@@ -109,9 +118,15 @@ module.exports.enrollment = function (req, res) {
         [sequelize.fn("SUM", sequelize.col("class_2")), "class_2"],
         [sequelize.fn("SUM", sequelize.col("class_3")), "class_3"],
         [sequelize.fn("SUM", sequelize.col("class_4")), "class_4"],
-        [sequelize.fn("SUM", sequelize.col("class_5")), "class_5"],
         [sequelize.fn("SUM", sequelize.col("class_6")), "class_6"],
         [sequelize.fn("SUM", sequelize.col("class_7")), "class_7"],
+      ],
+      where: whereSchoolManagement
+    }), 
+    schoolQuery({
+      raw: true,
+      attributes: [
+        [sequelize.fn("SUM", sequelize.col("class_5")), "class_5"],
         [sequelize.fn("SUM", sequelize.col("class_8")), "class_8"],
         [sequelize.fn("SUM", sequelize.col("class_9")), "class_9"],
         [sequelize.fn("SUM", sequelize.col("class_10")), "class_10"],
@@ -122,7 +137,10 @@ module.exports.enrollment = function (req, res) {
     })
   ]).then(function (data) {
       let response = {student_enrolled:0};
-      for(let cls in data[0][0]){
+      Object.assign(data[0][0], data[0][0]);
+      console.log(data[0][0]);
+      console.log(Object.assign(data[0][0], data[0][0]));
+      for(let cls in Object.assign(data[0][0], data[0][0])){
         if(cls!= 'class_'+req.query.class_code){
           response['student_enrolled'] += data[0][0][cls];
         }
