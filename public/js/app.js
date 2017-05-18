@@ -8,7 +8,8 @@ HPD.urls = {
     filterList: 'school',
     studentsEnrolled : 'school/enrollment',
     chartRecord : 'student',
-    competencyRecord : 'competency'
+    competencyRecord : 'competency',
+    competencyDescription : 'competency/description'
 };
 
 
@@ -16,7 +17,7 @@ HPD.urls = {
 
     var el = {
         $filter : $('.js-filter'),$iFilter : $('.js-iFilter'), $preLoader : $('#preloader'), $modal: $('.js-modal'), $navs : $('a.nav-link')
-        }, filterList = {}, filters = {}, $scope={},
+        }, filterList = {}, filters = {}, $scope={}, pendingCalls ={},
         filterAheadMap = {
             district : ['block', 'cluster', 'school_name'],
             block : ['cluster', 'school_name'],
@@ -121,7 +122,7 @@ HPD.urls = {
         appliedFilter.type = type;
         appliedFilter.value = $el.val();
 
-        $.ajax({
+        pendingCalls.filter = $.ajax({
             method: 'GET',
             url : HPD.urls.filterList + '?' + type +'=' +encodeURIComponent($el.val()),
             success: function(res) {
@@ -174,6 +175,21 @@ HPD.urls = {
             }
             return queryString;
         }
+        var filterCQuery = function (index, isCompetency) {
+            var queryString = '?', paramList;
+            if (filters.district) {
+                queryString = '?' + type + '=' + encodeURIComponent(val) +'&graph' + '=' + index;
+
+            } else {
+                queryString = '?graph' + '=' + index + '&';
+            }
+            $.each(el.$iFilter, function(key, item) {
+                if($(item).data('type')!='sex' && $(item).data('type')!='' && $(item).val()){
+                    queryString += $(item).data('type') +'='+ $(item).val() + '&'
+                }
+            });
+            return queryString;
+        }
         var filterEnrollQuery = function () {
             var queryString = '?', paramList;
             if (filters.district) {
@@ -182,7 +198,7 @@ HPD.urls = {
             }
             return queryString
         }
-        $.ajax({
+        pendingCalls.assessed = $.ajax({
             method: 'GET',
             url: HPD.urls.chartRecord + filterQuery(8),
             success: function (res) {
@@ -190,7 +206,7 @@ HPD.urls = {
 
             }
         });
-        $.ajax({
+        pendingCalls.enrolled = $.ajax({
             method: 'GET',
             url: HPD.urls.studentsEnrolled + filterEnrollQuery(),
             success: function (res) {
@@ -199,7 +215,7 @@ HPD.urls = {
             }
         });
 
-        $.ajax({
+        pendingCalls.gradePie = $.ajax({
             method: 'GET',
             url: HPD.urls.chartRecord + filterQuery(0),
             success: function (res) {
@@ -211,11 +227,12 @@ HPD.urls = {
                     $('#gradePie').html('<div class="text-center">No Data</div>')
                 }
                 $('.js-gradePie.js-loader').hide();
-
-
+            }, error: function() {
+                $('#gradePie').html('<div class="text-center">Something Went Wrong</div>')
+                $('.js-gradePie.js-loader').hide();
             }
             });
-            $.ajax({
+        pendingCalls.subjectStack = $.ajax({
                 method: 'GET',
                 url: HPD.urls.chartRecord + filterQuery(1),
                 success: function (res) {
@@ -328,10 +345,13 @@ HPD.urls = {
                         $('#subjectStack').html('<div class="text-center">No Data</div>')
                     }
                     $('.js-subjectStack.js-loader').hide();
-                }
+                }, error: function() {
+                $('#subjectStack').html('<div class="text-center">Something Went Wrong</div>')
+                $('.js-subjectStack.js-loader').hide();
+            }
             });
 
-            $.ajax({
+        pendingCalls.classStack = $.ajax({
                 method: 'GET',
                 url: HPD.urls.chartRecord + filterQuery(2),
                 success: function (res) {
@@ -441,9 +461,12 @@ HPD.urls = {
                         $('#classStack').html('<div class="text-center">No Data</div>')
                     }
                     $('.js-classStack.js-loader').hide();
-                }
+                }, error: function() {
+                $('#classStack').html('<div class="text-center">Something Went Wrong</div>')
+                $('.js-classStack.js-loader').hide();
+            }
             });
-            $.ajax({
+        pendingCalls.gradeStack = $.ajax({
                 method: 'GET',
                 url: HPD.urls.chartRecord + filterQuery(3),
                 success: function (res) {
@@ -580,11 +603,14 @@ HPD.urls = {
                     }
                     $('.js-gradeStack.js-loader').hide();
 
-                }
+                }, error: function() {
+                $('#gradeStack').html('<div class="text-center">Something Went Wrong</div>')
+                $('.js-gradeStack.js-loader').hide();
+            }
             });
-            $.ajax({
+        pendingCalls.competencyType = $.ajax({
                 method: 'GET',
-                url: HPD.urls.competencyRecord + filterQuery(0, true),
+                url: HPD.urls.competencyRecord + filterCQuery(0, true),
                 success: function (res) {
                     var chartItems = res.result.competencyType, series = [], filterLevel = {}, gradeObj = {};
 
@@ -677,17 +703,18 @@ HPD.urls = {
                         $('#competencyTrends').html('<div class="text-center">No Data</div>')
                     }
                     $('.js-competencyTrends.js-loader').hide();
-
-
-                }
+                }, error: function() {
+                $('#competencyTrends').html('<div class="text-center">Something Went Wrong</div>')
+                $('.js-competencyTrends.js-loader').hide();
+            }
             });
 
         /**
          * 7. Competency Category
          */
-            $.ajax({
+        pendingCalls.competencyCategory = $.ajax({
                 method: 'GET',
-                url: HPD.urls.competencyRecord + filterQuery(1, true),
+                url: HPD.urls.competencyRecord + filterCQuery(1, true),
                 success: function (res) {
                     var chartItems = res.result.competencyCategory, series = [], labels=[], categoryList = {}, gradeObj = {};
 
@@ -753,89 +780,97 @@ HPD.urls = {
                             el.$modal.addClass('in');
                             el.$modal.show();
                             $('.js-catDrill.js-loader').show();
-                            $.ajax({
+
+                            $.when( $.ajax({
                                 method: 'GET',
-                                url: HPD.urls.competencyRecord + filterQuery(4, true) + '&competency_category='+category,
-                                //url: HPD.urls.chartRecord + filterQuery(7),
-                                success: function (res) {
+                                url: HPD.urls.competencyRecord + filterCQuery(4, true) + '&competency_category='+category}), $.ajax({
+                                method: 'GET',
+                                url: HPD.urls.competencyDescription})).
+                                then(function( resp1, resp2 ) {
+                                    pendingCalls.competencyAnalysis = resp1[2];
+                                    var res = resp1[0], resDesc = resp2[0].result.competency;
                                     var chartItems = res.result.competencyAnalysis, series = [], filterLevel = {}, gradeObj = {};
-
-                                    chartItems.forEach(function (item) {
-                                        gradeObj = {};
-                                        if (item.competency) {
-                                            gradeObj.competency = item.competency;
-                                            gradeObj.description = item.competency_description;
-                                            gradeObj.success = Math.round(item.success / item.total * 100);
-                                            series.push(gradeObj)
-                                        }
-                                    });
-
-                                    AmCharts.makeChart('catDrill', {
-                                        type: 'serial',
-                                        theme: 'blur',
-                                        color: '#333',
-                                        dataProvider: series,
-                                        valueAxes: [
-                                            {
-                                                position: 'left',
-                                                title: 'Success Percentage',
-                                                unit: '%',
-                                                'minimium': 0,'maximum': 100
+                                    if(chartItems.length) {
+                                        chartItems.forEach(function (item) {
+                                            gradeObj = {};
+                                            if (item.competency) {
+                                                gradeObj.competency = item.competency;
+                                                gradeObj.description = resDesc[item.competency].competency_description;
+                                                gradeObj.success = Math.round(item.success / item.total * 100);
+                                                series.push(gradeObj)
                                             }
-                                        ],
-                                        startDuration: 1,
-                                        graphs: [
-                                            {
-                                                balloonText: '<b>[[description]]: [[value]]</b>',
-                                                fillColorsField: 'color',
-                                                fillAlphas: 0.9,
-                                                lineAlpha: 0.2,
-                                                type: 'column',
-                                                valueField: 'success'
-                                            }
-                                        ],
-                                        chartCursor: {
-                                            categoryBalloonEnabled: false,
-                                            cursorAlpha: 0,
-                                            zoomable: false
-                                        },
-                                        categoryField: 'competency',
-                                        categoryAxis: {
-                                            gridPosition: 'start',
-                                            labelRotation: 0,
-                                            gridAlpha: 0.5,
-                                            gridColor: '#f0fef1'
-                                        },
-                                        export: {
-                                            enabled: true,
-                                            "reviver": function(nodeObj) {
-                                                if (nodeObj.className === 'amcharts-axis-label'){
-                                                    nodeObj.fill = '#333';
+                                        });
+
+                                        AmCharts.makeChart('catDrill', {
+                                            type: 'serial',
+                                            theme: 'blur',
+                                            color: '#fff',
+                                            dataProvider: series,
+                                            valueAxes: [
+                                                {
+                                                    position: 'left',
+                                                    title: 'Success Percentage',
+                                                    unit: '%',
+                                                    'minimium': 0,'maximum': 100
                                                 }
+                                            ],
+                                            startDuration: 1,
+                                            graphs: [
+                                                {
+                                                    balloonText: '<b>[[competency]]: [[value]]%</b><br/><span>[[description]]</span>',
+                                                    fillColorsField: 'color',
+                                                    fillAlphas: 0.9,
+                                                    lineAlpha: 0.2,
+                                                    type: 'column',
+                                                    valueField: 'success'
+                                                }
+                                            ],
+                                            chartCursor: {
+                                                categoryBalloonEnabled: false,
+                                                cursorAlpha: 0,
+                                                zoomable: false
                                             },
-                                        },
-                                        "chartScrollbar": {
-                                            "enabled": true,
-                                            "selectedBackgroundColor" : '#333',
-                                            "gridCount" : 10
-                                        },
-                                        creditsPosition: 'top-right'
-                                    });
+                                            categoryField: 'competency',
+                                            categoryAxis: {
+                                                gridPosition: 'start',
+                                                labelRotation: 90,
+                                                gridAlpha: 0.5,
+                                                gridColor: '#f0fef1'
+                                            },
+                                            export: {
+                                                enabled: true
+                                            },
+                                            "chartScrollbar": {
+                                                "enabled": true,
+                                                "selectedBackgroundColor" : '#333',
+                                                "gridCount" : 10
+                                            },
+                                            creditsPosition: 'top-right'
+                                        });
+                                    } else {
+                                        $('#catDrill').html('<div class="text-center">No Data</div>')
+                                    }
+
                                     $('.js-catDrill.js-loader').hide();
-                                }
-                            });
+                                    //}, error : function() {
+                                    //$('#competencyAcheivement').html('<div class="text-center">Something Went Wrong</div>')
+                                    //$('.js-competencyAcheivement.js-loader').hide();
+                                });
 
                         });
                     } else {
-                        $('#competencyCategory').html('<div class="text-center">No Data</div>')
+                        $('#catDrill').html('<div class="text-center">No Data</div>')
                     }
                     $('.js-competencyCategory.js-loader').hide();
-                }
+                }, error: function() {
+            $('#competencyCategory').html('<div class="text-center">Something Went Wrong</div>')
+            $('.js-competencyCategory.js-loader').hide();
+        }
             }); // end of ajax call
 
-            $.ajax({
+        pendingCalls.competencyDistribution = $.ajax({
                 method: 'GET',
-                url: HPD.urls.competencyRecord + filterQuery(2, true),
+                url: HPD.urls.competencyRecord + filterCQuery(2, true),
                 success: function (res) {
 
                     var chartItems = res.result.competencyDistribution, series = [], filterLevel = {}, gradeObj = {};
@@ -865,7 +900,7 @@ HPD.urls = {
                             startDuration: 1,
                             graphs: [
                                 {
-                                    balloonText: '<b>[[category]]: [[value]]</b>',
+                                    balloonText: '<b>[[category]]: [[value]]%</b>',
                                     fillColorsField: 'color',
                                     fillAlphas: 0.9,
                                     lineAlpha: 0.2,
@@ -899,82 +934,94 @@ HPD.urls = {
                         $('#competency').html('<div class="text-center">No Data</div>')
                     }
                     $('.js-competency.js-loader').hide();
-                }
+                }, error: function() {
+                $('#competency').html('<div class="text-center">Something Went Wrong</div>')
+                $('.js-competency.js-loader').hide();
+            }
             });
 //----------------------------------------------------------------------------------------------------------------------
-            $.ajax({
-                method: 'GET',
-                url: HPD.urls.competencyRecord + filterQuery(3, true),
-                success: function (res) {
+        $.when( $.ajax({
+            method: 'GET',
+            url: HPD.urls.competencyRecord + filterCQuery(3, true)}),$.ajax({
+            method: 'GET',
+            url: HPD.urls.competencyDescription})).
+        then(function( resp1, resp2 ) {
+                pendingCalls.competencyAnalysis = resp1[2];
+                var res = resp1[0], resDesc = resp2[0].result.competency;
+                var chartItems = res.result.competencyAnalysis, series = [], filterLevel = {}, gradeObj = {};
+                if(chartItems.length) {
+                    chartItems.forEach(function (item) {
+                        gradeObj = {};
+                        if (item.competency) {
+                            gradeObj.competency = item.competency;
+                            gradeObj.description = resDesc[item.competency].competency_description;
+                            gradeObj.success = Math.round(item.success / item.total * 100);
+                            series.push(gradeObj)
+                        }
+                    });
 
-                    var chartItems = res.result.competencyAnalysis, series = [], filterLevel = {}, gradeObj = {};
-                    if(chartItems.length) {
-                        chartItems.forEach(function (item) {
-                            gradeObj = {};
-                            if (item.competency) {
-                                gradeObj.competency = item.competency;
-                                gradeObj.description = item.competency_description;
-                                gradeObj.success = Math.round(item.success / item.total * 100);
-                                series.push(gradeObj)
+                    AmCharts.makeChart('competencyAcheivement', {
+                        type: 'serial',
+                        theme: 'blur',
+                        color: '#fff',
+                        dataProvider: series,
+                        valueAxes: [
+                            {
+                                position: 'left',
+                                title: 'Success Percentage',
+                                unit: '%',
+                                'minimium': 0,'maximum': 100
                             }
-                        });
-
-                        AmCharts.makeChart('competencyAcheivement', {
-                            type: 'serial',
-                            theme: 'blur',
-                            color: '#fff',
-                            dataProvider: series,
-                            valueAxes: [
-                                {
-                                    position: 'left',
-                                    title: 'Success Percentage',
-                                    unit: '%',
-                                    'minimium': 0,'maximum': 100
-                                }
-                            ],
-                            startDuration: 1,
-                            graphs: [
-                                {
-                                    balloonText: '<b>[[description]]: [[value]]</b>',
-                                    fillColorsField: 'color',
-                                    fillAlphas: 0.9,
-                                    lineAlpha: 0.2,
-                                    type: 'column',
-                                    valueField: 'success'
-                                }
-                            ],
-                            chartCursor: {
-                                categoryBalloonEnabled: false,
-                                cursorAlpha: 0,
-                                zoomable: false
-                            },
-                            categoryField: 'competency',
-                            categoryAxis: {
-                                gridPosition: 'start',
-                                labelRotation: 90,
-                                gridAlpha: 0.5,
-                                gridColor: '#f0fef1'
-                            },
-                            export: {
-                                enabled: true
-                            },
-                            "chartScrollbar": {
-                                "enabled": true,
-                                "selectedBackgroundColor" : '#333',
-                                "gridCount" : 10
-                            },
-                            creditsPosition: 'top-right'
-                        });
-                    } else {
-                        $('#competencyAcheivement').html('<div class="text-center">No Data</div>')
-                    }
-
-                    $('.js-competencyAcheivement.js-loader').hide();
+                        ],
+                        startDuration: 1,
+                        graphs: [
+                            {
+                                balloonText: '<b>[[competency]]: [[value]]%</b><br/><span>[[description]]</span>',
+                                fillColorsField: 'color',
+                                fillAlphas: 0.9,
+                                lineAlpha: 0.2,
+                                type: 'column',
+                                valueField: 'success'
+                            }
+                        ],
+                        chartCursor: {
+                            categoryBalloonEnabled: false,
+                            cursorAlpha: 0,
+                            zoomable: false
+                        },
+                        categoryField: 'competency',
+                        categoryAxis: {
+                            gridPosition: 'start',
+                            labelRotation: 90,
+                            gridAlpha: 0.5,
+                            gridColor: '#f0fef1'
+                        },
+                        export: {
+                            enabled: true
+                        },
+                        "chartScrollbar": {
+                            "enabled": true,
+                            "selectedBackgroundColor" : '#333',
+                            "gridCount" : 10
+                        },
+                        creditsPosition: 'top-right'
+                    });
+                } else {
+                    $('#competencyAcheivement').html('<div class="text-center">No Data</div>')
                 }
+
+                $('.js-competencyAcheivement.js-loader').hide();
+            //}, error : function() {
+            //$('#competencyAcheivement').html('<div class="text-center">Something Went Wrong</div>')
+            //$('.js-competencyAcheivement.js-loader').hide();
             });
+
 
     }
     el.$filter.on('change', function() {
+        for(var key in pendingCalls){
+            pendingCalls[key].abort();
+        }
         loadFilters($(this));
     });
     el.$iFilter.on('change', function() {
@@ -984,6 +1031,9 @@ HPD.urls = {
                 iQuery += $(item).data('type') +'='+ $(item).val() + '&'
             }
         });
+        for(var key in pendingCalls){
+            pendingCalls[key].abort();
+        }
         chartInit(appliedFilter.key, appliedFilter.type, appliedFilter.value, iQuery)
     });
     el.$navs.on('click', function() {
@@ -998,7 +1048,7 @@ HPD.urls = {
 
 
     var init = function() {
-        $.ajax({
+        pendingCalls.filter = $.ajax({
             method: 'GET',
             url : HPD.urls.filterList,
             success: function(res) {
