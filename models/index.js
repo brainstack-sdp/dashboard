@@ -12,7 +12,7 @@ let sequelize = new Sequelize(process.env.SQL_DB_DATABASE, process.env.SQL_DB_US
   dialect: "mysql",
   pool: {
     max: 25,
-    min: 5,
+    min: 0,
     idle: 10000
   },
   timezone: "asia/calcutta",
