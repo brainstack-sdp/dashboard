@@ -82,7 +82,6 @@ module.exports.student = function (req, res) {
       'summer_winter':req.query.summer_winter
     };
   }
-
   if(req.query.class_code) {
     attributes = ['subject'];
     whereStudent['class_code'] = req.query.class_code;

@@ -18,5 +18,6 @@ let competencyController = require("../controllers/competencyController");
  */
 
 router.get("/", competencyController.competency);
+router.get("/description", competencyController.description);
 
 module.exports = router;

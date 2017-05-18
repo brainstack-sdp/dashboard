@@ -14,11 +14,19 @@ connection = pymysql.connect(host='education.cztr5jruorah.ap-south-1.rds.amazona
 try:
     with connection.cursor() as cursor:
     #     # Create a new record
-        # for i in range(65,100):
-        for i in range(400,500):
-        # for i in range(65,1670):
+        # for i in range(1197,1200):
+        # 1490
+        # for i in range(931,1000):
+        # for i in range(745,800):
+        # for i in range(838,900):
+        # for i in range(1600,1670):
         # for i in range(65,14):
-        # if True: 
+        # for i in range(9047,18150):
+        if True:
+            sql = """OPTIMIZE table student_result_competency_copy;"""
+            cursor.execute(sql)
+            connection.commit()
+        if False: 
             # sql = """INSERT INTO `student_result_competency_copy` (`competency`, `question`, `class_code`, 
             #     `student_id`, `competency_category`, `type`,`success_criteria`,`success`, `in_final` ) 
             # SELECT R.competency, {0}, S.class_code, S.id, R.competency_category, R.type,
@@ -31,29 +39,79 @@ try:
             #     AND R.competency = SRC.competency
             #     SET in_final=1 """.format(str(i))
             # print(sql)
-            sql = """SELECT S.school_code, SH.summer_winter, SH.school_name, 
-                    SH.district, SH.cluster, SH.block, S.subject, S.id
-                    FROM student S 
-                    INNER JOIN school SH on SH.school_code=S.school_code 
-                    LIMIT {0},1000 """.format(str(i*1000))
-            print(sql)
-            print("\n\n\n\n\n\n\n\n\n\n\n\n\n")
+            # sql = """SELECT S.school_code, SH.summer_winter, SH.school_name, 
+            #         SH.district, SH.cluster, SH.block, S.subject, S.id
+            #         FROM student S 
+            #         INNER JOIN school SH on SH.school_code=S.school_code 
+            #         LIMIT {0},1000 """.format(str(i*1000))
+            # print(sql)
+            # sql = """SELECT SH.school_code, SH.summer_winter, SH.school_name, 
+            #         SH.district, SH.cluster, SH.block
+            #         FROM school SH 
+            #         WHERE district in ('SHIMLA') and block not in ('GAGRET-2', 'GAGRET-1', 'UNA', 
+            #             'HAROLI', 'BAKRAS', 'DHARAMPUR', 'CHAUHARA', 'SADAR-1', 'SADAR-2', 
+            #             'SUNDER NAGAR-1', 'SUNDER NAGAR-2', 'SAIGALOO', 'BALH', 'CHACHIOT-1', 
+            #             'CHACHIOT-2', 'SERAJ-1','SERAJ-2', 'DRANG-1', 'DRANG-2','CHAUNTRA-1', 
+            #             'CHAUNTRA-2', 'KARSOG-1', 'KARSOG-2', 'GOPALPUR-1', 'KUTHAR', 'KANDAGHAT', 
+            #             'NALAGARH', 'DHUNDAN', 'BAKRAS', 'DADAHU', 'NAHAN', 'NOHRADHAR', 'PAONTA SAHIB', 
+            #             'RAJGARH', 'SARAHAN', 'SATAUN', 'SHILLAI', 'SURLA', 'KAFFOTTA', 'NARAG', 'HAROLI',
+            #             'UNA', 'GAGRET-1', 'GAGRET-2', 'AMB')
+            #         """
+            sql = """ SELECT subject, competency, class_code 
+                    from result1"""; 
             cursor.execute(sql)
             result = cursor.fetchall()
-            # print(result)
             for j in result:
-                print(j)
                 sql = """UPDATE `student_result_competency` SRC
-                    SET SRC.school_code={1},
-                    SRC.summer_winter='{2}', 
-                    SRC.school_name='{3}', 
-                    SRC.district='{4}', 
-                    SRC.cluster='{5}', 
-                    SRC.block='{6}',
-                    SRC.subject='{7}' WHERE SRC.student_id = {0}""".format(str(j['id']), str(j['school_code']), 
-                        j['summer_winter'], j['school_name'], j['district'], j['cluster'], j['block'], j['subject'])
-                # print(sql)
+                        SET SRC.subject="{2}"
+                        WHERE SRC.class_code = {0} AND SRC.competency = {1} 
+                        AND SRC.subject IS NULL""".format(str(j['class_code']), 
+                            j['competency'], j['subject'])
+                print(sql)
                 cursor.execute(sql)
+            connection.commit()
+            # for j in result:
+
+            #     sql = """SELECT S.id
+            #             FROM student S WHERE S.school_code = {0}
+            #             """.format(str(j['school_code']))
+            #     print(sql)
+            #     print("\n\n\n\n\n\n\n\n\n\n\n\n\n")
+            #     cursor.execute(sql)
+            #     result1 = cursor.fetchall()
+            #     print(result1)
+            #     arr_str = ''
+            #     if len(result)>0:
+            #         for k in result1:
+            #             arr_str += str(k['id']) 
+            #             arr_str += ", "
+            #         print(arr_str[:-2])
+            #         sql = """UPDATE `student_result_competency` SRC
+            #             SET SRC.school_code={1},
+            #             SRC.summer_winter="{2}", 
+            #             SRC.school_name="{3}", 
+            #             SRC.district="{4}", 
+            #             SRC.cluster="{5}", 
+            #             SRC.block="{6}"
+            #             WHERE SRC.student_id IN ({0})""".format(str(arr_str[:-2]), str(j['school_code']), 
+            #                 j['summer_winter'], j['school_name'], j['district'], j['cluster'], j['block'])
+            #         print(sql)
+            #         cursor.execute(sql)
+            #     connection.commit()
+            # # print(result)
+            # for j in result:
+            #     print(j)
+                # sql = """UPDATE `student_result_competency` SRC
+                #     SET SRC.school_code={1},
+                #     SRC.summer_winter='{2}', 
+                #     SRC.school_name='{3}', 
+                #     SRC.district='{4}', 
+                #     SRC.cluster='{5}', 
+                #     SRC.block='{6}',
+                #     WHERE SRC.student_id = {0}""".format(str(j['id']), str(j['school_code']), 
+                #         j['summer_winter'], j['school_name'], j['district'], j['cluster'], j['block'])
+                # print(sql)
+                # cursor.execute(sql)
             # result = cursor.fetchone()
             # print(result)
             # print(datetime.now()-start)
@@ -74,43 +132,43 @@ try:
             #     AND  R.competency = SRC.competency 
             #     SET in_final=1""".format(str(i))
             # print(sql)
-            sql = """ ALTER TABLE student_result_competency 
-                ADD block VARCHAR(255) NULL,
-                ADD INDEX (block), 
-                ADD cluster VARCHAR(255) DEFAULT NULL,
-                ADD INDEX (cluster), 
-                ADD district VARCHAR(255) DEFAULT NULL,
-                ADD INDEX (district), 
-                ADD school_name VARCHAR(255) DEFAULT NULL,
-                ADD INDEX (school_name), 
-                ADD summer_winter VARCHAR(255) DEFAULT NULL,
-                ADD INDEX (summer_winter), 
-                ADD subject VARCHAR(255) NULL,
-                ADD INDEX (subject),
-                ADD INDEX (school_code)  """
+            # sql = """ ALTER TABLE student_result_competency 
+            #     ADD block VARCHAR(255) NULL,
+            #     ADD INDEX (block), 
+            #     ADD cluster VARCHAR(255) DEFAULT NULL,
+            #     ADD INDEX (cluster), 
+            #     ADD district VARCHAR(255) DEFAULT NULL,
+            #     ADD INDEX (district), 
+            #     ADD school_name VARCHAR(255) DEFAULT NULL,
+            #     ADD INDEX (school_name), 
+            #     ADD summer_winter VARCHAR(255) DEFAULT NULL,
+            #     ADD INDEX (summer_winter), 
+            #     ADD subject VARCHAR(255) NULL,
+            #     ADD INDEX (subject),
+            #     ADD INDEX (school_code)  """
             # print(sql)
-            sql = """UPDATE `student_result_competency` SRC
-                INNER JOIN student S on S.id = SRC.student_id 
-                INNER JOIN result1 R on R.question={0} 
-                AND SRC.question = {0}
-                AND R.class_code=S.class_code 
-                AND R.success_criteria=0.5
-                AND R.subject= S.subject 
-                AND S.q{0} >= 0.5 
-                SET success=1""".format(str(i))
+            # sql = """UPDATE `student_result_competency` SRC
+            #     INNER JOIN student S on S.id = SRC.student_id 
+            #     INNER JOIN result1 R on R.question={0} 
+            #     AND SRC.question = {0}
+            #     AND R.class_code=S.class_code 
+            #     AND R.success_criteria=0.5
+            #     AND R.subject= S.subject 
+            #     AND S.q{0} >= 0.5 
+            #     SET success=1""".format(str(i))
             # print(sql)
             # cursor.execute(sql)
             # connection.commit()
 
-            sql = """UPDATE `student_result_competency` SRC
-                INNER JOIN student S on S.id = SRC.student_id 
-                INNER JOIN result1 R on R.question={0} 
-                AND SRC.question = {0}
-                AND R.class_code=S.class_code 
-                AND R.success_criteria=0.5
-                AND R.subject=S.subject 
-                AND S.q{0} < 0.5 
-                SET success=0""".format(str(i))
+            # sql = """UPDATE `student_result_competency` SRC
+            #     INNER JOIN student S on S.id = SRC.student_id 
+            #     INNER JOIN result1 R on R.question={0} 
+            #     AND SRC.question = {0}
+            #     AND R.class_code=S.class_code 
+            #     AND R.success_criteria=0.5
+            #     AND R.subject=S.subject 
+            #     AND S.q{0} < 0.5 
+            #     SET success=0""".format(str(i))
             # print(sql)
             # cursor.execute(sql)
             # connection.commit()

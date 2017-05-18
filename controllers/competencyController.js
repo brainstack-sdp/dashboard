@@ -10,6 +10,7 @@
 
 let models = require("../models/index");
 let sequelize = require("sequelize");
+let _ = require("underscore");
 let log = require("../helpers/logger");
 let responseArray = ['competencyType', 'competencyCategory', 'competencyDistribution',
     'competencyAnalysis', 'competencyAnalysis'];
@@ -18,6 +19,17 @@ let responseArray = ['competencyType', 'competencyCategory', 'competencyDistribu
 let studentCompetencyQuery = function (queryObj) {
   return new Promise(function (resolve, reject) {
     models.student_competency.findAll(queryObj).then(function (data) {
+      return resolve(data);
+    }).catch(function (err) {
+      log.error(err);
+      return reject(err);
+    });
+  });
+};
+
+let competencyQuery = function (queryObj) {
+  return new Promise(function (resolve, reject) {
+    models.competency.findAll(queryObj).then(function (data) {
       return resolve(data);
     }).catch(function (err) {
       log.error(err);
@@ -92,33 +104,21 @@ module.exports.competency = function (req, res) {
       group: [group]
     }, {
       raw: true,
-      include: [{
-          model: models.competency,
-          as: "C",
-          attributes: [],
-          required: true
-        }],
+      include: [],
       attributes: [
         [sequelize.fn("SUM", sequelize.col("success")), "success"],
         [sequelize.fn("COUNT", sequelize.col("student_id")), "total"],
-        "competency",
-        "C.competency_description"
+        "competency"
       ],
       where: whereStudent,
       group: ["competency"]
     }, {
       raw: true,
-      include: [{
-        model: models.competency,
-        as: "C",
-        attributes: [],
-        required: true,
-      }],
+      include: [],
       attributes: [
         [sequelize.fn("SUM", sequelize.col("success")), "success"],
         [sequelize.fn("COUNT", sequelize.col("student_id")), "total"],
-        "competency",
-        "C.competency_description"
+        "competency"
       ],
       where: whereStudent,
       group: ["competency"]
@@ -133,4 +133,21 @@ module.exports.competency = function (req, res) {
   });
 };
 
+
+module.exports.description = function (req, res) {
+  Promise.all([competencyQuery({
+      raw: true,
+      include: [],
+      attributes: [
+        "competency",
+        "competency_description"
+      ]}
+    )]).then(function (data) {
+    let response = {'competency': _.indexBy(data[0], 'competency')};
+    res.json({"message": "Data", "result": response, "error": false});
+  }).catch(function (err) {
+    log.error(err);
+    res.status(500).json({"message": "err", "err": err, "error": true});
+  });
+};
 
