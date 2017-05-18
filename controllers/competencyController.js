@@ -76,7 +76,7 @@ module.exports.competency = function (req, res) {
       include: [],
       attributes: [
         [sequelize.fn("SUM", sequelize.col("success")), "success"],
-        [sequelize.fn("COUNT", sequelize.col("student_id")), "total"],
+        [sequelize.fn("COUNT", sequelize.col("id")), "total"],
         "class_code",
         "type"
       ],
@@ -87,7 +87,7 @@ module.exports.competency = function (req, res) {
       include: [],
       attributes: [
         [sequelize.fn("SUM", sequelize.col("success")), "success"],
-        [sequelize.fn("COUNT", sequelize.col("student_id")), "total"],
+        [sequelize.fn("COUNT", sequelize.col("id")), "total"],
         "competency_category"
       ],
       where: whereStudent,
@@ -97,7 +97,7 @@ module.exports.competency = function (req, res) {
       include: [],
       attributes: [
         [sequelize.fn("SUM", sequelize.col("success")), "success"],
-        [sequelize.fn("COUNT", sequelize.col("student_id")), "total"],
+        [sequelize.fn("COUNT", sequelize.col("id")), "total"],
         group
       ],
       where: whereStudent,
@@ -107,7 +107,7 @@ module.exports.competency = function (req, res) {
       include: [],
       attributes: [
         [sequelize.fn("SUM", sequelize.col("success")), "success"],
-        [sequelize.fn("COUNT", sequelize.col("student_id")), "total"],
+        [sequelize.fn("COUNT", sequelize.col("id")), "total"],
         "competency"
       ],
       where: whereStudent,
@@ -117,7 +117,7 @@ module.exports.competency = function (req, res) {
       include: [],
       attributes: [
         [sequelize.fn("SUM", sequelize.col("success")), "success"],
-        [sequelize.fn("COUNT", sequelize.col("student_id")), "total"],
+        [sequelize.fn("COUNT", sequelize.col("id")), "total"],
         "competency"
       ],
       where: whereStudent,
