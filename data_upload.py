@@ -26,6 +26,48 @@ try:
             sql = """OPTIMIZE table student_result_competency_copy;"""
             cursor.execute(sql)
             connection.commit()
+        if False:
+            sql = """SELECT subject, competency, class_code,  success_criteria, question
+                    from result1 
+                    WHERE success_criteria IN (0.5, 1.5, 2.5, 3.5, 4.5) 
+                    AND competency >6107"""
+            print(sql)
+            cursor.execute(sql)
+            result = cursor.fetchall()
+            for j in result:
+                print(j)
+                sql = """UPDATE `student_result_competency` SRC
+                        SET success=0
+                        WHERE SRC.class_code = {0} AND SRC.competency = {1} 
+                        AND SRC.subject = {2} AND SRC.question={3} """.format(str(j['class_code']), 
+                            j['competency'], j['subject'], j['question'])
+                print(sql)
+                cursor.execute(sql)
+                connection.commit()
+                sql = """SELECT id from student where class_code = {0} 
+                    AND subject = {1} AND q{2} >= {3} 
+                    """.format(str(j['class_code']), j['subject'], j['question'], j['success_criteria'])
+                print(sql)
+                cursor.execute(sql)
+                result1 = cursor.fetchall()
+                arr_str = ''
+                if len(result)>0:
+                    for k in result1:
+                        arr_str += str(k['id']) 
+                        arr_str += ", "
+                    print(arr_str[:-2])
+                    sql = """UPDATE `student_result_competency` SRC
+                            SET success=1
+                            WHERE SRC.student_id IN ({0}) 
+                            AND subject={1} 
+                            AND question={2} 
+                            AND class_code={3}
+                            AND competency={4}""".format(str(arr_str[:-2]), str(j['subject']), 
+                                j['question'], j['class_code'], j['competency'])
+                    print(sql)
+                    cursor.execute(sql)
+                    connection.commit()
+
         if False: 
             # sql = """INSERT INTO `student_result_competency_copy` (`competency`, `question`, `class_code`, 
             #     `student_id`, `competency_category`, `type`,`success_criteria`,`success`, `in_final` ) 

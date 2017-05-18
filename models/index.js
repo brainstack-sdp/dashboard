@@ -11,12 +11,12 @@ let sequelize = new Sequelize(process.env.SQL_DB_DATABASE, process.env.SQL_DB_US
   host: process.env.SQL_DB_HOST,
   dialect: "mysql",
   pool: {
-    max: 10,
+    max: 25,
     min: 5,
     idle: 10000
   },
   timezone: "asia/calcutta",
-  logging: console.log,
+  // logging: console.log,
   define: {
     timestamps: false
   }
