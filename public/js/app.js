@@ -697,7 +697,15 @@ HPD.urls = {
                                 }
                             ],
                             "allLabels": [],
-                            "balloon": {}
+                            "balloon": {},
+                            export: {
+                                enabled: true,
+                                "reviver": function (nodeObj) {
+                                    if (nodeObj.className === 'amcharts-axis-label') {
+                                        nodeObj.fill = '#333';
+                                    }
+                                },
+                            }
                         });
                     } else {
                         $('#competencyTrends').html('<div class="text-center">No Data</div>')

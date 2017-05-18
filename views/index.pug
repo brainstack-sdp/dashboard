@@ -68,7 +68,7 @@ html
                             option(value="2") Female
                     li
                         h4 Caste
-                        select(class="form-control js-filter" data-type="category")
+                        select(class="form-control js-iFilter" data-type="category")
                             option(value="") All
                             option(value="0") SC
                             option(value="1") ST
@@ -82,7 +82,7 @@ html
             .chart-main.al-main
                 .al-content
                     .pull-right
-                        a.btn(href="/") Reset Filters
+                        a.btn.btn-default.btn-lg(href="/") Reset Filters
                     .col-md-12
                         ul.nav.nav-tabs
                             li.uib-tab.nav-item.active
@@ -95,7 +95,7 @@ html
                                     .panel-heading
                                         h3.panel-title 1. Overall Grade Distribution
                                     .panel-body
-                                        .ct-chart(id="gradePie" style="width: 100%; height: 400px;")
+                                        .ct-chart(id="gradePie" style="width: 100%; height: 480px;")
                                         .text-right No. of students assessed(approx.):&nbsp;
                                             span.js-access
                                         .text-right No. of students enrolled:&nbsp;
