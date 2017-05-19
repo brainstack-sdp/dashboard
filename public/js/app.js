@@ -39,6 +39,10 @@ HPD.urls = {
             C: "#ffff00",
             D: "#ee7810",
             E: "#e85656"
+        }, typeMap ={
+            1 : 'Basic',
+            2 : 'Mediocre',
+            3 : 'Advanced'
         }, appliedFilter ={key: 'district'};
 
 
@@ -184,7 +188,7 @@ HPD.urls = {
                 queryString = '?graph' + '=' + index + '&';
             }
             $.each(el.$iFilter, function(key, item) {
-                if($(item).data('type')!='sex' && $(item).data('type')!='' && $(item).val()){
+                if($(item).data('type')!='sex' && $(item).data('type')!='category' && $(item).val()){
                     queryString += $(item).data('type') +'='+ $(item).val() + '&'
                 }
             });
@@ -196,6 +200,11 @@ HPD.urls = {
                 queryString = '?' + type + '=' + encodeURIComponent(val)
 
             }
+            $.each(el.$iFilter, function(key, item) {
+                if(($(item).data('type')=='summer_winter' || $(item).data('type')=='class_code') && $(item).val()){
+                    queryString += $(item).data('type') +'='+ $(item).val() + '&'
+                }
+            });
             return queryString
         }
         pendingCalls.assessed = $.ajax({
@@ -616,7 +625,7 @@ HPD.urls = {
 
                     if(chartItems.length) {
                         chartItems.forEach(function (item) {
-                            item.type = 'Type ' + item.type;
+                            item.type = typeMap[item.type];
                             if (filterLevel[item.class_code]) {
                                 filterLevel[item.class_code].push(item)
                             } else {
@@ -624,7 +633,7 @@ HPD.urls = {
                             }
                         });
                         for (var i in filterLevel) {
-                            gradeObj = {'Type 1': 0, 'Type 2': 0, 'Type 3': 0};
+                            gradeObj = {'Basic': 0, 'Mediocre': 0, 'Advanced': 0};
 
                             filterLevel[i].forEach(function (item) {
                                 gradeObj[item.type] = Math.round(item.success / item.total * 100);
@@ -669,22 +678,22 @@ HPD.urls = {
                                     "balloonText": "[[title]] of [[category]]:[[value]]",
                                     "bullet": "round",
                                     "id": "AmGraph-1",
-                                    "title": "Type 1",
-                                    "valueField": "Type 1"
+                                    "title": "Basic",
+                                    "valueField": "Basic"
                                 },
                                 {
                                     "balloonText": "[[title]] of [[category]]:[[value]]",
                                     "bullet": "square",
                                     "id": "AmGraph-2",
-                                    "title": "Type 2",
-                                    "valueField": "Type 2"
+                                    "title": "Mediocre",
+                                    "valueField": "Mediocre"
                                 },
                                 {
                                     "balloonText": "[[title]] of [[category]]:[[value]]",
                                     "bullet": "square",
                                     "id": "AmGraph-3",
-                                    "title": "Type 3",
-                                    "valueField": "Type 3"
+                                    "title": "Advanced",
+                                    "valueField": "Advanced"
                                 },
                             ],
                             "guides": [],
@@ -697,7 +706,15 @@ HPD.urls = {
                                 }
                             ],
                             "allLabels": [],
-                            "balloon": {}
+                            "balloon": {},
+                            export: {
+                                enabled: true,
+                                "reviver": function (nodeObj) {
+                                    if (nodeObj.className === 'amcharts-axis-label') {
+                                        nodeObj.fill = '#333';
+                                    }
+                                },
+                            }
                         });
                     } else {
                         $('#competencyTrends').html('<div class="text-center">No Data</div>')
