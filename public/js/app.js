@@ -800,7 +800,7 @@ HPD.urls = {
 
                             $.when( $.ajax({
                                 method: 'GET',
-                                url: HPD.urls.competencyRecord + filterCQuery(4, true) + '&competency_category='+category}), $.ajax({
+                                url: HPD.urls.competencyRecord + filterCQuery(4, true) + '&competency_category='+encodeURIComponent(category)}), $.ajax({
                                 method: 'GET',
                                 url: HPD.urls.competencyDescription})).
                                 then(function( resp1, resp2 ) {
@@ -821,7 +821,6 @@ HPD.urls = {
                                         AmCharts.makeChart('catDrill', {
                                             type: 'serial',
                                             theme: 'blur',
-                                            color: '#fff',
                                             dataProvider: series,
                                             valueAxes: [
                                                 {
