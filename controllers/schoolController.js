@@ -88,23 +88,22 @@ module.exports.enrollment = function (req, res) {
   let whereSchool = undefined;
   let whereSchoolManagement = undefined;
   if(req.query.district) {
-    group = 'block';
     whereSchool = req.query;
   } else if(req.query.block) {
-    group = 'cluster';
     whereSchool = req.query;
   } else if(req.query.cluster) {
-    group = 'school_name';
     whereSchool = req.query;
   } else if(req.query.school_name) {
-    group = 'summer_winter';
     whereSchool = req.query;
-  } else if(req.query.summer_winter) {
-    group = 'summer_winter';
-    whereSchool = req.query;
-  } else {
-    group = 'district'
+  } 
+  if(req.query.summer_winter && whereSchool) {
+    whereSchool['summer_winter'] = req.query.summer_winter;
+  } else{
+    whereSchool = {
+      'summer_winter': req.query.summer_winter
+    };
   }
+
   whereSchoolManagement = whereSchool;
   if(whereSchool){
     whereSchoolManagement['school_management'] = 'Department of Education';
@@ -142,6 +141,7 @@ module.exports.enrollment = function (req, res) {
       let response = {student_enrolled:0};
 
       for(let cls in Object.assign(data[0][0], data[0][0])){
+        console.log('class_'+req.query.class_code)
         if(cls!= 'class_'+req.query.class_code){
           response['student_enrolled'] += data[0][0][cls];
         }

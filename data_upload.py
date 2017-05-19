@@ -22,15 +22,85 @@ try:
         # for i in range(1600,1670):
         # for i in range(65,14):
         # for i in range(9047,18150):
+        if False:
+            sql = """DELETE from student_result_competency WHERE subject = 6 AND class_code in (6,7)"""
+            print(sql)
+            cursor.execute(sql) 
+            connection.commit()
+        if False:
+            sql = """SELECT subject, competency, class_code, success_criteria, question, 
+                        type, competency_category
+                    from result1 
+                    WHERE subject =6 
+                    """
+            print(sql)
+            cursor.execute(sql)
+            result = cursor.fetchall()
+            for j in result:
+                if j['competency'] in [6208, 6206, 7206, 7209, 7202]:
+                    in_final = 1
+                else:
+                    in_final = 0
+
+                if str(j['competency']) != '6201':
+                    sql = """INSERT INTO `student_result_competency` 
+                        (`competency`, `question`, `class_code`, 
+                        `student_id`, `competency_category`, `type`,`success_criteria`,`success`, `in_final`, 
+                        `school_code`, `block`, `cluster`, `district`, `school_name`,
+                        `summer_winter`, `subject`) 
+                        SELECT "{3}", "{0}", "{1}", S.id, "{5}", "{6}",
+                         "{2}", 1, "{4}", S.school_code, SH.block, SH.cluster, SH.district, SH.school_name, 
+                         SH.summer_winter, 6
+                        from student S 
+                        INNER JOIN school SH ON S.school_code = SH.school_code 
+                        AND S.class_code = "{1}" AND S.subject = 6 
+                        AND S.q{0} >= {2}
+                        """.format(j['question'], 
+                            j['class_code'], j['success_criteria'], j['competency'], in_final, 
+                            j['competency_category'], j['type'])
+                    print(sql)
+                    cursor.execute(sql)
+                    connection.commit()
+                sql = """INSERT INTO `student_result_competency` 
+                    (`competency`, `question`, `class_code`, 
+                    `student_id`, `competency_category`, `type`,`success_criteria`,`success`, `in_final`, 
+                    `school_code`, `block`, `cluster`, `district`, `school_name`,
+                    `summer_winter`, `subject`)  
+                    SELECT "{3}", "{0}", "{1}", S.id, "{5}", "{6}",
+                     "{2}", 1, "{4}", S.school_code, SH.block, SH.cluster, SH.district, SH.school_name, 
+                     SH.summer_winter, 6
+                    from student S 
+                    INNER JOIN school SH ON S.school_code = SH.school_code 
+                    AND S.class_code = "{1}" AND S.subject=6 
+                    AND S.q{0} < {2}
+                    """.format(j['question'], 
+                        j['class_code'], j['success_criteria'], j['competency'], in_final, 
+                        j['competency_category'], j['type'])
+                print(sql)
+                cursor.execute(sql)
+                connection.commit()
         if True:
             sql = """OPTIMIZE table student_result_competency_copy;"""
             cursor.execute(sql)
             connection.commit()
         if False:
-            sql = """SELECT subject, competency, class_code,  success_criteria, question
+            sql = """UPDATE `student_result_competency` SRC
+                    SET subject=6
+                    WHERE class_code IN (6,7) AND subject=3"""
+            print(sql)
+            cursor.execute(sql) 
+            connection.commit()
+            sql = """UPDATE `student` SRC
+                    SET subject=6
+                    WHERE class_code IN (6,7) AND subject=3"""
+            print(sql)
+            cursor.execute(sql) 
+            connection.commit()
+        if False:
+            sql = """SELECT subject, competency, class_code, success_criteria, question, competency_category
                     from result1 
-                    WHERE success_criteria IN (0.5, 1.5, 2.5, 3.5, 4.5) 
-                    AND competency >6107"""
+                    WHERE subject =6 
+                    """
             print(sql)
             cursor.execute(sql)
             result = cursor.fetchall()
@@ -159,7 +229,7 @@ try:
             # print(datetime.now()-start)
             # start = datetime.now()
 
-            connection.commit()
+            # connection.commit()
 
             # sql = """INSERT INTO `student_result_competency_copy` (`competency`, `question`, `class_code`, 
             #     `student_id`, `competency_category`, `type`,`success_criteria`,`success`, `in_final` ) 
