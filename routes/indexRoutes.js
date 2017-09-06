@@ -10,6 +10,7 @@ let express = require("express");
 let router = express.Router();
 
 let schoolController = require("../controllers/schoolController");
+let sdpController = require("../controllers/sdpController");
 /**
  * GET "/"
  * Default home route. Just relays a success message back.
@@ -17,6 +18,7 @@ let schoolController = require("../controllers/schoolController");
  * @return {Object} json
  */
 router.get("/", schoolController.index);
+router.get("/sdp", sdpController.home);
 router.get("/login", schoolController.login);
 
 module.exports = router;

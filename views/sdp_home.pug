@@ -1,0 +1,169 @@
+doctype html
+html
+    head
+        title HP Education Analysis
+        link(rel="stylesheet" href="styles/vendor-aa67210ead.css")
+        link(rel="stylesheet" href="styles/app-fe96e7be2d.css")
+        link(rel="stylesheet" href="styles/style.css")
+        link(rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all")
+    body.blur-theme
+        header
+            .page-top.clearfix(scroll-position="scrolled" max-height="50")
+                .col-xs-4
+                    a(href="/sdp" class="al-logo clearfix")
+                        img(src="/assets/img/himachal-pradesh-sarkar.png")
+                        span HP
+                        | SDP Data
+                .col-xs-4.text-center
+                    img(src="/assets/img/samarth-logo-v9---lowres.png")
+                .col-xs-4.text-right
+                    img(src="/assets/img/ssabglogo.jpg")
+        .body-bg
+        main
+            aside.al-sidebar
+                ul.al-sidebar-list
+                    li
+                        h4 District
+                        select(class="form-control js-filter" data-cat="upper" data-type="district")
+                    li
+                        h4 Block
+                        select(class="form-control js-filter" data-cat="upper" data-type="block")
+
+                    li
+                        h4 School
+                        select(class="form-control js-filter" data-cat="upper" data-type="school_name")
+                    li
+                        h4 Level
+                        select(class="form-control js-iFilter"  data-type="class_code")
+                            option(value="") All
+                            option(value="1") Primary only (Class 1-5)
+                            option(value="2") Upper Primary only (Class 6-8)
+                            option(value="2") Upper Primary + Secondary/ Senior Secondary (Class 6-10 OR Class 6-12)
+                    li
+                        h4 Summer/Winter
+                        select(class="form-control js-iFilter" data-cat="lower" data-type="summer_winter")
+                            option(value="") All
+                            option(value="Summer") Summer
+                            option(value="Winter") Winter
+
+            .chart-main.al-main
+                .al-content
+                    .pull-right
+                        a.btn.btn-default(href="/") Reset Filters
+                    .col-md-12
+                        ul.nav.nav-tabs
+                            li.uib-tab.nav-item.active
+                                a.nav-link(href="#" aria-controls="compliance" role="tab" data-toggle="tab") Compliance
+                            li.uib-tab.nav-item
+                                a.nav-link(href="#" aria-controls="monitoring" role="tab" data-toggle="tab") Monitoring
+                        .tab-content
+                            .tab-pane.active
+                                .panel.panel-blur
+                                    .panel-heading
+                                        h3.panel-title 1. Completion of SDP
+                                    .panel-body
+                                        .ct-chart(id="gradePie" style="width: 100%; height: 480px;")
+                                        .text-right No. of students assessed(approx.):&nbsp;
+                                            span.js-access
+                                        .text-right No. of students enrolled:&nbsp;
+                                            span.js-enroll -
+                                        .preloader.js-loader.js-gradePie
+                                            div
+                                .panel.panel-blur
+                                    .panel-heading
+                                        h3.panel-title 2. Total SDPs Targets filled by School Type
+                                    .panel-body
+                                        div(id='subjectStack' style="width: 100%; height: 400px;")
+                                        .text-right No. of students assessed(approx.):&nbsp;
+                                            span.js-access
+                                        .text-right No. of students enrolled:&nbsp;
+                                            span.js-enroll -
+                                        .preloader.js-loader.js-subjectStack
+                                            div
+                                .panel.panel-blur
+                                    .panel-heading
+                                        h3.panel-title 3. Type of Target
+                                    .panel-body
+                                        div(id="classStack" style="width: 100%; height: 400px;")
+                                        .text-right No. of students assessed(approx.):&nbsp;
+                                            .js-access
+                                        .text-right No. of students enrolled:&nbsp;
+                                            span.js-enroll -
+
+                                        .preloader.js-loader.js-classStack
+                                            div
+
+                                .panel.panel-blur
+                                    .panel-heading
+                                        h3.panel-title 4. Resource Requirements
+                                    .panel-body
+                                        .ct-chart(id="gradeStack" style="width: 100%; height: 400px;")
+                                        .text-right No. of students assessed(approx.):&nbsp;
+                                            span.js-access
+                                        .text-right No. of students enrolled:&nbsp;
+                                            span.js-enroll
+                                        .preloader.js-loader.js-gradeStack
+                                            div
+                            .tab-pane
+                                .panel.panel-blur
+                                    .panel-heading
+                                        h3.panel-title 5. Target Status
+                                    .panel-body
+                                        .ct-chart(id="competencyTrends" style="width: 100%; height: 400px;")
+                                        .text-right No. of students assessed(approx.):&nbsp;
+                                            span.js-access
+                                        .text-right No. of students enrolled:&nbsp;
+                                            span.js-enroll
+                                        .preloader.js-loader.js-competencyTrends
+                                            div
+                                .panel.panel-blur
+                                    .panel-heading
+                                        h3.panel-title 6. Target Form Completion
+                                    .panel-body
+                                        .ct-chart(id="competencyCategory" style="width: 100%; height: 400px;")
+                                        .text-right No. of students assessed(approx.):&nbsp;
+                                            span.js-access
+                                        .text-right No. of students enrolled:&nbsp;
+                                            span.js-enroll
+                                        .preloader.js-loader.js-competencyCategory
+                                            div
+                                .panel.panel-blur
+                                    .panel-heading
+                                        h3.panel-title 7. Percentage of Targets by Status (Administrative Units)
+                                    .panel-body
+                                        .ct-chart(id="competency" style="width: 100%; height: 400px;")
+                                        .text-right No. of students assessed(approx.):&nbsp;
+                                            span.js-access
+                                        .text-right No. of students enrolled:&nbsp;
+                                            span.js-enroll -
+                                        .preloader.js-loader.js-competency
+                                            div
+                                .panel.panel-blur
+                                    .panel-heading
+                                        h3.panel-title 8. Percentage of Targets by Status (Target Category),
+                                    .panel-body
+                                        .ct-chart(id="competencyAcheivement" style="width: 100%; height: 400px;")
+                                        .text-right No. of students assessed(approx.):&nbsp;
+                                            span.js-access
+                                        .text-right No. of students enrolled:&nbsp;
+                                            span.js-enroll -
+                                        .preloader.js-loader.js-competencyAcheivement
+                                            div
+            footer.al-footer.clearfix
+                .al-footer-right Created by Samarth
+            .modal.fade.js-modal
+                .modal-dialog.modal-lg
+                    .modal-content
+                        .modal-header
+                            button(type="button" class="close js-close"  aria-label="Close")
+                                em(class="ion-ios-close-empty sn-link-close")
+                            h4.modal-title Competency Category Drilldown
+                        .modal-body
+                            div(id="catDrill" style="width: 640px; height: 300px;")
+                            .preloader.js-loader.js-catDrill
+                                div
+        //div( id="preloader")
+            div
+        script(src="js/vendor-727ff9d081.js")
+        script(src="https://www.amcharts.com/lib/3/plugins/export/export.min.js")
+        script(src="js/app.js")
