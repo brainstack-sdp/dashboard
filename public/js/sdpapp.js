@@ -19,9 +19,8 @@ HPD.urls = {
         $filter : $('.js-filter'),$iFilter : $('.js-iFilter'), $preLoader : $('#preloader'), $modal: $('.js-modal'), $navs : $('a.nav-link')
         }, filterList = {}, filters = {}, $scope={}, pendingCalls ={},
         filterAheadMap = {
-            district : ['block', 'cluster', 'school_name'],
-            block : ['cluster', 'school_name'],
-            cluster : ['school_name'],
+            district : ['block',, 'school_name'],
+            block : ['school_name'],
             school_name : []
         }, gradeMap = {
 
