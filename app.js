@@ -90,6 +90,8 @@ app.use(cookieParser());
 
 app.use(allowCrossDomain);
 
+require('./config/db')(app);
+
 let models = require("./models");
 
 passport.serializeUser(function (user, cb) {
@@ -151,6 +153,7 @@ app.post("/login", function (req, res, next) {
 });
 
 app.use(function (req, res, next) {
+  // next();
   res.locals.login = req.isAuthenticated();
   if (sessionUtils.checkExists(req, res, "user")) {
     req.user = sessionUtils.getData(req, res, "user");
@@ -167,10 +170,12 @@ let routes = require("./routes/indexRoutes");
 let schoolRoutes = require("./routes/schoolRoutes");
 let studentRoutes = require("./routes/studentRoutes");
 let competencyRoutes = require("./routes/competencyRoutes");
+let sdpRoutes = require("./routes/sdpRoutes");
 
 app.use("/", routes);
 app.use("/school", schoolRoutes);
 app.use("/student", studentRoutes);
+app.use("/sdp/survey", sdpRoutes);
 app.use("/competency", competencyRoutes);
 /**
  * catch 404 and forward to error handler

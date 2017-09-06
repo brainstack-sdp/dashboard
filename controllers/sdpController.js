@@ -13,6 +13,8 @@ let sequelize = require("sequelize");
 let moment = require("moment");
 let sessionUtils = require("../utils/sessionUtils");
 let log = require("../helpers/logger");
+let SurveyModel = require("../documents/Survey");
+
 
 module.exports.home = function (req, res) {
     res.render('sdp_home');
@@ -24,3 +26,18 @@ module.exports.home = function (req, res) {
   //}
 };
 
+
+module.exports.analyticsSurvey = function(req, res) {
+
+    Promise.all([
+        SurveyModel.completeStatusCount(),
+        SurveyModel.classTypeCount(),
+        
+    ]).then(function(data) {
+        var response = {
+            complete: data[0],
+            classType: data[1],
+        };
+        res.json({'message': 'Data', 'result':response, 'error': false});
+    });
+};
