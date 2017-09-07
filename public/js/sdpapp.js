@@ -231,102 +231,58 @@ HPD.urls = {
                     var subjects = {}, filterLevel = {}, filterLevelItems = {}, seriesObj = {}, subjectObject = {};
                     if(chartItems.length) {
                         chartItems.forEach(function (item) {
-                            subjects[item.subject] = 1;
-                            if (filterLevel[item[filterKey]]) {
-                                filterLevel[item[filterKey]].push(item)
-                            } else {
-                                filterLevel[item[filterKey]] = [item];
-                            }
+                            gradeObj = {};
+                            gradeObj[filterKey] = item[filterKey];
+                            gradeObj.size = item.size/item.size*100;
+                            series.push(gradeObj)
                         });
 
-                            labels.push({
-                                "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
-                                "fillAlphas": 0.8,
-                                "labelText": "",
-                                "lineAlpha": 0.3,
-                                "title": 'Percentage of Completion',
-                                "type": "column",
-                                "color": "#fff",
-                                "valueField": 'value'
-                            })
-
-                        for (var i in filterLevel) {
-                            seriesObj = {};
-                            var sum = 0, total = 0;
-                            filterLevel[i].forEach(function (item) {
-                                total += item.count;
-                                switch (item.grade) {
-                                    case 'A' :
-                                        sum += 5 * item.count;
-                                        break;
-                                    case 'B' :
-                                        sum += 4 * item.count;
-                                        break;
-                                    case 'C' :
-                                        sum += 3 * item.count;
-                                        break;
-                                    case 'D' :
-                                        sum += 2 * item.count;
-                                        break;
-                                    case 'E' :
-                                        sum += 1 * item.count;
-                                        break;
-                                }
-                                seriesObj["value"] = (sum / total)*100;
-                            });
-                            seriesObj.level = i;
-
-                            series.push(seriesObj)
-                        }
-                        AmCharts.makeChart("subjectStack", {
-                            "type": "serial",
-                            "theme": "light",
+                        AmCharts.makeChart('sdpstatus', {
+                            type: 'serial',
+                            theme: 'blur',
                             color: '#fff',
-                            "colors": [
-                                gradeColors.E,
-                                gradeColors.D,
-                                gradeColors.C,
-                                gradeColors.B,
-                                gradeColors.A
-
+                            dataProvider: series,
+                            valueAxes: [
+                                {
+                                    axisAlpha: 0,
+                                    position: 'left',
+                                    title: 'Success Percentage',
+                                    unit: '%',
+                                    'minimium': 0,'maximum': 100
+                                }
                             ],
-                            "legend": {
-                                "horizontalGap": 10,
-                                "maxColumns": 1,
-                                "position": "right",
-                                "useGraphSettings": true,
-                                "markerSize": 10
+                            startDuration: 1,
+                            graphs: [
+                                {
+                                    balloonText: '<b>[[category]]: [[value]]</b>',
+                                    fillColorsField: 'color',
+                                    fillAlphas: 0.9,
+                                    lineAlpha: 0.2,
+                                    type: 'column',
+                                    valueField: 'size'
+                                }
+                            ],
+                            chartCursor: {
+                                categoryBalloonEnabled: false,
+                                cursorAlpha: 0,
+                                zoomable: false
                             },
-                            "dataProvider": series,
-
-                            "graphs": labels,
-                            "categoryField": 'level',
-                            "categoryAxis": {
-                                "gridPosition": "start",
-                                "axisAlpha": 0,
-                                "gridAlpha": 0,
-                                "position": "left",
+                            categoryField: filterKey,
+                            categoryAxis: {
+                                gridPosition: 'start',
                                 labelRotation: 45,
-                                color: '#fff'
+                                gridAlpha: 0.5,
+                                gridColor: '#f0fef1'
                             },
-                            valueAxes: [{
-                                minimum: 0,
-                                maximum: 5
-                            }],
-                            "export": {
-                                "enabled": true,
-                                "reviver": function (nodeObj) {
-                                    if (nodeObj.className === 'amcharts-axis-label') {
+                            export: {
+                                enabled: true,
+                                "reviver": function(nodeObj) {
+                                    if (nodeObj.className === 'amcharts-axis-label'){
                                         nodeObj.fill = '#333';
                                     }
                                 },
                             },
-                            "chartScrollbar": {
-                                "enabled": true,
-                                "selectedBackgroundColor": '#333',
-                                "gridCount": 5
-                            }
-
+                            creditsPosition: 'top-right'
                         });
                     } else {
                         $('#subjectStack').html('<div class="text-center">No Data</div>')
@@ -349,17 +305,11 @@ HPD.urls = {
                         });
                         for (var i in filterLevel) {
                             total = 0;
-                            grades = {"केवल प्राथमिक । Primary only (Class 1-5)": 0, "केवल उच्च प्राथमिक । Upper Primary only (Class 6-8)": 0, "उच्च प्राथमिक एवं माध्यमिक या उच्च माध्यमिक । Upper Primary + Secondary/ Senior Secondary (Class 6-10 OR Class 6-12)": 0}
+                            grades = {"केवल प्राथमिक । Primary only (Class 1-)5": 0, "केवल उच्च प्राथमिक । Upper Primary only (Class 6-8)": 0, "उच्च प्राथमिक एवं माध्यमिक या उच्च माध्यमिक । Upper Primary + Secondary/ Senior Secondary (Class 6-10 OR Class 6-12)": 0}
                             filterLevel[i].forEach(function (item) {
-                                grades[item.grade] = item.size;
+                                grades[item._id] = item.size;
                             });
-                            gradeObj = {};
-
-                            gradeObj.A = Math.round((grades.A * 100 || 0) / total);
-                            gradeObj.B = Math.round((grades.B * 100 || 0) / total);
-                            gradeObj.C = Math.round((grades.C * 100 || 0) / total);
-                            gradeObj.D = Math.round((grades.D * 100 || 0) / total);
-                            gradeObj.E = Math.round((grades.E * 100 || 0) / total);
+                            gradeObj = grades;
                             gradeObj[filterKey] = i;
                             series.push(gradeObj)
                         }
@@ -370,9 +320,7 @@ HPD.urls = {
                             "colors": [
                                 gradeColors.E,
                                 gradeColors.D,
-                                gradeColors.C,
-                                gradeColors.B,
-                                gradeColors.A
+                                gradeColors.C
                             ],
                             "legend": {
                                 "horizontalGap": 10,
@@ -398,7 +346,7 @@ HPD.urls = {
                                 "title": "P",
                                 "type": "column",
                                 "color": "#000000",
-                                "valueField": "E"
+                                "valueField": "केवल प्राथमिक । Primary only (Class 1-5)"
                             },
                                 {
                                     "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
@@ -408,7 +356,7 @@ HPD.urls = {
                                     "title": "UP",
                                     "type": "column",
                                     "color": "#000000",
-                                    "valueField": "D"
+                                    "valueField": "केवल उच्च प्राथमिक । Upper Primary only (Class 6-8)"
                                 },
                                 {
                                     "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
@@ -418,7 +366,7 @@ HPD.urls = {
                                     "title": "UP+S",
                                     "type": "column",
                                     "color": "#000000",
-                                    "valueField": "C"
+                                    "valueField": "उच्च प्राथमिक एवं माध्यमिक या उच्च माध्यमिक । Upper Primary + Secondary/ Senior Secondary (Class 6-10 OR Class 6-12)"
                                 }],
                             "categoryField": filterKey,
                             "categoryAxis": {
@@ -448,29 +396,30 @@ HPD.urls = {
                     }
                     $('.js-gradeStack.js-loader').hide();
 
-                }, error: function() {
-                $('#subjectStack').html('<div class="text-center">Something Went Wrong</div>')
-                $('.js-subjectStack.js-loader').hide();
-            }
-            });
+                    var resource_1 = res.result.resource_584;
+                    var resource_2 = res.result.resource_587;
+                    var resource_3 = res.result.resource_588;
 
-        pendingCalls.classStack = $.ajax({
-                method: 'GET',
-                url: HPD.urls.survey + filterQuery(2),
-                success: function (res) {
-
-                    var chartItems = res.result.classStack, labels = [], series = [], filterLevel = {}, filterLevelItems = {}, seriesObj = {}, levels = ['Human', 'Physical', 'Financial resource'];
+                    var labels = [], series = [], filterLevel = {}, filterLevelItems = {}, seriesObj = {}, levels = ['Human', 'Physical', 'Financial Resource'];
                     var classes = {}, classObject = {};
-                    if(chartItems.length) {
+                    if(resource_1.length && resource_2.length && resource_3.length) {
+                        resource_1.forEach(function (item) {
+                            item.resource = levels[0]
+                        });
+                        resource_2.forEach(function (item) {
+                            item.resource = levels[1]
+                        });
+                        resource_3.forEach(function (item) {
+                            item.resource = levels[2]
+                        });
+                        chartItems = resource_1.concat(resource_2).concat(resource_3)
+
                         chartItems.forEach(function (item) {
-                            classes[item.class_code] = 1;
                             if (filterLevel[item[filterKey]]) {
                                 filterLevel[item[filterKey]].push(item)
                             } else {
                                 filterLevel[item[filterKey]] = [item];
                             }
-
-
                         });
                         for (var i=0;i< levels.length;i++) {
                             labels.push({
@@ -488,28 +437,19 @@ HPD.urls = {
                             seriesObj = {};
                             var sum = 0, total = 0, ctr=0;
                             filterLevel[i].forEach(function (item) {
-                                total += item.count;
-                                switch (item.grade) {
-                                    case 'A' :
-                                        sum += 1 * item.count;
+                                total += item.size;
+                                switch (item.resource) {
+                                    case levels[0] :
+                                        sum += 1 * item.size;
                                         break;
-                                    case 'B' :
-                                        sum += 1 * item.count;
+                                    case levels[1] :
+                                        sum += 1 * item.size;
                                         break;
-                                    case 'C' :
-                                        sum += 1 * item.count;
-                                        break;
-                                    case 'D' :
-                                        sum += 1 * item.count;
-                                        break;
-                                    case 'E' :
-                                        sum += 1 * item.count;
+                                    case levels[2] :
+                                        sum += 1 * item.size;
                                         break;
                                 }
-                                if(levels[ctr]){
-                                    seriesObj[levels[ctr]] = (sum / total)*100;
-                                    ctr +=1;
-                                }
+                                seriesObj[item.resource] = (sum / total)*100;
 
                             });
                             seriesObj.level = i;
@@ -568,6 +508,19 @@ HPD.urls = {
                         $('#resourceStack').html('<div class="text-center">No Data</div>')
                     }
                     $('.js-resourceStack.js-loader').hide();
+
+                }, error: function() {
+                $('#subjectStack').html('<div class="text-center">Something Went Wrong</div>')
+                $('.js-subjectStack.js-loader').hide();
+            }
+            });
+
+        pendingCalls.classStack = $.ajax({
+                method: 'GET',
+                url: HPD.urls.survey + filterQuery(2),
+                success: function (res) {
+
+
                 }, error: function() {
                 $('#classStack').html('<div class="text-center">Something Went Wrong</div>')
                 $('.js-resourceStack.js-loader').hide();
