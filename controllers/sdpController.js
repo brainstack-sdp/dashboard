@@ -84,6 +84,7 @@ module.exports.analyticsSurvey = function(req, res) {
         SurveyModel.resourceCount(where, resources[588], group_name, query),
         SurveyModel.targetCount(where, resources[588], group_name, query),
         SurveyModel.targetStatusCount(where, resources[588], group_name, query),
+        SurveyModel.targetStatus(where, resources[588], group_name, query),
     ]).then(function(data) {
         var response = {
             complete: data[0],
@@ -92,7 +93,8 @@ module.exports.analyticsSurvey = function(req, res) {
             resource_587: data[3],
             resource_588: data[4],
             target: data[5],
-            target_status: data[6]
+            target_status: data[6],
+            status: data[7]
         };
         res.json({'message': 'Data', 'result':response, 'error': false});
     });

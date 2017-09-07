@@ -193,14 +193,6 @@ surveySchema.statics.targetStatusCount = function(where, resource, group_name, q
                             { $eq:['$[question(540)]', 'हाँ । Yes' ] }
                           ] }, 1, 0 ]
                     } },
-                    // "noupdate_count": { "$sum": {
-                    //     "$cond": [ { $and : [
-                    //         { '[question(535)]': { $eq: "" } },
-                    //         { '[question(537)]': { $eq: "" } },
-                    //         { '[question(589)]': { $eq: "" } },
-                    //         { '[question(540)]': { $eq: "" } }
-                    //       ] }, 1, 0 ]
-                    // } },
                 }
             },
             { "$project": {
@@ -208,8 +200,7 @@ surveySchema.statics.targetStatusCount = function(where, resource, group_name, q
                 'status': "$_id.st",
                 "yes_count": 1,
                 "no_count": 1,
-                "partial_count": 1,
-                // "noupdate_count": 1
+                "partial_count": 1
             } }
         ]).exec(function(err, data){
             if(err)
@@ -218,6 +209,46 @@ surveySchema.statics.targetStatusCount = function(where, resource, group_name, q
         });
     }.bind(this));
 };
+
+surveySchema.statics.targetStatus = function(where, resource, group_name, query){
+    return new Promise (function(resolve, reject){
+        "use strict";
+        this.aggregate([
+            where,
+            {
+                '$group': {
+                    '_id': {
+                        'st': '$[question(535)]',
+                        'st': '$[variable(\"536-shown\")]'
+                        // 'st': '$[question(536), option(12524)]'
+                        
+                    },
+                    "yes_count": { "$sum": {
+                        "$cond": [ { $eq:['$[question(535)]', 'हाँ । Yes' ] }, 1, 0 ]
+                    } },
+                    "no_count": { "$sum": {
+                        "$cond": [ { $ne:['$[question(535)]', 'हाँ । Yes' ] }, 1, 0 ]
+                    } },
+                    "partial_count": { "$sum": {
+                        "$cond": [ { $eq:['$[question(535)]', 'हाँ । Yes' ] }, 1, 0 ]
+                    } },
+                }
+            },
+            { "$project": {
+                "_id": 0,
+                'status': "$_id.st",
+                "yes_count": 1,
+                "no_count": 1,
+                "partial_count": 1            
+            } }
+        ]).exec(function(err, data){
+            if(err)
+                reject(err);
+            resolve(data);
+        });
+    }.bind(this));
+};
+
 
 var SurveryModel = connApi.model('survey', surveySchema);
 
