@@ -258,18 +258,16 @@ HPD.urls = {
                             }
                         });
 
-                        for (var subject in subjects) {
                             labels.push({
                                 "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
                                 "fillAlphas": 0.8,
                                 "labelText": "",
                                 "lineAlpha": 0.3,
-                                "title": subjectMap[subject],
+                                "title": 'Percentage of Completion',
                                 "type": "column",
                                 "color": "#fff",
-                                "valueField": subject
+                                "valueField": 'value'
                             })
-                        }
 
                         for (var i in filterLevel) {
                             seriesObj = {};
@@ -293,7 +291,7 @@ HPD.urls = {
                                         sum += 1 * item.count;
                                         break;
                                 }
-                                seriesObj[item.subject] = (sum / total).toFixed(1);
+                                seriesObj["value"] = (sum / total)*100;
                             });
                             seriesObj.level = i;
 
@@ -364,7 +362,7 @@ HPD.urls = {
                 url: HPD.urls.chartRecord + filterQuery(2),
                 success: function (res) {
 
-                    var chartItems = res.result.classStack, labels = [], series = [], filterLevel = {}, filterLevelItems = {}, seriesObj = {};
+                    var chartItems = res.result.classStack, labels = [], series = [], filterLevel = {}, filterLevelItems = {}, seriesObj = {}, levels = ['Human', 'Physical', 'Financial resource'];
                     var classes = {}, classObject = {};
                     if(chartItems.length) {
                         chartItems.forEach(function (item) {
@@ -377,47 +375,51 @@ HPD.urls = {
 
 
                         });
-                        for (var class_code in classes) {
+                        for (var i=0;i< levels.length;i++) {
                             labels.push({
                                 "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
                                 "fillAlphas": 0.8,
                                 "labelText": "",
                                 "lineAlpha": 0.3,
-                                "title": "Class " + class_code,
+                                "title": levels[i],
                                 "type": "column",
                                 "color": "#fff",
-                                "valueField": class_code
+                                "valueField": levels[i]
                             })
                         }
                         for (var i in filterLevel) {
                             seriesObj = {};
-                            var sum = 0, total = 0;
+                            var sum = 0, total = 0, ctr=0;
                             filterLevel[i].forEach(function (item) {
                                 total += item.count;
                                 switch (item.grade) {
                                     case 'A' :
-                                        sum += 5 * item.count;
+                                        sum += 1 * item.count;
                                         break;
                                     case 'B' :
-                                        sum += 4 * item.count;
+                                        sum += 1 * item.count;
                                         break;
                                     case 'C' :
-                                        sum += 3 * item.count;
+                                        sum += 1 * item.count;
                                         break;
                                     case 'D' :
-                                        sum += 2 * item.count;
+                                        sum += 1 * item.count;
                                         break;
                                     case 'E' :
                                         sum += 1 * item.count;
                                         break;
                                 }
-                                seriesObj[item.class_code] = (sum / total).toFixed(1);
+                                if(levels[ctr]){
+                                    seriesObj[levels[ctr]] = (sum / total)*100;
+                                    ctr +=1;
+                                }
+
                             });
                             seriesObj.level = i;
 
                             series.push(seriesObj)
                         }
-                        AmCharts.makeChart("classStack", {
+                        AmCharts.makeChart("resourceStack", {
                             "type": "serial",
                             "theme": "light",
                             color: '#fff',
@@ -466,12 +468,12 @@ HPD.urls = {
 
                         });
                     } else {
-                        $('#classStack').html('<div class="text-center">No Data</div>')
+                        $('#resourceStack').html('<div class="text-center">No Data</div>')
                     }
-                    $('.js-classStack.js-loader').hide();
+                    $('.js-resourceStack.js-loader').hide();
                 }, error: function() {
                 $('#classStack').html('<div class="text-center">Something Went Wrong</div>')
-                $('.js-classStack.js-loader').hide();
+                $('.js-resourceStack.js-loader').hide();
             }
             });
         pendingCalls.gradeStack = $.ajax({
@@ -538,7 +540,7 @@ HPD.urls = {
                                 "fillAlphas": 0.8,
                                 "labelText": "[[value]]",
                                 "lineAlpha": 0.3,
-                                "title": "E",
+                                "title": "P",
                                 "type": "column",
                                 "color": "#000000",
                                 "valueField": "E"
@@ -548,7 +550,7 @@ HPD.urls = {
                                     "fillAlphas": 0.8,
                                     "labelText": "[[value]]",
                                     "lineAlpha": 0.3,
-                                    "title": "D",
+                                    "title": "UP",
                                     "type": "column",
                                     "color": "#000000",
                                     "valueField": "D"
@@ -558,30 +560,10 @@ HPD.urls = {
                                     "fillAlphas": 0.8,
                                     "labelText": "[[value]]",
                                     "lineAlpha": 0.3,
-                                    "title": "C",
+                                    "title": "UP+S",
                                     "type": "column",
                                     "color": "#000000",
                                     "valueField": "C"
-                                },
-                                {
-                                    "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
-                                    "fillAlphas": 0.8,
-                                    "labelText": "[[value]]",
-                                    "lineAlpha": 0.3,
-                                    "title": "B",
-                                    "type": "column",
-                                    "color": "#000000",
-                                    "valueField": "B"
-                                },
-                                {
-                                    "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
-                                    "fillAlphas": 0.8,
-                                    "labelText": "[[value]]",
-                                    "lineAlpha": 0.3,
-                                    "title": "A",
-                                    "type": "column",
-                                    "color": "#000000",
-                                    "valueField": "A"
                                 }],
                             "categoryField": filterKey,
                             "categoryAxis": {
