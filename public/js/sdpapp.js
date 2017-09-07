@@ -21,14 +21,6 @@ HPD.urls = {
             school_name : []
         }, gradeMap = {
 
-        },
-        subjectMap = {
-            1: 'Hindi',
-            2: 'Maths',
-            3: 'EVS',
-            4: 'English',
-            5: 'SST',
-            6: 'Science'
         }, gradeColors = {
             A : "#76FF03",
             B: "#00C853",
@@ -544,40 +536,17 @@ HPD.urls = {
                 method: 'GET',
                 url: HPD.urls.survey + filterCQuery(0, true),
                 success: function (res) {
-                    var chartItems = res.result.competencyType, series = [], filterLevel = {}, gradeObj = {};
+                    var chartItems = res.result.target, series = [], filterLevel = {}, gradeObj = {}, grades;
 
                     if(chartItems.length) {
-                        chartItems.forEach(function (item) {
-                            item.type = typeMap[item.type];
-                            if (filterLevel[item.class_code]) {
-                                filterLevel[item.class_code].push(item)
-                            } else {
-                                filterLevel[item.class_code] = [item];
-                            }
-                        });
-                        for (var i in filterLevel) {
-                            gradeObj = {'Basic': 0, 'Mediocre': 0, 'Advanced': 0};
-
-                            filterLevel[i].forEach(function (item) {
-                                gradeObj[item.type] = Math.round(item.success / item.total * 100);
-                            });
-                            gradeObj.class = 'Class ' + i;
-                            series.push(gradeObj)
-                        }
-
-
-                        AmCharts.makeChart('competencyTrends', {
+                        AmCharts.makeChart("targetStatus", {
                             "type": "serial",
-                            "categoryField": "class",
-                            "startDuration": 1,
                             "theme": "light",
                             color: '#fff',
                             "colors": [
-                                "#e85656",
-                                "#ee7810",
-                                "#e0e004",
-                                "#90b900",
-                                "#209e91"
+                                gradeColors.E,
+                                gradeColors.D,
+                                gradeColors.C
                             ],
                             "legend": {
                                 "horizontalGap": 10,
@@ -586,8 +555,46 @@ HPD.urls = {
                                 "useGraphSettings": true,
                                 "markerSize": 10
                             },
-                            "dataProvider": series,
-
+                            "dataProvider": chartItems,
+                            "valueAxes": [
+                                {
+                                    "id": "ValueAxis-1",
+                                    "stackType": "100%",
+                                    "unit": '%',
+                                    "title": "Grade Distribution"
+                                }
+                            ],
+                            "graphs": [{
+                                "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
+                                "fillAlphas": 0.8,
+                                "labelText": "[[value]]",
+                                "lineAlpha": 0.3,
+                                "title": "Yes",
+                                "type": "column",
+                                "color": "#000000",
+                                "valueField": "yes_count)"
+                            },
+                                {
+                                    "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
+                                    "fillAlphas": 0.8,
+                                    "labelText": "[[value]]",
+                                    "lineAlpha": 0.3,
+                                    "title": "No",
+                                    "type": "column",
+                                    "color": "#000000",
+                                    "valueField": "no_count"
+                                },
+                                {
+                                    "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
+                                    "fillAlphas": 0.8,
+                                    "labelText": "[[value]]",
+                                    "lineAlpha": 0.3,
+                                    "title": "Partial",
+                                    "type": "column",
+                                    "color": "#000000",
+                                    "valueField": "partial_count"
+                                }],
+                            "categoryField": filterKey,
                             "categoryAxis": {
                                 "gridPosition": "start",
                                 "axisAlpha": 0,
@@ -595,57 +602,28 @@ HPD.urls = {
                                 "position": "left",
                                 labelRotation: 45
                             },
-                            "trendLines": [],
-                            "graphs": [
-                                {
-                                    "balloonText": "[[title]] of [[category]]:[[value]]",
-                                    "bullet": "round",
-                                    "id": "AmGraph-1",
-                                    "title": "Basic",
-                                    "valueField": "Basic"
-                                },
-                                {
-                                    "balloonText": "[[title]] of [[category]]:[[value]]",
-                                    "bullet": "square",
-                                    "id": "AmGraph-2",
-                                    "title": "Mediocre",
-                                    "valueField": "Mediocre"
-                                },
-                                {
-                                    "balloonText": "[[title]] of [[category]]:[[value]]",
-                                    "bullet": "square",
-                                    "id": "AmGraph-3",
-                                    "title": "Advanced",
-                                    "valueField": "Advanced"
-                                },
-                            ],
-                            "guides": [],
-                            "valueAxes": [
-                                {
-                                    "id": "ValueAxis-1",
-                                    "title": "Success Percentage",
-                                    unit: '%',
-                                    'minimium': 0, 'maximum': 100
-                                }
-                            ],
-                            "allLabels": [],
-                            "balloon": {},
-                            export: {
-                                enabled: true,
+                            "export": {
+                                "enabled": true,
                                 "reviver": function (nodeObj) {
                                     if (nodeObj.className === 'amcharts-axis-label') {
                                         nodeObj.fill = '#333';
                                     }
-                                },
+                                }
+                            },
+                            "chartScrollbar": {
+                                "enabled": true,
+                                "selectedBackgroundColor": '#333',
+                                "gridCount": 4
                             }
+
                         });
                     } else {
-                        $('#competencyTrends').html('<div class="text-center">No Data</div>')
+                        $('#targetStatus').html('<div class="text-center">No Data</div>')
                     }
-                    $('.js-competencyTrends.js-loader').hide();
+                    $('.js-targetStatus.js-loader').hide();
                 }, error: function() {
-                $('#competencyTrends').html('<div class="text-center">Something Went Wrong</div>')
-                $('.js-competencyTrends.js-loader').hide();
+                $('#targetStatus').html('<div class="text-center">Something Went Wrong</div>')
+                $('.js-targetStatus.js-loader').hide();
             }
             });
 
