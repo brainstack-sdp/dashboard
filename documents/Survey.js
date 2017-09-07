@@ -17,10 +17,16 @@ var surveySchema = new mongoose.Schema({
     "[question(343), option(10871)]" : String,
     "[question(343), option(10872)]" : String,
     "[question(343), option(10873)]" : String,
-    "[question(343), option(10871)]" : { type: String,  index: true}
-    "[question(343), option(10872)]" : { type: String,  index: true}
-    "[question(343), option(10873)]" : { type: String,  index: true}
-
+    "[question(343), option(10871)]" : { type: String,  index: true},
+    "[question(343), option(10872)]" : { type: String,  index: true},
+    "[question(343), option(10873)]" : { type: String,  index: true},
+    "[question(153)]": { type: String,  index: true},
+    "question(591)]": { type: String,  index: true},
+    "[question(535)]": { type: String,  index: true},
+    "[variable(537)]": { type: String,  index: true},
+    "[variable(587)]": { type: String,  index: true},
+    "[variable(540)]": { type: String,  index: true},
+    "[variable(\"536-shown\")]": { type: String,  index: true},
     // "[question(343), option(10874)]" : String,
 
     // ideal_stay_time : String
