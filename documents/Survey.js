@@ -22,7 +22,7 @@ var surveySchema = new mongoose.Schema({
 }, {strict: false, collection: 'survey'});
 
 
-surveySchema.statics.completeStatusCount = function(group, where, group_name){
+surveySchema.statics.completeStatusCount = function(group, where, group_name, query){
  
     return new Promise (function(resolve, reject){
         "use strict";
@@ -31,7 +31,7 @@ surveySchema.statics.completeStatusCount = function(group, where, group_name){
             {
                 '$group': {
                     '_id': '$'+group,
-                    'name': {'$first': '$'+group_name},
+                    [query]: {'$first': '$'+group_name},
                     'size': {
                         '$sum': 1
                     }
@@ -54,7 +54,7 @@ surveySchema.statics.completeStatusCount = function(group, where, group_name){
     // }.bind(this));
 };
 
-surveySchema.statics.schoolTypeCount = function(where, group_name){
+surveySchema.statics.schoolTypeCount = function(where, group_name, query){
     return new Promise (function(resolve, reject){
         "use strict";
         this.aggregate([
@@ -62,7 +62,7 @@ surveySchema.statics.schoolTypeCount = function(where, group_name){
             {
                 '$group': {
                     '_id': '$[question(153)]',
-                    'name': {'$first': '$'+group_name},
+                    [query]: {'$first': '$'+group_name},
                     'size': {
                         '$sum': 1
                     }
@@ -76,7 +76,7 @@ surveySchema.statics.schoolTypeCount = function(where, group_name){
     }.bind(this));
 };
 
-surveySchema.statics.resourceCount = function(where, resource, group_name){
+surveySchema.statics.resourceCount = function(where, resource, group_name, query){
     return new Promise (function(resolve, reject){
         "use strict";
         this.aggregate([
@@ -84,7 +84,7 @@ surveySchema.statics.resourceCount = function(where, resource, group_name){
             {
                 '$group': {
                     '_id': '$'+resource,
-                    'name': {'$first': '$'+group_name},
+                    [query]: {'$first': '$'+group_name},
                     'size': {
                         '$sum': 1
                     }
