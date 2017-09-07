@@ -20,4 +20,6 @@ let schoolController = require("../controllers/schoolController");
 router.get("/", schoolController.school);
 router.get("/enrollment", schoolController.enrollment);
 
+router.get("/sdp", schoolController.sdp);
+
 module.exports = router;
