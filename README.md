@@ -30,3 +30,6 @@ $ node app
 
    [node.js]: <http://nodejs.org>
    [express]: <http://expressjs.com>
+
+
+mongoimport -d dash_test --collection school  --type csv --file school_data.csv   --headerline
