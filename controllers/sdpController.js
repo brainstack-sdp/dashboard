@@ -39,7 +39,7 @@ module.exports.analyticsSurvey = function(req, res) {
     let where = undefined;
     if(req.query.district) {
       query = 'block';
-      group_name = '[question(343), option(10871)';
+      group_name = '[question(343), option(10871)]';
       group = '[question(343), option(10872)]';
       where = {'$match': {'[question(343), option(10871)]': req.query.district }};
     } else if(req.query.block) {
