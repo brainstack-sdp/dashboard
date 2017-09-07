@@ -98,6 +98,63 @@ surveySchema.statics.resourceCount = function(where, resource, group_name, query
     }.bind(this));
 };
 
+surveySchema.statics.targetCount = function(where, resource, group_name, query){
+    return new Promise (function(resolve, reject){
+        "use strict";
+        this.aggregate([
+            where,
+            {
+                '$group': {
+                    '_id': '$'+group_name,
+                    "yes_count": { "$sum": {
+                        "$cond": [ { $and : [
+                            { $eq:['$[question(535)]', 'हाँ । Yes' ] },
+                            { $eq:['$[question(537)]', 'हाँ । Yes' ] },
+                            { $eq:['$[question(589)]', 'हाँ । Yes' ] },
+                            { $eq:['$[question(540)]', 'हाँ । Yes' ] }
+                          ] }, 1, 0 ]
+                    } },
+                    "no_count": { "$sum": {
+                        "$cond": [ { $and : [
+                            { $ne:['$[question(535)]', 'हाँ । Yes' ] },
+                            { $ne:['$[question(537)]', 'हाँ । Yes' ] },
+                            { $ne:['$[question(589)]', 'हाँ । Yes' ] },
+                            { $ne:['$[question(540)]', 'हाँ । Yes' ] }
+                          ] }, 1, 0 ]
+                    } },
+                    "partial_count": { "$sum": {
+                        "$cond": [ { $or : [
+                             { $eq:['$[question(535)]', 'हाँ । Yes' ] },
+                            { $eq:['$[question(537)]', 'हाँ । Yes' ] },
+                            { $eq:['$[question(589)]', 'हाँ । Yes' ] },
+                            { $eq:['$[question(540)]', 'हाँ । Yes' ] }
+                          ] }, 1, 0 ]
+                    } },
+                    // "noupdate_count": { "$sum": {
+                    //     "$cond": [ { $and : [
+                    //         { '[question(535)]': { $eq: "" } },
+                    //         { '[question(537)]': { $eq: "" } },
+                    //         { '[question(589)]': { $eq: "" } },
+                    //         { '[question(540)]': { $eq: "" } }
+                    //       ] }, 1, 0 ]
+                    // } },
+                }
+            },
+            { "$project": {
+                "_id": 0,
+                [query]: "$_id",
+                "yes_count": 1,
+                "no_count": 1,
+                "partial_count": 1,
+                // "noupdate_count": 1
+            } }
+        ]).exec(function(err, data){
+            if(err)
+                reject(err);
+            resolve(data);
+        });
+    }.bind(this));
+};
 
 
 var SurveryModel = connApi.model('survey', surveySchema);
