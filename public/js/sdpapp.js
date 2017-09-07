@@ -504,6 +504,92 @@ HPD.urls = {
                 }, error: function() {
                 $('#subjectStack').html('<div class="text-center">Something Went Wrong</div>')
                 $('.js-subjectStack.js-loader').hide();
+
+                var chartItems = res.result.target;
+
+                if(chartItems.length) {
+                    AmCharts.makeChart("targetStatus", {
+                        "type": "serial",
+                        "theme": "light",
+                        color: '#fff',
+                        "colors": [
+                            gradeColors.E,
+                            gradeColors.D,
+                            gradeColors.C
+                        ],
+                        "legend": {
+                            "horizontalGap": 10,
+                            "maxColumns": 1,
+                            "position": "right",
+                            "useGraphSettings": true,
+                            "markerSize": 10
+                        },
+                        "dataProvider": chartItems,
+                        "valueAxes": [
+                            {
+                                "id": "ValueAxis-1",
+                                "stackType": "100%",
+                                "unit": '%',
+                                "title": "Grade Distribution"
+                            }
+                        ],
+                        "graphs": [{
+                            "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
+                            "fillAlphas": 0.8,
+                            "labelText": "[[value]]",
+                            "lineAlpha": 0.3,
+                            "title": "Yes",
+                            "type": "column",
+                            "color": "#000000",
+                            "valueField": "yes_count)"
+                        },
+                            {
+                                "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
+                                "fillAlphas": 0.8,
+                                "labelText": "[[value]]",
+                                "lineAlpha": 0.3,
+                                "title": "No",
+                                "type": "column",
+                                "color": "#000000",
+                                "valueField": "no_count"
+                            },
+                            {
+                                "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
+                                "fillAlphas": 0.8,
+                                "labelText": "[[value]]",
+                                "lineAlpha": 0.3,
+                                "title": "Partial",
+                                "type": "column",
+                                "color": "#000000",
+                                "valueField": "partial_count"
+                            }],
+                        "categoryField": filterKey,
+                        "categoryAxis": {
+                            "gridPosition": "start",
+                            "axisAlpha": 0,
+                            "gridAlpha": 0,
+                            "position": "left",
+                            labelRotation: 45
+                        },
+                        "export": {
+                            "enabled": true,
+                            "reviver": function (nodeObj) {
+                                if (nodeObj.className === 'amcharts-axis-label') {
+                                    nodeObj.fill = '#333';
+                                }
+                            }
+                        },
+                        "chartScrollbar": {
+                            "enabled": true,
+                            "selectedBackgroundColor": '#333',
+                            "gridCount": 4
+                        }
+
+                    });
+                } else {
+                    $('#targetStatus').html('<div class="text-center">No Data</div>')
+                }
+                $('.js-targetStatus.js-loader').hide();
             }
             });
 
@@ -518,114 +604,6 @@ HPD.urls = {
                 $('.js-resourceStack.js-loader').hide();
             }
             });
-        pendingCalls.gradeStack = $.ajax({
-                method: 'GET',
-                url: HPD.urls.survey + filterQuery(3),
-                success: function (res) {
-
-                    var chartItems = res.result.gradeStack, labels = [], series = [], filterLevel = {};
-                    var gradeObj = {A: {}, B: {}, C: {}, D: {}, E: {}}, grades = {}, gradeData = [], total = 0;
-
-
-                }, error: function() {
-                $('#gradeStack').html('<div class="text-center">Something Went Wrong</div>')
-                $('.js-gradeStack.js-loader').hide();
-            }
-            });
-        pendingCalls.competencyType = $.ajax({
-                method: 'GET',
-                url: HPD.urls.survey + filterCQuery(0, true),
-                success: function (res) {
-                    var chartItems = res.result.target, series = [], filterLevel = {}, gradeObj = {}, grades;
-
-                    if(chartItems.length) {
-                        AmCharts.makeChart("targetStatus", {
-                            "type": "serial",
-                            "theme": "light",
-                            color: '#fff',
-                            "colors": [
-                                gradeColors.E,
-                                gradeColors.D,
-                                gradeColors.C
-                            ],
-                            "legend": {
-                                "horizontalGap": 10,
-                                "maxColumns": 1,
-                                "position": "right",
-                                "useGraphSettings": true,
-                                "markerSize": 10
-                            },
-                            "dataProvider": chartItems,
-                            "valueAxes": [
-                                {
-                                    "id": "ValueAxis-1",
-                                    "stackType": "100%",
-                                    "unit": '%',
-                                    "title": "Grade Distribution"
-                                }
-                            ],
-                            "graphs": [{
-                                "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
-                                "fillAlphas": 0.8,
-                                "labelText": "[[value]]",
-                                "lineAlpha": 0.3,
-                                "title": "Yes",
-                                "type": "column",
-                                "color": "#000000",
-                                "valueField": "yes_count)"
-                            },
-                                {
-                                    "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
-                                    "fillAlphas": 0.8,
-                                    "labelText": "[[value]]",
-                                    "lineAlpha": 0.3,
-                                    "title": "No",
-                                    "type": "column",
-                                    "color": "#000000",
-                                    "valueField": "no_count"
-                                },
-                                {
-                                    "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
-                                    "fillAlphas": 0.8,
-                                    "labelText": "[[value]]",
-                                    "lineAlpha": 0.3,
-                                    "title": "Partial",
-                                    "type": "column",
-                                    "color": "#000000",
-                                    "valueField": "partial_count"
-                                }],
-                            "categoryField": filterKey,
-                            "categoryAxis": {
-                                "gridPosition": "start",
-                                "axisAlpha": 0,
-                                "gridAlpha": 0,
-                                "position": "left",
-                                labelRotation: 45
-                            },
-                            "export": {
-                                "enabled": true,
-                                "reviver": function (nodeObj) {
-                                    if (nodeObj.className === 'amcharts-axis-label') {
-                                        nodeObj.fill = '#333';
-                                    }
-                                }
-                            },
-                            "chartScrollbar": {
-                                "enabled": true,
-                                "selectedBackgroundColor": '#333',
-                                "gridCount": 4
-                            }
-
-                        });
-                    } else {
-                        $('#targetStatus').html('<div class="text-center">No Data</div>')
-                    }
-                    $('.js-targetStatus.js-loader').hide();
-                }, error: function() {
-                $('#targetStatus').html('<div class="text-center">Something Went Wrong</div>')
-                $('.js-targetStatus.js-loader').hide();
-            }
-            });
 
         /**
          * 7. Competency Category
@@ -634,154 +612,97 @@ HPD.urls = {
                 method: 'GET',
                 url: HPD.urls.survey + filterCQuery(1, true),
                 success: function (res) {
-                    var chartItems = res.result.competencyCategory, series = [], labels=[], categoryList = {}, gradeObj = {};
+
+                    var targetMap = {
+                        '11356': 'Community Participation',
+                        '11357':'Community Participation',
+                        '11358':'Community Participation',
+                        11361: 'Teacher Performance',
+                        11362: 'Teacher Performance',
+                        11363: 'Teacher Performance',
+                        11318: 'Teacher Performance',
+                        11319: 'Teacher Performance',
+                        11320: 'School Management',
+                        11321: 'School Management',
+                        11366: 'Learning Levels',
+                        11367: 'Learning Levels',
+                        11368: 'Learning Levels',
+                        15171: 'School Management',
+                        15172: 'School Management'
+                    }
+
+                    var chartItems = res.result.target_status, series = [], labels=[], categoryList = {}, gradeObj = {};
 
                     if(chartItems.length){
                         chartItems.forEach(function (item) {
                             gradeObj = {};
-                            if (item.competency_category) {
-                                categoryList[item.competency_category] =1;
-                                gradeObj.category = item.competency_category;
-                                gradeObj.success = Math.round(item.success / item.total * 100);
-                                series.push(gradeObj)
-                            }
+                            item.target = targetMap[item.status] || 'Other'
                         });
+                        series = chartItems
 
-                        AmCharts.makeChart('competencyCategory', {
-                            type: 'serial',
-                            theme: 'blur',
-                            color: '#fff',
-                            dataProvider: series,
-                            valueAxes: [
-                                {
-                                    axisAlpha: 0,
-                                    position: 'left',
-                                    title: 'Success Percentage',
-                                    unit: '%',
-                                    'minimium': 0,'maximum': 100
-                                }
-                            ],
-                            startDuration: 1,
-                            graphs: [
-                                {
-                                    balloonText: '<b>[[category]]: [[value]]</b>',
-                                    fillColorsField: 'color',
-                                    fillAlphas: 0.9,
-                                    lineAlpha: 0.2,
-                                    type: 'column',
-                                    valueField: 'success'
-                                }
-                            ],
-                            chartCursor: {
-                                categoryBalloonEnabled: false,
-                                cursorAlpha: 0,
-                                zoomable: false
-                            },
-                            categoryField: 'category',
-                            categoryAxis: {
-                                gridPosition: 'start',
-                                labelRotation: 45,
-                                gridAlpha: 0.5,
-                                gridColor: '#f0fef1'
-                            },
-                            export: {
-                                enabled: true,
-                                "reviver": function(nodeObj) {
-                                    if (nodeObj.className === 'amcharts-axis-label'){
-                                        nodeObj.fill = '#333';
-                                    }
+                        AmCharts.makeChart("targetStatusCategory", {
+                                "type": "serial",
+                                "theme": "light",
+                                "legend": {
+                                    "horizontalGap": 10,
+                                    "maxColumns": 1,
+                                    "position": "right",
+                                    "useGraphSettings": true,
+                                    "markerSize": 10
                                 },
-                            },
-                            creditsPosition: 'top-right'
-                        }).addListener("clickGraphItem", function(event) {
-                            var category = event.item.category;
-                            el.$modal.addClass('in');
-                            el.$modal.show();
-                            $('.js-catDrill.js-loader').show();
-
-                            $.when( $.ajax({
-                                method: 'GET',
-                                url: HPD.urls.survey + filterCQuery(4, true) + '&competency_category='+encodeURIComponent(category)}), $.ajax({
-                                method: 'GET',
-                                url: HPD.urls.competencyDescription})).
-                                then(function( resp1, resp2 ) {
-                                    pendingCalls.competencyAnalysis = resp1[2];
-                                    var res = resp1[0], resDesc = resp2[0].result.competency;
-                                    var chartItems = res.result.competencyAnalysis, series = [], filterLevel = {}, gradeObj = {};
-                                    if(chartItems.length) {
-                                        chartItems.forEach(function (item) {
-                                            gradeObj = {};
-                                            if (item.competency) {
-                                                gradeObj.competency = item.competency;
-                                                gradeObj.description = resDesc[item.competency].competency_description;
-                                                gradeObj.success = Math.round(item.success / item.total * 100);
-                                                series.push(gradeObj)
-                                            }
-                                        });
-
-                                        AmCharts.makeChart('catDrill', {
-                                            type: 'serial',
-                                            theme: 'blur',
-                                            dataProvider: series,
-                                            valueAxes: [
-                                                {
-                                                    position: 'left',
-                                                    title: 'Success Percentage',
-                                                    unit: '%',
-                                                    'minimium': 0,'maximum': 100
-                                                }
-                                            ],
-                                            startDuration: 1,
-                                            graphs: [
-                                                {
-                                                    balloonText: '<b>[[competency]]: [[value]]%</b><br/><span>[[description]]</span>',
-                                                    fillColorsField: 'color',
-                                                    fillAlphas: 0.9,
-                                                    lineAlpha: 0.2,
-                                                    type: 'column',
-                                                    valueField: 'success'
-                                                }
-                                            ],
-                                            chartCursor: {
-                                                categoryBalloonEnabled: false,
-                                                cursorAlpha: 0,
-                                                zoomable: false
-                                            },
-                                            categoryField: 'competency',
-                                            categoryAxis: {
-                                                gridPosition: 'start',
-                                                labelRotation: 90,
-                                                gridAlpha: 0.5,
-                                                gridColor: '#f0fef1'
-                                            },
-                                            export: {
-                                                enabled: true
-                                            },
-                                            "chartScrollbar": {
-                                                "enabled": true,
-                                                "selectedBackgroundColor" : '#333',
-                                                "gridCount" : 10
-                                            },
-                                            creditsPosition: 'top-right'
-                                        });
-                                    } else {
-                                        $('#catDrill').html('<div class="text-center">No Data</div>')
-                                    }
-
-                                    $('.js-catDrill.js-loader').hide();
-                                    //}, error : function() {
-                                    //$('#competencyAcheivement').html('<div class="text-center">Something Went Wrong</div>')
-                                    //$('.js-competencyAcheivement.js-loader').hide();
-                                });
-
-                        });
+                                "dataProvider": series,
+                                "valueAxes": [{
+                                    "stackType": "regular",
+                                    "axisAlpha": 0.5,
+                                    "gridAlpha": 0
+                                }],
+                                "graphs": [{
+                                    "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
+                                    "fillAlphas": 0.8,
+                                    "labelText": "[[value]]",
+                                    "lineAlpha": 0.3,
+                                    "title": "Yes",
+                                    "type": "column",
+                                    "color": "#000000",
+                                    "valueField": "yes_count"
+                                }, {
+                                    "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
+                                    "fillAlphas": 0.8,
+                                    "labelText": "[[value]]",
+                                    "lineAlpha": 0.3,
+                                    "title": "No",
+                                    "type": "column",
+                                    "color": "#000000",
+                                    "valueField": "no_count"
+                                }, {
+                                    "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
+                                    "fillAlphas": 0.8,
+                                    "labelText": "[[value]]",
+                                    "lineAlpha": 0.3,
+                                    "title": "Partial",
+                                    "type": "column",
+                                    "color": "#000000",
+                                    "valueField": "partial_count"
+                                }],
+                                "rotate": true,
+                                "categoryField": "target",
+                                "categoryAxis": {
+                                    "gridPosition": "start",
+                                    "axisAlpha": 0,
+                                    "gridAlpha": 0,
+                                    "position": "left"
+                                },
+                                "export": {
+                                    "enabled": true
+                                }
+                            });
                     } else {
-                        $('#catDrill').html('<div class="text-center">No Data</div>')
+                        $('#targetStatusCategory').html('<div class="text-center">No Data</div>')
                     }
-                    $('.js-competencyCategory.js-loader').hide();
+                    $('.js-targetStatusCategory.js-loader').hide();
                 }, error: function() {
-            $('#competencyCategory').html('<div class="text-center">Something Went Wrong</div>')
-            $('.js-competencyCategory.js-loader').hide();
+            $('#targetStatusCategory').html('<div class="text-center">Something Went Wrong</div>')
+            $('.js-targetStatusCategory.js-loader').hide();
         }
             }); // end of ajax call
 
@@ -857,82 +778,6 @@ HPD.urls = {
             }
             });
 //----------------------------------------------------------------------------------------------------------------------
-        $.when( $.ajax({
-            method: 'GET',
-            url: HPD.urls.survey + filterCQuery(3, true)}),$.ajax({
-            method: 'GET',
-            url: HPD.urls.competencyDescription})).
-        then(function( resp1, resp2 ) {
-                pendingCalls.competencyAnalysis = resp1[2];
-                var res = resp1[0], resDesc = resp2[0].result.competency;
-                var chartItems = res.result.competencyAnalysis, series = [], filterLevel = {}, gradeObj = {};
-                if(chartItems.length) {
-                    chartItems.forEach(function (item) {
-                        gradeObj = {};
-                        if (item.competency) {
-                            gradeObj.competency = item.competency;
-                            gradeObj.description = resDesc[item.competency].competency_description;
-                            gradeObj.success = Math.round(item.success / item.total * 100);
-                            series.push(gradeObj)
-                        }
-                    });
-
-                    AmCharts.makeChart('competencyAcheivement', {
-                        type: 'serial',
-                        theme: 'blur',
-                        color: '#fff',
-                        dataProvider: series,
-                        valueAxes: [
-                            {
-                                position: 'left',
-                                title: 'Success Percentage',
-                                unit: '%',
-                                'minimium': 0,'maximum': 100
-                            }
-                        ],
-                        startDuration: 1,
-                        graphs: [
-                            {
-                                balloonText: '<b>[[competency]]: [[value]]%</b><br/><span>[[description]]</span>',
-                                fillColorsField: 'color',
-                                fillAlphas: 0.9,
-                                lineAlpha: 0.2,
-                                type: 'column',
-                                valueField: 'success'
-                            }
-                        ],
-                        chartCursor: {
-                            categoryBalloonEnabled: false,
-                            cursorAlpha: 0,
-                            zoomable: false
-                        },
-                        categoryField: 'competency',
-                        categoryAxis: {
-                            gridPosition: 'start',
-                            labelRotation: 90,
-                            gridAlpha: 0.5,
-                            gridColor: '#f0fef1'
-                        },
-                        export: {
-                            enabled: true
-                        },
-                        "chartScrollbar": {
-                            "enabled": true,
-                            "selectedBackgroundColor" : '#333',
-                            "gridCount" : 10
-                        },
-                        creditsPosition: 'top-right'
-                    });
-                } else {
-                    $('#competencyAcheivement').html('<div class="text-center">No Data</div>')
-                }
-
-                $('.js-competencyAcheivement.js-loader').hide();
-            //}, error : function() {
-            //$('#competencyAcheivement').html('<div class="text-center">Something Went Wrong</div>')
-            //$('.js-competencyAcheivement.js-loader').hide();
-            });
-
 
     }
     el.$filter.on('change', function() {
