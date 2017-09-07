@@ -33,3 +33,9 @@ $ node app
 
 
 mongoimport -d dash_test --collection school  --type csv --file school_data.csv   --headerline
+
+
+mongoimport -h 34.230.165.196 -d test --collection survey --file data_test1.json
+
+
+ssh -i /Users/himanshujain/Downloads/btweb.pem ubuntu@34.230.165.196
