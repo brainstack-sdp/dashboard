@@ -5,11 +5,8 @@
 var HPD = {};
 
 HPD.urls = {
-    filterList: 'school',
-    studentsEnrolled : 'school/enrollment',
-    chartRecord : 'student',
-    competencyRecord : 'competency',
-    competencyDescription : 'competency/description'
+    filterList: '/school',
+    survey : '/sdp/survey'
 };
 
 
@@ -19,7 +16,7 @@ HPD.urls = {
         $filter : $('.js-filter'),$iFilter : $('.js-iFilter'), $preLoader : $('#preloader'), $modal: $('.js-modal'), $navs : $('a.nav-link')
         }, filterList = {}, filters = {}, $scope={}, pendingCalls ={},
         filterAheadMap = {
-            district : ['block',, 'school_name'],
+            district : ['block', 'school_name'],
             block : ['school_name'],
             school_name : []
         }, gradeMap = {
@@ -206,46 +203,30 @@ HPD.urls = {
             });
             return queryString
         }
-        pendingCalls.assessed = $.ajax({
-            method: 'GET',
-            url: HPD.urls.chartRecord + filterQuery(8),
-            success: function (res) {
-                $('.js-access').html(res.result.studentsAccessed[0].total);
 
-            }
-        });
-        pendingCalls.enrolled = $.ajax({
-            method: 'GET',
-            url: HPD.urls.studentsEnrolled + filterEnrollQuery(),
-            success: function (res) {
-                $('.js-enroll').html(res.result.student_enrolled);
-
-            }
-        });
-
-        pendingCalls.gradePie = $.ajax({
-            method: 'GET',
-            url: HPD.urls.chartRecord + filterQuery(0),
-            success: function (res) {
-                var chartItems = res.result.gradePie;
-
-                if(chartItems.length) {
-                    createPieChart('gradePie', chartItems);
-                } else {
-                    $('#gradePie').html('<div class="text-center">No Data</div>')
-                }
-                $('.js-gradePie.js-loader').hide();
-            }, error: function() {
-                $('#gradePie').html('<div class="text-center">Something Went Wrong</div>')
-                $('.js-gradePie.js-loader').hide();
-            }
-            });
+        //pendingCalls.gradePie = $.ajax({
+        //    method: 'GET',
+        //    url: HPD.urls.survey + filterQuery(0),
+        //    success: function (res) {
+        //        var chartItems = res.result.gradePie;
+        //
+        //        if(chartItems.length) {
+        //            createPieChart('gradePie', chartItems);
+        //        } else {
+        //            $('#gradePie').html('<div class="text-center">No Data</div>')
+        //        }
+        //        $('.js-gradePie.js-loader').hide();
+        //    }, error: function() {
+        //        $('#gradePie').html('<div class="text-center">Something Went Wrong</div>')
+        //        $('.js-gradePie.js-loader').hide();
+        //    }
+        //    });
         pendingCalls.subjectStack = $.ajax({
                 method: 'GET',
-                url: HPD.urls.chartRecord + filterQuery(1),
+                url: HPD.urls.survey + filterQuery(1),
                 success: function (res) {
                     var pieData = {}, series = [], sum = 0, gradeMap = {},
-                        chartItems = res.result.subjectStack, labels = [];
+                        chartItems = res.result.complete, labels = [];
 
                     var subjects = {}, filterLevel = {}, filterLevelItems = {}, seriesObj = {}, subjectObject = {};
                     if(chartItems.length) {
@@ -351,6 +332,122 @@ HPD.urls = {
                         $('#subjectStack').html('<div class="text-center">No Data</div>')
                     }
                     $('.js-subjectStack.js-loader').hide();
+
+                    pieData = {}; series = []; sum = 0;
+                        chartItems = res.result.school_type; labels = [];
+
+                     subjects = {}, filterLevel = {}, filterLevelItems = {}, seriesObj = {}, subjectObject = {};
+                    var grades ={}, gradeObj = {};
+
+                    if(chartItems.length) {
+                        chartItems.forEach(function (item) {
+                            if (filterLevel[item[filterKey]]) {
+                                filterLevel[item[filterKey]].push(item)
+                            } else {
+                                filterLevel[item[filterKey]] = [item];
+                            }
+                        });
+                        for (var i in filterLevel) {
+                            total = 0;
+                            grades = {"केवल प्राथमिक । Primary only (Class 1-5)": 0, "केवल उच्च प्राथमिक । Upper Primary only (Class 6-8)": 0, "उच्च प्राथमिक एवं माध्यमिक या उच्च माध्यमिक । Upper Primary + Secondary/ Senior Secondary (Class 6-10 OR Class 6-12)": 0}
+                            filterLevel[i].forEach(function (item) {
+                                grades[item.grade] = item.size;
+                            });
+                            gradeObj = {};
+
+                            gradeObj.A = Math.round((grades.A * 100 || 0) / total);
+                            gradeObj.B = Math.round((grades.B * 100 || 0) / total);
+                            gradeObj.C = Math.round((grades.C * 100 || 0) / total);
+                            gradeObj.D = Math.round((grades.D * 100 || 0) / total);
+                            gradeObj.E = Math.round((grades.E * 100 || 0) / total);
+                            gradeObj[filterKey] = i;
+                            series.push(gradeObj)
+                        }
+                        AmCharts.makeChart("gradeStack", {
+                            "type": "serial",
+                            "theme": "light",
+                            color: '#fff',
+                            "colors": [
+                                gradeColors.E,
+                                gradeColors.D,
+                                gradeColors.C,
+                                gradeColors.B,
+                                gradeColors.A
+                            ],
+                            "legend": {
+                                "horizontalGap": 10,
+                                "maxColumns": 1,
+                                "position": "right",
+                                "useGraphSettings": true,
+                                "markerSize": 10
+                            },
+                            "dataProvider": series,
+                            "valueAxes": [
+                                {
+                                    "id": "ValueAxis-1",
+                                    "stackType": "100%",
+                                    "unit": '%',
+                                    "title": "Grade Distribution"
+                                }
+                            ],
+                            "graphs": [{
+                                "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
+                                "fillAlphas": 0.8,
+                                "labelText": "[[value]]",
+                                "lineAlpha": 0.3,
+                                "title": "P",
+                                "type": "column",
+                                "color": "#000000",
+                                "valueField": "E"
+                            },
+                                {
+                                    "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
+                                    "fillAlphas": 0.8,
+                                    "labelText": "[[value]]",
+                                    "lineAlpha": 0.3,
+                                    "title": "UP",
+                                    "type": "column",
+                                    "color": "#000000",
+                                    "valueField": "D"
+                                },
+                                {
+                                    "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
+                                    "fillAlphas": 0.8,
+                                    "labelText": "[[value]]",
+                                    "lineAlpha": 0.3,
+                                    "title": "UP+S",
+                                    "type": "column",
+                                    "color": "#000000",
+                                    "valueField": "C"
+                                }],
+                            "categoryField": filterKey,
+                            "categoryAxis": {
+                                "gridPosition": "start",
+                                "axisAlpha": 0,
+                                "gridAlpha": 0,
+                                "position": "left",
+                                labelRotation: 45
+                            },
+                            "export": {
+                                "enabled": true,
+                                "reviver": function (nodeObj) {
+                                    if (nodeObj.className === 'amcharts-axis-label') {
+                                        nodeObj.fill = '#333';
+                                    }
+                                }
+                            },
+                            "chartScrollbar": {
+                                "enabled": true,
+                                "selectedBackgroundColor": '#333',
+                                "gridCount": 4
+                            }
+
+                        });
+                    } else {
+                        $('#gradeStack').html('<div class="text-center">No Data</div>')
+                    }
+                    $('.js-gradeStack.js-loader').hide();
+
                 }, error: function() {
                 $('#subjectStack').html('<div class="text-center">Something Went Wrong</div>')
                 $('.js-subjectStack.js-loader').hide();
@@ -359,7 +456,7 @@ HPD.urls = {
 
         pendingCalls.classStack = $.ajax({
                 method: 'GET',
-                url: HPD.urls.chartRecord + filterQuery(2),
+                url: HPD.urls.survey + filterQuery(2),
                 success: function (res) {
 
                     var chartItems = res.result.classStack, labels = [], series = [], filterLevel = {}, filterLevelItems = {}, seriesObj = {}, levels = ['Human', 'Physical', 'Financial resource'];
@@ -478,120 +575,12 @@ HPD.urls = {
             });
         pendingCalls.gradeStack = $.ajax({
                 method: 'GET',
-                url: HPD.urls.chartRecord + filterQuery(3),
+                url: HPD.urls.survey + filterQuery(3),
                 success: function (res) {
 
                     var chartItems = res.result.gradeStack, labels = [], series = [], filterLevel = {};
                     var gradeObj = {A: {}, B: {}, C: {}, D: {}, E: {}}, grades = {}, gradeData = [], total = 0;
-                    if(chartItems.length) {
-                        chartItems.forEach(function (item) {
-                            if (filterLevel[item[filterKey]]) {
-                                filterLevel[item[filterKey]].push(item)
-                            } else {
-                                filterLevel[item[filterKey]] = [item];
-                            }
-                        });
-                        for (var i in filterLevel) {
-                            total = 0;
-                            grades = {A: 0, B: 0, C: 0, D: 0, E: 0}
-                            filterLevel[i].forEach(function (item) {
-                                total += item.count;
-                                grades[item.grade] = item.count;
-                            });
-                            gradeObj = {};
 
-                            gradeObj.A = Math.round((grades.A * 100 || 0) / total);
-                            gradeObj.B = Math.round((grades.B * 100 || 0) / total);
-                            gradeObj.C = Math.round((grades.C * 100 || 0) / total);
-                            gradeObj.D = Math.round((grades.D * 100 || 0) / total);
-                            gradeObj.E = Math.round((grades.E * 100 || 0) / total);
-                            gradeObj[filterKey] = i;
-                            series.push(gradeObj)
-                        }
-                        AmCharts.makeChart("gradeStack", {
-                            "type": "serial",
-                            "theme": "light",
-                            color: '#fff',
-                            "colors": [
-                                gradeColors.E,
-                                gradeColors.D,
-                                gradeColors.C,
-                                gradeColors.B,
-                                gradeColors.A
-                            ],
-                            "legend": {
-                                "horizontalGap": 10,
-                                "maxColumns": 1,
-                                "position": "right",
-                                "useGraphSettings": true,
-                                "markerSize": 10
-                            },
-                            "dataProvider": series,
-                            "valueAxes": [
-                                {
-                                    "id": "ValueAxis-1",
-                                    "stackType": "100%",
-                                    "unit": '%',
-                                    "title": "Grade Distribution"
-                                }
-                            ],
-                            "graphs": [{
-                                "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
-                                "fillAlphas": 0.8,
-                                "labelText": "[[value]]",
-                                "lineAlpha": 0.3,
-                                "title": "P",
-                                "type": "column",
-                                "color": "#000000",
-                                "valueField": "E"
-                            },
-                                {
-                                    "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
-                                    "fillAlphas": 0.8,
-                                    "labelText": "[[value]]",
-                                    "lineAlpha": 0.3,
-                                    "title": "UP",
-                                    "type": "column",
-                                    "color": "#000000",
-                                    "valueField": "D"
-                                },
-                                {
-                                    "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
-                                    "fillAlphas": 0.8,
-                                    "labelText": "[[value]]",
-                                    "lineAlpha": 0.3,
-                                    "title": "UP+S",
-                                    "type": "column",
-                                    "color": "#000000",
-                                    "valueField": "C"
-                                }],
-                            "categoryField": filterKey,
-                            "categoryAxis": {
-                                "gridPosition": "start",
-                                "axisAlpha": 0,
-                                "gridAlpha": 0,
-                                "position": "left",
-                                labelRotation: 45
-                            },
-                            "export": {
-                                "enabled": true,
-                                "reviver": function (nodeObj) {
-                                    if (nodeObj.className === 'amcharts-axis-label') {
-                                        nodeObj.fill = '#333';
-                                    }
-                                }
-                            },
-                            "chartScrollbar": {
-                                "enabled": true,
-                                "selectedBackgroundColor": '#333',
-                                "gridCount": 4
-                            }
-
-                        });
-                    } else {
-                        $('#gradeStack').html('<div class="text-center">No Data</div>')
-                    }
-                    $('.js-gradeStack.js-loader').hide();
 
                 }, error: function() {
                 $('#gradeStack').html('<div class="text-center">Something Went Wrong</div>')
@@ -600,7 +589,7 @@ HPD.urls = {
             });
         pendingCalls.competencyType = $.ajax({
                 method: 'GET',
-                url: HPD.urls.competencyRecord + filterCQuery(0, true),
+                url: HPD.urls.survey + filterCQuery(0, true),
                 success: function (res) {
                     var chartItems = res.result.competencyType, series = [], filterLevel = {}, gradeObj = {};
 
@@ -712,7 +701,7 @@ HPD.urls = {
          */
         pendingCalls.competencyCategory = $.ajax({
                 method: 'GET',
-                url: HPD.urls.competencyRecord + filterCQuery(1, true),
+                url: HPD.urls.survey + filterCQuery(1, true),
                 success: function (res) {
                     var chartItems = res.result.competencyCategory, series = [], labels=[], categoryList = {}, gradeObj = {};
 
@@ -781,7 +770,7 @@ HPD.urls = {
 
                             $.when( $.ajax({
                                 method: 'GET',
-                                url: HPD.urls.competencyRecord + filterCQuery(4, true) + '&competency_category='+encodeURIComponent(category)}), $.ajax({
+                                url: HPD.urls.survey + filterCQuery(4, true) + '&competency_category='+encodeURIComponent(category)}), $.ajax({
                                 method: 'GET',
                                 url: HPD.urls.competencyDescription})).
                                 then(function( resp1, resp2 ) {
@@ -867,7 +856,7 @@ HPD.urls = {
 
         pendingCalls.competencyDistribution = $.ajax({
                 method: 'GET',
-                url: HPD.urls.competencyRecord + filterCQuery(2, true),
+                url: HPD.urls.survey + filterCQuery(2, true),
                 success: function (res) {
 
                     var chartItems = res.result.competencyDistribution, series = [], filterLevel = {}, gradeObj = {};
@@ -939,7 +928,7 @@ HPD.urls = {
 //----------------------------------------------------------------------------------------------------------------------
         $.when( $.ajax({
             method: 'GET',
-            url: HPD.urls.competencyRecord + filterCQuery(3, true)}),$.ajax({
+            url: HPD.urls.survey + filterCQuery(3, true)}),$.ajax({
             method: 'GET',
             url: HPD.urls.competencyDescription})).
         then(function( resp1, resp2 ) {
