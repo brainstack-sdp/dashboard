@@ -35,28 +35,35 @@ module.exports.home = function (req, res) {
 module.exports.analyticsSurvey = function(req, res) {
     let group = '';
     let group_name = '';
+    let query = ''
     let where = undefined;
     if(req.query.district) {
+      query = 'district';
       group_name = '[question(343), option(10871)';
       group = '[question(343), option(10872)]';
       where = {'$match': {'[question(343), option(10871)]': req.query.district }};
     } else if(req.query.block) {
+      query = 'block';
       group_name = '[question(343), option(10872)]';
       group = '[question(343), option(10873)]';
       where = {'$match': {'[question(343), option(10872)]': req.query.block }};
     } else if(req.query.school_name) {
+      query = 'school_name';
       group_name = ['summer_winter'];
       group = '[question(591)]';
       where = {'$match': {'[question(343), option(10873)]': req.query.school_name }};
     } else if(req.query.summer_winter) {
+      query = 'summer_winter';
       group_name = '[question(591)]';
       group = '[question(153)]';
       where = {'$match': {'[question(591)]': req.query.summer_winter }};
     } else if(req.query.school_type) {
+      query = 'school_type';
       group_name = '[question(153)]';
       group = 'question(591)]';
       where = {'$match': {'[question(153)]': req.query.school_type }};
     } else{
+      query = 'district';
       group_name = '[question(343), option(10871)]';
       group = '[question(343), option(10871)]';
       where = {'$match': {'id': {'$exists': true}}}
@@ -70,11 +77,11 @@ module.exports.analyticsSurvey = function(req, res) {
     //   };
     // }
     Promise.all([
-        SurveyModel.completeStatusCount(group, where, group_name),
-        SurveyModel.schoolTypeCount(where, group_name),
-        SurveyModel.resourceCount(where, resources[584], group_name),
-        SurveyModel.resourceCount(where, resources[587], group_name),
-        SurveyModel.resourceCount(where, resources[588], group_name),
+        SurveyModel.completeStatusCount(group, where, group_name, query),
+        SurveyModel.schoolTypeCount(where, group_name, query),
+        SurveyModel.resourceCount(where, resources[584], group_name, query),
+        SurveyModel.resourceCount(where, resources[587], group_name, query),
+        SurveyModel.resourceCount(where, resources[588], group_name, query),
         
     ]).then(function(data) {
       console.log(data);
