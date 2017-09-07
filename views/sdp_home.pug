@@ -63,92 +63,59 @@ html
                                     .panel-heading
                                         h3.panel-title 1. Completion of SDP
                                     .panel-body
-                                        .ct-chart(id="gradePie" style="width: 100%; height: 480px;")
-                                        .text-right No. of students assessed(approx.):&nbsp;
-                                            span.js-access
-                                        .text-right No. of students enrolled:&nbsp;
-                                            span.js-enroll -
-                                        .preloader.js-loader.js-gradePie
+                                        div(id="sdpstatus" style="width: 100%; height: 480px;")
+                                        .preloader.js-loader.js-subjectStack
                                             div
+
                                 .panel.panel-blur
                                     .panel-heading
                                         h3.panel-title 2. Total SDPs Targets filled by School Type
                                     .panel-body
-                                        div(id='subjectStack' style="width: 100%; height: 400px;")
-                                        .text-right No. of students assessed(approx.):&nbsp;
-                                            span.js-access
-                                        .text-right No. of students enrolled:&nbsp;
-                                            span.js-enroll -
-                                        .preloader.js-loader.js-subjectStack
+                                        .ct-chart(id="gradeStack" style="width: 100%; height: 400px;")
+                                        .preloader.js-loader.js-gradeStack
                                             div
                                 .panel.panel-blur
                                     .panel-heading
                                         h3.panel-title 3. Type of Target
                                     .panel-body
-                                        div(id="classStack" style="width: 100%; height: 400px;")
-                                        .text-right No. of students assessed(approx.):&nbsp;
-                                            .js-access
-                                        .text-right No. of students enrolled:&nbsp;
-                                            span.js-enroll -
-
-                                        .preloader.js-loader.js-classStack
+                                        .ct-chart(id='gradePie' style="width: 100%; height: 400px;")
+                                        .preloader.js-loader.js-gradePie
                                             div
-
                                 .panel.panel-blur
                                     .panel-heading
                                         h3.panel-title 4. Resource Requirements
                                     .panel-body
-                                        .ct-chart(id="gradeStack" style="width: 100%; height: 400px;")
-                                        .text-right No. of students assessed(approx.):&nbsp;
-                                            span.js-access
-                                        .text-right No. of students enrolled:&nbsp;
-                                            span.js-enroll
-                                        .preloader.js-loader.js-gradeStack
+                                        div(id="resourceStack" style="width: 100%; height: 480px;")
+                                        .preloader.js-loader.js-resourceStack
                                             div
                             .tab-pane
                                 .panel.panel-blur
                                     .panel-heading
                                         h3.panel-title 5. Target Status
                                     .panel-body
-                                        .ct-chart(id="competencyTrends" style="width: 100%; height: 400px;")
-                                        .text-right No. of students assessed(approx.):&nbsp;
-                                            span.js-access
-                                        .text-right No. of students enrolled:&nbsp;
-                                            span.js-enroll
-                                        .preloader.js-loader.js-competencyTrends
+                                        .ct-chart(id="targetStatusValue" style="width: 100%; height: 400px;")
+                                        .preloader.js-loader.js-targetStatusValue
                                             div
                                 .panel.panel-blur
                                     .panel-heading
                                         h3.panel-title 6. Target Form Completion
                                     .panel-body
-                                        .ct-chart(id="competencyCategory" style="width: 100%; height: 400px;")
-                                        .text-right No. of students assessed(approx.):&nbsp;
-                                            span.js-access
-                                        .text-right No. of students enrolled:&nbsp;
-                                            span.js-enroll
+                                        .ct-chart(id="targetCompletion" style="width: 100%; height: 400px;")
                                         .preloader.js-loader.js-competencyCategory
                                             div
                                 .panel.panel-blur
                                     .panel-heading
                                         h3.panel-title 7. Percentage of Targets by Status (Administrative Units)
                                     .panel-body
-                                        .ct-chart(id="competency" style="width: 100%; height: 400px;")
-                                        .text-right No. of students assessed(approx.):&nbsp;
-                                            span.js-access
-                                        .text-right No. of students enrolled:&nbsp;
-                                            span.js-enroll -
-                                        .preloader.js-loader.js-competency
+                                        .ct-chart(id="targetStatus" style="width: 100%; height: 400px;")
+                                        .preloader.js-loader.js-targetStatus
                                             div
                                 .panel.panel-blur
                                     .panel-heading
                                         h3.panel-title 8. Percentage of Targets by Status (Target Category),
                                     .panel-body
-                                        .ct-chart(id="competencyAcheivement" style="width: 100%; height: 400px;")
-                                        .text-right No. of students assessed(approx.):&nbsp;
-                                            span.js-access
-                                        .text-right No. of students enrolled:&nbsp;
-                                            span.js-enroll -
-                                        .preloader.js-loader.js-competencyAcheivement
+                                        .ct-chart(id="targetStatusCategory" style="width: 100%; height: 400px;")
+                                        .preloader.js-loader.js-targetStatusCategory
                                             div
             footer.al-footer.clearfix
                 .al-footer-right Created by Samarth
@@ -167,4 +134,4 @@ html
             div
         script(src="js/vendor-727ff9d081.js")
         script(src="https://www.amcharts.com/lib/3/plugins/export/export.min.js")
-        script(src="js/app.js")
+        script(src="js/sdpapp.js")
