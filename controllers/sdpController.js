@@ -15,7 +15,12 @@ let sessionUtils = require("../utils/sessionUtils");
 let log = require("../helpers/logger");
 let SurveyModel = require("../documents/Survey");
 
-
+let resources = {
+  '584': '[question(584), question_pipe(\"इन वाजिब संसाधनों की ज़रूरत होगी<br />\r\n(Need to procure these resources - reasonable estimate)\")]',
+  '587': '[question(587), question_pipe(\"इन वाजिब संसाधनों की ज़रूरत होगी<br />\r\n(Need to procure these resources - reasonable estimate)\")]',
+  '588': '[question(588), question_pipe(\"इन वाजिब संसाधनों की ज़रूरत होगी<br />\r\n(Need to procure these resources - reasonable estimate)\")]',
+         
+}
 module.exports.home = function (req, res) {
     res.render('sdp_home');
   //if (sessionUtils.checkExists(req, res, "user")) {
@@ -28,15 +33,55 @@ module.exports.home = function (req, res) {
 
 
 module.exports.analyticsSurvey = function(req, res) {
-
+    let group = '';
+    let where = undefined;
+    if(req.query.district) {
+      // attributes = ['block'];
+      group = '[question(343), option(10872)]';
+      where = {'$match': {'[question(343), option(10871)]': req.query.district }};
+    } else if(req.query.block) {
+      // attributes = ['cluster'];
+      group = '[question(343), option(10873)]';
+      where = {'$match': {'[question(343), option(10872)]': req.query.block }};
+    } else if(req.query.school_name) {
+      // attributes = ['summer_winter'];
+      group = '[question(591)]';
+      where = {'$match': {'[question(343), option(10873)]': req.query.school_name }};
+    } else if(req.query.summer_winter) {
+      // attributes = ['summer_winter'];
+      group = '[question(153)]';
+      where = {'$match': {'[question(591)]': req.query.summer_winter }};
+    } else if(req.query.school_type) {
+      // attributes = ['summer_winter'];
+      group = 'question(591)]';
+      where = {'$match': {'[question(153)]': req.query.school_type }};
+    } else{
+      group = '[question(343), option(10871)]';
+      where = {'$match': {'id': {'$exists': true}}}
+    } 
+    
+    // if(req.query.summer_winter && whereSchool) {
+    //   where['summer_winter'] = req.query.summer_winter;
+    // } else if (req.query.summer_winter){
+    //   where = {
+    //     'summer_winter':req.query.summer_winter
+    //   };
+    // }
     Promise.all([
-        SurveyModel.completeStatusCount(),
-        SurveyModel.classTypeCount(),
+        SurveyModel.completeStatusCount(group, where),
+        SurveyModel.schoolTypeCount( where),
+        SurveyModel.resourceCount( where, resources[584]),
+        SurveyModel.resourceCount( where, resources[587]),
+        SurveyModel.resourceCount( where, resources[588]),
         
     ]).then(function(data) {
+      console.log(data);
         var response = {
             complete: data[0],
-            classType: data[1],
+            school_type: data[1],
+            resource_584: data[2],
+            resource_587: data[3],
+            resource_588: data[4]
         };
         res.json({'message': 'Data', 'result':response, 'error': false});
     });
