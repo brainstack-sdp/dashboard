@@ -22,10 +22,23 @@ var surveySchema = new mongoose.Schema({
 }, {strict: false, collection: 'survey'});
 
 
-surveySchema.statics.completeStatusCount = function(){
+surveySchema.statics.completeStatusCount = function(group, where, group_name){
+ 
     return new Promise (function(resolve, reject){
         "use strict";
-        this.count({"status":"Complete"}).exec(function(err, data){
+        this.aggregate([
+            where,
+            {
+                '$group': {
+                    '_id': '$'+group,
+                    'name': {'$first': '$'+group_name},
+                    'size': {
+                        '$sum': 1
+                    }
+                }
+            }
+        ]).exec(function(err, data){
+
             if(err)
                 reject(err);
             resolve(data);
@@ -41,14 +54,15 @@ surveySchema.statics.completeStatusCount = function(){
     // }.bind(this));
 };
 
-surveySchema.statics.classTypeCount = function(){
+surveySchema.statics.schoolTypeCount = function(where, group_name){
     return new Promise (function(resolve, reject){
         "use strict";
         this.aggregate([
+            where,
             {
                 '$group': {
                     '_id': '$[question(153)]',
-                    // 'name': {'$first': '$names'},
+                    'name': {'$first': '$'+group_name},
                     'size': {
                         '$sum': 1
                     }
@@ -62,16 +76,29 @@ surveySchema.statics.classTypeCount = function(){
     }.bind(this));
 };
 
-surveySchema.statics.resourceCount = function(){
+surveySchema.statics.resourceCount = function(where, resource, group_name){
     return new Promise (function(resolve, reject){
         "use strict";
-        this.count({"status":"Complete"}).exec(function(err, data){
+        this.aggregate([
+            where,
+            {
+                '$group': {
+                    '_id': '$'+resource,
+                    'name': {'$first': '$'+group_name},
+                    'size': {
+                        '$sum': 1
+                    }
+                }
+            }
+        ]).exec(function(err, data){
             if(err)
                 reject(err);
             resolve(data);
         });
     }.bind(this));
 };
+
+
 
 var SurveryModel = connApi.model('survey', surveySchema);
 
