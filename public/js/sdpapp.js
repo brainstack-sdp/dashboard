@@ -711,70 +711,99 @@ HPD.urls = {
                 url: HPD.urls.survey + filterCQuery(2, true),
                 success: function (res) {
 
-                    var chartItems = res.result.competencyDistribution, series = [], filterLevel = {}, gradeObj = {};
+                    var chartItems = res.result.status, series = [], status = {}, gradeObj = {};
                     if(chartItems.length) {
 
-                        chartItems.forEach(function (item) {
-                            gradeObj = {};
-                            gradeObj[filterKey] = item[filterKey];
-                            gradeObj.success = Math.round(item.success / item.total * 100);
-                            series.push(gradeObj)
-                        });
+                        var ans = {};
 
-                        AmCharts.makeChart('competency', {
-                            type: 'serial',
-                            theme: 'blur',
-                            color: '#fff',
-                            dataProvider: series,
-                            valueAxes: [
-                                {
-                                    axisAlpha: 0,
-                                    position: 'left',
-                                    title: 'Success Percentage',
-                                    unit: '%',
-                                    'minimium': 0, 'maximum': 100
-                                }
-                            ],
-                            startDuration: 1,
-                            graphs: [
-                                {
-                                    balloonText: '<b>[[category]]: [[value]]%</b>',
-                                    fillColorsField: 'color',
-                                    fillAlphas: 0.9,
-                                    lineAlpha: 0.2,
-                                    type: 'column',
-                                    valueField: 'success'
-                                }
-                            ],
-                            chartCursor: {
-                                categoryBalloonEnabled: false,
-                                cursorAlpha: 0,
-                                zoomable: false
-                            },
-                            categoryField: filterKey,
-                            categoryAxis: {
-                                gridPosition: 'start',
-                                labelRotation: 45,
-                                gridAlpha: 0.5,
-                                gridColor: '#f0fef1'
-                            },
-                            export: {
-                                enabled: true,
-                                "reviver": function (nodeObj) {
-                                    if (nodeObj.className === 'amcharts-axis-label') {
-                                        nodeObj.fill = '#333';
-                                    }
+                        for(var i = 0; i < chartItems.length; ++i){
+                            for(var obj in chartItems[i]){
+                                gradeObj[obj] = ans[obj] ? ans[obj] + chartItems[i][obj] : chartItems[i][obj];
+                            }
+                        }
+
+                        for (var key, value in gradeObj) {
+                            status.field = key;
+                            status.value = key;
+                            series.push(status);
+                        }
+
+
+                        AmCharts.makeChart('targetStatusValue', {
+                                type: 'pie',
+                                startDuration: 0,
+                                theme: 'blur',
+                                addClassNames: true,
+                                color: '#fff',
+                                "colors": [
+                                    gradeColors.A,
+                                    gradeColors.B,
+                                    gradeColors.C,
+                                ],
+                                labelTickColor: '#fff',
+                                legend: {
+                                    position: 'right',
+                                    marginRight: 100,
+                                    valueText: '',
+                                    autoMargins: false
                                 },
-                            },
-                            creditsPosition: 'top-right'
-                        });
+                                defs: {
+                                    filter: [
+                                        {
+                                            id: 'shadow',
+                                            width: '200%',
+                                            height: '200%',
+                                            feOffset: {
+                                                result: 'offOut',
+                                                in: 'SourceAlpha',
+                                                dx: 0,
+                                                dy: 0
+                                            },
+                                            feGaussianBlur: {
+                                                result: 'blurOut',
+                                                in: 'offOut',
+                                                stdDeviation: 5
+                                            },
+                                            feBlend: {
+                                                in: 'SourceGraphic',
+                                                in2: 'blurOut',
+                                                mode: 'normal'
+                                            }
+                                        }
+                                    ]
+                                },
+                                "balloonText": "[[title]]<br><span style='font-size:14px'>([[percents]]%)</span>",
+                                dataProvider: series,
+                                valueField: 'value',
+                                titleField: 'field',
+                                export: {
+                                    enabled: true,
+                                    "reviver": function(nodeObj) {
+                                        if (nodeObj.className === 'amcharts-pie-label'){
+                                            nodeObj.fill = '#333';
+                                        }
+                                    },
+                                },
+                                creditsPosition: 'bottom-left',
+
+                                autoMargins: false,
+                                marginTop: 10,
+                                alpha: 0.8,
+                                marginBottom: 0,
+                                marginLeft: 0,
+                                marginRight: 0,
+                                pullOutRadius: 0,
+                                responsive: {
+                                    enabled: false
+                                }
+                            });
                     } else {
-                        $('#competency').html('<div class="text-center">No Data</div>')
+                        $('#targetStatusValue').html('<div class="text-center">No Data</div>')
                     }
-                    $('.js-competency.js-loader').hide();
+                    $('.js-targetStatusValue.js-loader').hide();
                 }, error: function() {
-                $('#competency').html('<div class="text-center">Something Went Wrong</div>')
-                $('.js-competency.js-loader').hide();
+                $('#targetStatusValue').html('<div class="text-center">Something Went Wrong</div>')
+                $('.js-targetStatusValue.js-loader').hide();
             }
             });
 //----------------------------------------------------------------------------------------------------------------------
