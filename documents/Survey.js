@@ -22,18 +22,8 @@ var surveySchema = new mongoose.Schema({
 }, {strict: false, collection: 'survey'});
 
 
-surveySchema.statics.completeStatusCount = function(group, where){
-    console.log(
-            {
-                '$group': {
-                    '_id': '$'+group,
-                    'size': {
-                        '$sum': 1
-                    }
-                }
-            }
-        );
-    console.log(where);
+surveySchema.statics.completeStatusCount = function(group, where, group_name){
+ 
     return new Promise (function(resolve, reject){
         "use strict";
         this.aggregate([
@@ -41,14 +31,14 @@ surveySchema.statics.completeStatusCount = function(group, where){
             {
                 '$group': {
                     '_id': '$'+group,
-                    // 'name': {'$first': '$names'},
+                    'name': {'$first': '$'+group_name},
                     'size': {
                         '$sum': 1
                     }
                 }
             }
         ]).exec(function(err, data){
-            
+
             if(err)
                 reject(err);
             resolve(data);
@@ -64,7 +54,7 @@ surveySchema.statics.completeStatusCount = function(group, where){
     // }.bind(this));
 };
 
-surveySchema.statics.schoolTypeCount = function(where){
+surveySchema.statics.schoolTypeCount = function(where, group_name){
     return new Promise (function(resolve, reject){
         "use strict";
         this.aggregate([
@@ -72,6 +62,7 @@ surveySchema.statics.schoolTypeCount = function(where){
             {
                 '$group': {
                     '_id': '$[question(153)]',
+                    'name': {'$first': '$'+group_name},
                     'size': {
                         '$sum': 1
                     }
@@ -85,7 +76,7 @@ surveySchema.statics.schoolTypeCount = function(where){
     }.bind(this));
 };
 
-surveySchema.statics.resourceCount = function(where, resource){
+surveySchema.statics.resourceCount = function(where, resource, group_name){
     return new Promise (function(resolve, reject){
         "use strict";
         this.aggregate([
@@ -93,6 +84,7 @@ surveySchema.statics.resourceCount = function(where, resource){
             {
                 '$group': {
                     '_id': '$'+resource,
+                    'name': {'$first': '$'+group_name},
                     'size': {
                         '$sum': 1
                     }
