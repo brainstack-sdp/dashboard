@@ -277,25 +277,15 @@ surveySchema.statics.targetTypeCount = function(where, resource, group_name, que
             where,
             { $project: { [target_var['575_1']]: 1,
                           [target_var['647_1']]: 1, 
+                          [target_var['647_2']]: 1, 
                           'cp_1': { $substr: [ "$"+target_var['504_1'], 0, 9 ] },
                           'cp_2': { $substr: [ "$"+target_var['504_2'], 0, 9 ] },
-                          'cp_3': { $substr: [ "$"+target_var['504_3'], 0, 9 ] },
-                          // 'cp_1':{[target_var['504_1']]: { $regex: 'Community', $options: 'g' }}
-                          // 'cp_1':{[target_var['504_1']]: { $regex: 'Community', $options: 'g' }}
-                          // 'cp_1':{[target_var['504_1']]: { $regex: 'Community', $options: 'g' }}
+                          'cp_3': { $substr: [ "$"+target_var['504_3'], 0, 9 ] }
                       },
             },
             {
                 '$group': {
                     "_id": null,
-                    // '_id': {
-                    //     'st': '$[question(575), question_pipe(\"यह संसाधन उपलब्ध है<br />\r\n(Already have these resources)]', 
-                    //     'st': '$[question(504), question_pipe(\"यह संसाधन उपलब्ध है<br />\r\n(Already have these resources)]', 
-                    //     'st': '$[question(504), question_pipe(\"इन वाजिब संसाधनों की ज़रूरत होगी<br />\r\n(Need to procure these resources - reasonable estimate)\")]', 
-                    //     'st': '$[question(504), question_pipe(\"3\")]',
-                    //     'st': '$[question(647), question_pipe(\"यह संसाधन उपलब्ध है<br />\r\n(Already have these resources)]',
-                    //     'st': '$[question(647), question_pipe(\"इन वाजिब संसाधनों की ज़रूरत होगी<br />\r\n(Need to procure these resources - reasonable estimate)\")]'
-                    // },
                     "learning_curve": { "$sum": {
                         "$cond": [ { [target_var['575_1']]: { "$ifNull": [ "$field", false ] } }, 1, 0 ]
                     } },
@@ -321,39 +311,16 @@ surveySchema.statics.targetTypeCount = function(where, resource, group_name, que
                                             { $eq:['$cp_3', 'School Ma' ] },
                                             { $eq:['$cp_3', 'विद्यालय' ] }] 
                                         }, 1, 0 ]
-                    } },
-                    // "community_participation": { "$sum": {
-                    //     "$cond": [ { $or : [{[target_var['504_1']]: { $regex: 'Community', $options: 'g' }}, 
-                    //                         {[target_var['504_2']]: { $regex: 'Community', $options: 'g' }}, 
-                    //                         {[target_var['504_3']]: { $regex: 'Community', $options: 'g' }}] 
-                    //                     }, 1, 0 ]
-                    // } },
-                    // "teacher_performance": { "$sum": {
-                    //     "$cond": [ {  $or : [{[target_var['504_1']]: { $regex: 'Community', $options: 'g' }}, 
-                    //                          {[target_var['504_2']]: { $regex: 'Community', $options: 'g' }}, 
-                    //                          {[target_var['504_3']]: { $regex: 'Community', $options: 'g' }}] 
-                    //                     }, 1, 0 ]
-                    // } },
-                    // "school_management": { "$sum": {
-                    //     "$cond": [ { $or : [{[target_var['504_1']]: { $regex: 'Community', $options: 'g' }}, 
-                    //                         {[target_var['504_2']]: { $regex: 'Community', $options: 'g' }}, 
-                    //                         {[target_var['504_3']]: { $regex: 'Community', $options: 'g' }}] 
-                    //                     }, 1, 0 ]
-                    // } },        
+                    } },        
                 }
             },
             { "$project": {
                 "_id": 0,
-                // 'status': "$_id.st",
                 "teacher_performance": 1,
                 "community_participation": 1,
                 "school_management": 1,
                 "learning_curve": 1,
                 "others": 1,
-                "cp_2": "$cp_2",
-                "cp_1": "$cp_1",
-                "cp_3": "$cp_3"
-
             } }
         ]).exec(function(err, data){
             if(err)
