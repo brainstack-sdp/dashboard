@@ -722,9 +722,9 @@ HPD.urls = {
                             }
                         }
 
-                        for (var key, value in gradeObj) {
+                        for (var key in gradeObj) {
                             status.field = key;
-                            status.value = key;
+                            status.value = gradeObj[key];
                             series.push(status);
                         }
 
