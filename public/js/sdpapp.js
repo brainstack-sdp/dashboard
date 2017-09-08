@@ -6,6 +6,7 @@ var HPD = {};
 
 HPD.urls = {
     filterList: '/school',
+    schoolCount: '/school/sdp',
     survey : '/sdp/survey'
 };
 
@@ -114,7 +115,7 @@ HPD.urls = {
         appliedFilter.type = type;
         appliedFilter.value = $el.val();
 
-        pendingCalls.filter = $.ajax({
+         $.ajax({
             method: 'GET',
             url : HPD.urls.filterList + '?' + type +'=' +encodeURIComponent($el.val()),
             success: function(res) {
@@ -189,44 +190,37 @@ HPD.urls = {
 
             }
             $.each(el.$iFilter, function(key, item) {
-                if(($(item).data('type')=='summer_winter' || $(item).data('type')=='class_code') && $(item).val()){
+                if(($(item).data('type')=='summer_winter') && $(item).val()){
                     queryString += $(item).data('type') +'='+ $(item).val() + '&'
                 }
             });
             return queryString
         }
 
-        //pendingCalls.gradePie = $.ajax({
-        //    method: 'GET',
-        //    url: HPD.urls.survey + filterQuery(0),
-        //    success: function (res) {
-        //        var chartItems = res.result.gradePie;
-        //
-        //        if(chartItems.length) {
-        //            createPieChart('gradePie', chartItems);
-        //        } else {
-        //            $('#gradePie').html('<div class="text-center">No Data</div>')
-        //        }
-        //        $('.js-gradePie.js-loader').hide();
-        //    }, error: function() {
-        //        $('#gradePie').html('<div class="text-center">Something Went Wrong</div>')
-        //        $('.js-gradePie.js-loader').hide();
-        //    }
-        //    });
-        pendingCalls.subjectStack = $.ajax({
+        pendingCalls.subjectStack =  $.when($.ajax({
                 method: 'GET',
-                url: HPD.urls.survey + filterQuery(1),
-                success: function (res) {
-                    var pieData = {}, series = [], sum = 0, gradeMap = {},
+                url: HPD.urls.survey + filterQuery(1)}), $.ajax({
+            method: 'GET',
+            url: HPD.urls.schoolCount + filterQuery(1)}))
+            .then(function (result, schoolResult) {
+                var res = result[0], school = schoolResult[0].result.count;
+
+                    var pieData = {}, series = [], sum = 0,totalSchools= 0, gradeMap = {},
                         chartItems = res.result.complete, labels = [];
 
                     var subjects = {}, filterLevel = {}, filterLevelItems = {}, seriesObj = {}, subjectObject = {};
                     if(chartItems.length) {
                         chartItems.forEach(function (item) {
                             gradeObj = {};
-                            gradeObj[filterKey] = item[filterKey];
-                            gradeObj.size = item.size/item.size*100;
-                            series.push(gradeObj)
+                            if(item[filterKey]){
+                                gradeObj[filterKey] = item[filterKey];
+                                totalSchools = school.filter(function( obj ) {
+                                    return obj[filterKey] == item[filterKey];
+                                });
+                                gradeObj.size = (item.size/totalSchools[0].size)*100
+                                series.push(gradeObj)
+                            }
+
                         });
 
                         AmCharts.makeChart('sdpstatus', {
@@ -426,10 +420,16 @@ HPD.urls = {
                             })
                         }
                         for (var i in filterLevel) {
+                            if(!i){
+                                continue;
+                            }
                             seriesObj = {};
                             var sum = 0, total = 0, ctr=0;
+                            totalSchools = school.filter(function( obj ) {
+                                return obj[filterKey] == i
+                            });
                             filterLevel[i].forEach(function (item) {
-                                total += item.size;
+
                                 switch (item.resource) {
                                     case levels[0] :
                                         sum += 1 * item.size;
@@ -441,9 +441,10 @@ HPD.urls = {
                                         sum += 1 * item.size;
                                         break;
                                 }
-                                seriesObj[item.resource] = (sum / total)*100;
+                                seriesObj[item.resource] = sum
 
                             });
+
                             seriesObj.level = i;
 
                             series.push(seriesObj)
@@ -477,10 +478,6 @@ HPD.urls = {
                                 "position": "left",
                                 labelRotation: 45
                             },
-                            valueAxes: [{
-                                minimum: 0,
-                                maximum: 5
-                            }],
                             "export": {
                                 "enabled": true,
                                 "reviver": function (nodeObj) {
@@ -500,10 +497,6 @@ HPD.urls = {
                         $('#resourceStack').html('<div class="text-center">No Data</div>')
                     }
                     $('.js-resourceStack.js-loader').hide();
-
-                }, error: function() {
-                $('#subjectStack').html('<div class="text-center">Something Went Wrong</div>')
-                $('.js-subjectStack.js-loader').hide();
 
                 var chartItems = res.result.target;
 
@@ -590,228 +583,186 @@ HPD.urls = {
                     $('#targetStatus').html('<div class="text-center">No Data</div>')
                 }
                 $('.js-targetStatus.js-loader').hide();
-            }
-            });
 
-        pendingCalls.classStack = $.ajax({
-                method: 'GET',
-                url: HPD.urls.survey + filterQuery(2),
-                success: function (res) {
+                var targetMap = {
+                    '11356': 'Community Participation',
+                    '11357':'Community Participation',
+                    '11358':'Community Participation',
+                    11361: 'Teacher Performance',
+                    11362: 'Teacher Performance',
+                    11363: 'Teacher Performance',
+                    11318: 'Teacher Performance',
+                    11319: 'Teacher Performance',
+                    11320: 'School Management',
+                    11321: 'School Management',
+                    11366: 'Learning Levels',
+                    11367: 'Learning Levels',
+                    11368: 'Learning Levels',
+                    15171: 'School Management',
+                    15172: 'School Management'
+                }
 
+                var chartItems = res.result.target_status, series = [], labels=[], categoryList = {}, gradeObj = {};
 
-                }, error: function() {
-                $('#classStack').html('<div class="text-center">Something Went Wrong</div>')
-                $('.js-resourceStack.js-loader').hide();
-            }
-            });
+                if(chartItems.length){
+                    chartItems.forEach(function (item) {
+                        gradeObj = {};
+                        item.target = targetMap[item.status] || 'Other'
+                    });
+                    series = chartItems
 
-        /**
-         * 7. Competency Category
-         */
-        pendingCalls.competencyCategory = $.ajax({
-                method: 'GET',
-                url: HPD.urls.survey + filterCQuery(1, true),
-                success: function (res) {
-
-                    var targetMap = {
-                        '11356': 'Community Participation',
-                        '11357':'Community Participation',
-                        '11358':'Community Participation',
-                        11361: 'Teacher Performance',
-                        11362: 'Teacher Performance',
-                        11363: 'Teacher Performance',
-                        11318: 'Teacher Performance',
-                        11319: 'Teacher Performance',
-                        11320: 'School Management',
-                        11321: 'School Management',
-                        11366: 'Learning Levels',
-                        11367: 'Learning Levels',
-                        11368: 'Learning Levels',
-                        15171: 'School Management',
-                        15172: 'School Management'
-                    }
-
-                    var chartItems = res.result.target_status, series = [], labels=[], categoryList = {}, gradeObj = {};
-
-                    if(chartItems.length){
-                        chartItems.forEach(function (item) {
-                            gradeObj = {};
-                            item.target = targetMap[item.status] || 'Other'
-                        });
-                        series = chartItems
-
-                        AmCharts.makeChart("targetStatusCategory", {
-                                "type": "serial",
-                                "theme": "light",
-                                "legend": {
-                                    "horizontalGap": 10,
-                                    "maxColumns": 1,
-                                    "position": "right",
-                                    "useGraphSettings": true,
-                                    "markerSize": 10
-                                },
-                                "dataProvider": series,
-                                "valueAxes": [{
-                                    "stackType": "regular",
-                                    "axisAlpha": 0.5,
-                                    "gridAlpha": 0
-                                }],
-                                "graphs": [{
-                                    "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
-                                    "fillAlphas": 0.8,
-                                    "labelText": "[[value]]",
-                                    "lineAlpha": 0.3,
-                                    "title": "Yes",
-                                    "type": "column",
-                                    "color": "#000000",
-                                    "valueField": "yes_count"
-                                }, {
-                                    "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
-                                    "fillAlphas": 0.8,
-                                    "labelText": "[[value]]",
-                                    "lineAlpha": 0.3,
-                                    "title": "No",
-                                    "type": "column",
-                                    "color": "#000000",
-                                    "valueField": "no_count"
-                                }, {
-                                    "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
-                                    "fillAlphas": 0.8,
-                                    "labelText": "[[value]]",
-                                    "lineAlpha": 0.3,
-                                    "title": "Partial",
-                                    "type": "column",
-                                    "color": "#000000",
-                                    "valueField": "partial_count"
-                                }],
-                                "rotate": true,
-                                "categoryField": "target",
-                                "categoryAxis": {
-                                    "gridPosition": "start",
-                                    "axisAlpha": 0,
-                                    "gridAlpha": 0,
-                                    "position": "left"
-                                },
-                                "export": {
-                                    "enabled": true
-                                }
-                            });
-                    } else {
-                        $('#targetStatusCategory').html('<div class="text-center">No Data</div>')
-                    }
-                    $('.js-targetStatusCategory.js-loader').hide();
-                }, error: function() {
-            $('#targetStatusCategory').html('<div class="text-center">Something Went Wrong</div>')
-            $('.js-targetStatusCategory.js-loader').hide();
-        }
-            }); // end of ajax call
-
-        pendingCalls.competencyDistribution = $.ajax({
-                method: 'GET',
-                url: HPD.urls.survey + filterCQuery(2, true),
-                success: function (res) {
-
-                    var chartItems = res.result.status, series = [], status = {}, gradeObj = {};
-                    if(chartItems.length) {
-
-                        var ans = {};
-
-                        for(var i = 0; i < chartItems.length; ++i){
-                            for(var obj in chartItems[i]){
-                                gradeObj[obj] = ans[obj] ? ans[obj] + chartItems[i][obj] : chartItems[i][obj];
-                            }
+                    AmCharts.makeChart("targetStatusCategory", {
+                        "type": "serial",
+                        "theme": "light",
+                        "legend": {
+                            "horizontalGap": 10,
+                            "maxColumns": 1,
+                            "position": "right",
+                            "useGraphSettings": true,
+                            "markerSize": 10
+                        },
+                        "dataProvider": series,
+                        "valueAxes": [{
+                            "stackType": "regular",
+                            "axisAlpha": 0.5,
+                            "gridAlpha": 0
+                        }],
+                        "graphs": [{
+                            "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
+                            "fillAlphas": 0.8,
+                            "labelText": "[[value]]",
+                            "lineAlpha": 0.3,
+                            "title": "Yes",
+                            "type": "column",
+                            "color": "#000000",
+                            "valueField": "yes_count"
+                        }, {
+                            "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
+                            "fillAlphas": 0.8,
+                            "labelText": "[[value]]",
+                            "lineAlpha": 0.3,
+                            "title": "No",
+                            "type": "column",
+                            "color": "#000000",
+                            "valueField": "no_count"
+                        }, {
+                            "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
+                            "fillAlphas": 0.8,
+                            "labelText": "[[value]]",
+                            "lineAlpha": 0.3,
+                            "title": "Partial",
+                            "type": "column",
+                            "color": "#000000",
+                            "valueField": "partial_count"
+                        }],
+                        "rotate": true,
+                        "categoryField": "target",
+                        "categoryAxis": {
+                            "gridPosition": "start",
+                            "axisAlpha": 0,
+                            "gridAlpha": 0,
+                            "position": "left"
+                        },
+                        "export": {
+                            "enabled": true
                         }
+                    });
+                } else {
+                    $('#targetStatusCategory').html('<div class="text-center">No Data</div>')
+                }
+                $('.js-targetStatusCategory.js-loader').hide();
 
-                        for (var key in gradeObj) {
-                            status.field = key;
-                            status.value = gradeObj[key];
-                            series.push(status);
-                        }
 
+                var chartItems = res.result.status, series = [], filterLevel = {}, gradeObj = {};
+                if(chartItems.length) {
 
-                        AmCharts.makeChart('targetStatusValue', {
-                                type: 'pie',
-                                startDuration: 0,
-                                theme: 'blur',
-                                addClassNames: true,
-                                color: '#fff',
-                                "colors": [
-                                    gradeColors.A,
-                                    gradeColors.B,
-                                    gradeColors.C,
-                                ],
-                                labelTickColor: '#fff',
-                                legend: {
-                                    position: 'right',
-                                    marginRight: 100,
-                                    valueText: '',
-                                    autoMargins: false
-                                },
-                                defs: {
-                                    filter: [
-                                        {
-                                            id: 'shadow',
-                                            width: '200%',
-                                            height: '200%',
-                                            feOffset: {
-                                                result: 'offOut',
-                                                in: 'SourceAlpha',
-                                                dx: 0,
-                                                dy: 0
-                                            },
-                                            feGaussianBlur: {
-                                                result: 'blurOut',
-                                                in: 'offOut',
-                                                stdDeviation: 5
-                                            },
-                                            feBlend: {
-                                                in: 'SourceGraphic',
-                                                in2: 'blurOut',
-                                                mode: 'normal'
-                                            }
-                                        }
-                                    ]
-                                },
-                                "balloonText": "[[title]]<br><span style='font-size:14px'>([[percents]]%)</span>",
-                                dataProvider: series,
-                                valueField: 'value',
-                                titleField: 'field',
-                                export: {
-                                    enabled: true,
-                                    "reviver": function(nodeObj) {
-                                        if (nodeObj.className === 'amcharts-pie-label'){
-                                            nodeObj.fill = '#333';
-                                        }
+                    chartItems.forEach(function (item) {
+                        gradeObj = {};
+                        gradeObj.status = item[filterKey];
+                        gradeObj.success = Math.round(item.success / item.total * 100);
+                        series.push(gradeObj)
+                    });
+
+                    AmCharts.makeChart('targetStatusValue', {
+                        type: 'pie',
+                        startDuration: 0,
+                        theme: 'blur',
+                        addClassNames: true,
+                        color: '#fff',
+                        "colors": [
+                            gradeColors.A,
+                            gradeColors.B,
+                            gradeColors.C,
+                        ],
+                        labelTickColor: '#fff',
+                        legend: {
+                            position: 'right',
+                            marginRight: 100,
+                            valueText: '',
+                            autoMargins: false
+                        },
+                        defs: {
+                            filter: [
+                                {
+                                    id: 'shadow',
+                                    width: '200%',
+                                    height: '200%',
+                                    feOffset: {
+                                        result: 'offOut',
+                                        in: 'SourceAlpha',
+                                        dx: 0,
+                                        dy: 0
                                     },
-                                },
-                                creditsPosition: 'bottom-left',
-
-                                autoMargins: false,
-                                marginTop: 10,
-                                alpha: 0.8,
-                                marginBottom: 0,
-                                marginLeft: 0,
-                                marginRight: 0,
-                                pullOutRadius: 0,
-                                responsive: {
-                                    enabled: false
+                                    feGaussianBlur: {
+                                        result: 'blurOut',
+                                        in: 'offOut',
+                                        stdDeviation: 5
+                                    },
+                                    feBlend: {
+                                        in: 'SourceGraphic',
+                                        in2: 'blurOut',
+                                        mode: 'normal'
+                                    }
                                 }
-                            });
-                    } else {
-                        $('#targetStatusValue').html('<div class="text-center">No Data</div>')
-                    }
-                    $('.js-targetStatusValue.js-loader').hide();
-                }, error: function() {
-                $('#targetStatusValue').html('<div class="text-center">Something Went Wrong</div>')
+                            ]
+                        },
+                        "balloonText": "[[title]]<br><span style='font-size:14px'>([[percents]]%)</span>",
+                        dataProvider: series,
+                        valueField: 'count',
+                        titleField: 'status',
+                        export: {
+                            enabled: true,
+                            "reviver": function(nodeObj) {
+                                if (nodeObj.className === 'amcharts-pie-label'){
+                                    nodeObj.fill = '#333';
+                                }
+                            },
+                        },
+                        creditsPosition: 'bottom-left',
+
+                        autoMargins: false,
+                        marginTop: 10,
+                        alpha: 0.8,
+                        marginBottom: 0,
+                        marginLeft: 0,
+                        marginRight: 0,
+                        pullOutRadius: 0,
+                        responsive: {
+                            enabled: false
+                        }
+                    });
+                } else {
+                    $('#targetStatusValue').html('<div class="text-center">No Data</div>')
+                }
                 $('.js-targetStatusValue.js-loader').hide();
-            }
-            });
+
+            })
 //----------------------------------------------------------------------------------------------------------------------
 
     }
     el.$filter.on('change', function() {
         for(var key in pendingCalls){
-            pendingCalls[key].abort();
+            pendingCalls[key].fail();
         }
         loadFilters($(this));
     });
@@ -823,7 +774,7 @@ HPD.urls = {
             }
         });
         for(var key in pendingCalls){
-            pendingCalls[key].abort();
+            pendingCalls[key].fail();
         }
         chartInit(appliedFilter.key, appliedFilter.type, appliedFilter.value, iQuery)
     });
