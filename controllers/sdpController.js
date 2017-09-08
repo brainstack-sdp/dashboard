@@ -39,28 +39,28 @@ module.exports.analyticsSurvey = function(req, res) {
     let where = undefined;
     if(req.query.district) {
       query = 'block';
-      group_name = '[question(343), option(10871)]';
+      group_name = '[question(343), option(10872)]';
       group = '[question(343), option(10872)]';
       where = {'$match': {'[question(343), option(10871)]': req.query.district }};
     } else if(req.query.block) {
       query = 'school_name';
-      group_name = '[question(343), option(10872)]';
+      group_name = '[question(343), option(10873)]';
       group = '[question(343), option(10873)]';
       where = {'$match': {'[question(343), option(10872)]': req.query.block }};
     } else if(req.query.school_name) {
       query = 'summer_winter';
-      group_name = '[question(343), option(10873)]';
+      group_name = '[[question(591)]';
       group = '[question(591)]';
       where = {'$match': {'[question(343), option(10873)]': req.query.school_name }};
     } else if(req.query.summer_winter) {
       query = 'school_type';
-      group_name = '[question(591)]';
+      group_name = '[question(153)]';
       group = '[question(153)]';
       where = {'$match': {'[question(591)]': req.query.summer_winter }};
     } else if(req.query.school_type) {
       query = 'school_name';
-      group_name = '[question(153)]';
-      group = 'question(591)]';
+      group_name = '[question(591)]';
+      group = '[question(591)]';
       where = {'$match': {'[question(153)]': req.query.school_type }};
     } else{
       query = 'district';
