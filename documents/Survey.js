@@ -4,7 +4,7 @@
  * Time: 10:01 PM
  */
 
-
+"use strict";
 var mongoose = require('mongoose');
 
 
@@ -27,6 +27,13 @@ var surveySchema = new mongoose.Schema({
     "[variable(587)]": { type: String,  index: true},
     "[variable(540)]": { type: String,  index: true},
     "[variable(\"536-shown\")]": { type: String,  index: true},
+    '[question(575), question_pipe(\"यह संसाधन उपलब्ध है<br />\r\n(Already have these resources)\")]': { type: String,  index: true},
+    '[question(504), question_pipe(\"यह संसाधन उपलब्ध है<br />\r\n(Already have these resources)\")]': { type: String,  index: true},
+    '[question(504), question_pipe(\"इन वाजिब संसाधनों की ज़रूरत होगी<br />\r\n(Need to procure these resources - reasonable estimate)\")]': { type: String,  index: true},
+    '[question(504), question_pipe(\"3\")]': { type: String,  index: true},
+    '[question(647), question_pipe(\"यह संसाधन उपलब्ध है<br />\r\n(Already have these resources)\")]': { type: String,  index: true},
+    '[question(647), question_pipe(\"इन वाजिब संसाधनों की ज़रूरत होगी<br />\r\n(Need to procure these resources - reasonable estimate)\")]': { type: String,  index: true},
+
     // "[question(343), option(10874)]" : String,
 
     // ideal_stay_time : String
