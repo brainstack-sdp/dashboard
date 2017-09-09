@@ -52,23 +52,25 @@ module.exports.analyticsSurvey = function(req, res) {
       group_name = '[[question(591)]';
       group = '[question(591)]';
       where = {'$match': {'[question(343), option(10873)]': req.query.school_name }};
-    } else if(req.query.summer_winter) {
-      query = 'school_type';
-      group_name = '[question(153)]';
-      group = '[question(153)]';
-      where = {'$match': {'[question(591)]': req.query.summer_winter }};
-    } else if(req.query.school_type) {
-      query = 'school_name';
-      group_name = '[question(591)]';
-      group = '[question(591)]';
-      where = {'$match': {'[question(153)]': req.query.school_type }};
     } else{
       query = 'district';
       group_name = '[question(343), option(10871)]';
       group = '[question(343), option(10871)]';
       where = {'$match': {'id': {'$exists': true}}}
     } 
-    
+    if(req.query.summer_winter) {
+      // query = 'school_type';
+      // group_name = '[question(153)]';
+      // group = '[question(153)]';
+      // where = {'$match': {'[question(591)]': req.query.summer_winter }};
+      where['$match']['[question(591)]'] =  {'$regex': req.query.summer_winter}; // };
+    } 
+    if(req.query.school_type) {
+      // query = 'school_name';
+      // group_name = '[question(591)]';
+      // group = '[question(591)]';
+      where['$match']['[question(153)]'] =  {'$regex': req.query.school_type};
+    }
     // if(req.query.summer_winter && whereSchool) {
     //   where['summer_winter'] = req.query.summer_winter;
     // } else if (req.query.summer_winter){
