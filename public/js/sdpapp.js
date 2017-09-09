@@ -382,6 +382,91 @@ HPD.urls = {
                     }
                     $('.js-gradeStack.js-loader').hide();
 
+                var chartItems = res.result.target_type, series = [], filterLevel = {}, gradeObj = {};
+                if(chartItems.length) {
+
+                    chartItems.forEach(function (item) {
+                        gradeObj = {};
+                        gradeObj.status = item[filterKey];
+                        gradeObj.success = Math.round(item.success / item.total * 100);
+                        series.push(gradeObj)
+                    });
+
+                    AmCharts.makeChart('gradePie', {
+                        type: 'pie',
+                        startDuration: 0,
+                        theme: 'blur',
+                        addClassNames: true,
+                        color: '#fff',
+                        "colors": [
+                            gradeColors.A,
+                            gradeColors.B,
+                            gradeColors.C,
+                            gradeColors.D,
+                            gradeColors.E
+                        ],
+                        labelTickColor: '#fff',
+                        legend: {
+                            position: 'right',
+                            marginRight: 100,
+                            valueText: '',
+                            autoMargins: false
+                        },
+                        defs: {
+                            filter: [
+                                {
+                                    id: 'shadow',
+                                    width: '200%',
+                                    height: '200%',
+                                    feOffset: {
+                                        result: 'offOut',
+                                        in: 'SourceAlpha',
+                                        dx: 0,
+                                        dy: 0
+                                    },
+                                    feGaussianBlur: {
+                                        result: 'blurOut',
+                                        in: 'offOut',
+                                        stdDeviation: 5
+                                    },
+                                    feBlend: {
+                                        in: 'SourceGraphic',
+                                        in2: 'blurOut',
+                                        mode: 'normal'
+                                    }
+                                }
+                            ]
+                        },
+                        "balloonText": "[[title]]<br><span style='font-size:14px'>([[percents]]%)</span>",
+                        dataProvider: series,
+                        valueField: 'count',
+                        titleField: 'status',
+                        export: {
+                            enabled: true,
+                            "reviver": function(nodeObj) {
+                                if (nodeObj.className === 'amcharts-pie-label'){
+                                    nodeObj.fill = '#333';
+                                }
+                            },
+                        },
+                        creditsPosition: 'bottom-left',
+
+                        autoMargins: false,
+                        marginTop: 10,
+                        alpha: 0.8,
+                        marginBottom: 0,
+                        marginLeft: 0,
+                        marginRight: 0,
+                        pullOutRadius: 0,
+                        responsive: {
+                            enabled: false
+                        }
+                    });
+                } else {
+                    $('#gradePie').html('<div class="text-center">No Data</div>')
+                }
+                $('.js-gradePie.js-loader').hide();
+
                     var resource_1 = res.result.resource_584;
                     var resource_2 = res.result.resource_587;
                     var resource_3 = res.result.resource_588;
@@ -498,6 +583,123 @@ HPD.urls = {
                     }
                     $('.js-resourceStack.js-loader').hide();
 
+                var chartItems = res.result.status, possibleAnswer = {yes_count:{name:'Yes'}, no_count:{name:'No'},partial_count: {name:'Partial'}}, selected, total = 0;
+
+                if(chartItems.length) {
+                    chartItems.forEach(function (item) {
+                        if(item.status){
+                            possibleAnswer.yes_count.proof ? possibleAnswer.yes_count.proof+=1:possibleAnswer.yes_count.proof=0
+                            possibleAnswer.partial_count.proof ? possibleAnswer.partial_count.proof=+1:possibleAnswer.partial_count.proof=0
+                        }
+                        for(var i in item){
+                            if(i=='status') {continue;}
+                            if(possibleAnswer[i].count) {
+                                possibleAnswer[i].count += item[i]
+                            } else {
+                                possibleAnswer[i].count = 0;
+                            }
+
+                        }
+                    });
+                    total = possibleAnswer.yes_count.count + possibleAnswer.no_count.count + possibleAnswer.partial_count.count
+
+                    var types = [{
+                        type: "Yes",
+                        percent: possibleAnswer.yes_count.count,
+                        color: "#ff9e01",
+                        subs: [{
+                            type: "Proof",
+                            percent: 15
+                        }, {
+                            type: "No Proof",
+                            percent: 15
+                        }]
+                    },{
+                        type: "No",
+                        percent: possibleAnswer.no_count.count,
+                        color: "#ff9e01",
+                        subs: [{
+                        type: "Proof",
+                        percent: 15
+                    }, {
+                        type: "No Proof",
+                        percent: 15
+                    }]
+                    },{type: "Partial",
+                        percent: possibleAnswer.partial_count.count,
+                        color: "#ff9e01",
+                        subs: [{
+                            type: "Proof",
+                            percent: 15
+                        }, {
+                            type: "No Proof",
+                            percent: 25
+                        }]
+                    }];
+
+                    function generateChartData() {
+                        var chartData = [];
+                        for (var i = 0; i < types.length; i++) {
+                            if (i == selected) {
+                                for (var x = 0; x < types[i].subs.length; x++) {
+                                    chartData.push({
+                                        type: types[i].subs[x].type,
+                                        percent: types[i].subs[x].percent,
+                                        color: types[i].color,
+                                        pulled: true
+                                    });
+                                }
+                            } else {
+                                chartData.push({
+                                    type: types[i].type,
+                                    percent: types[i].percent,
+                                    color: types[i].color,
+                                    id: i
+                                });
+                            }
+                        }
+                        return chartData;
+                    }
+
+                    AmCharts.makeChart("targetStatusValue", {
+                        "type": "pie",
+                        "theme": "light",
+
+                        "dataProvider": generateChartData(),
+                        "labelText": "[[title]]: [[value]]",
+                        "balloonText": "[[title]]: [[value]]",
+                        "titleField": "type",
+                        "valueField": "percent",
+                        "outlineColor": "#FFFFFF",
+                        "outlineAlpha": 0.8,
+                        "outlineThickness": 2,
+                        "colorField": "color",
+                        "pulledField": "pulled",
+                        "titles": [{
+                            "text": "Click a slice to see the details"
+                        }],
+                        "listeners": [{
+                            "event": "clickSlice",
+                            "method": function(event) {
+                                var chart = event.chart;
+                                if (event.dataItem.dataContext.id != undefined) {
+                                    selected = event.dataItem.dataContext.id;
+                                } else {
+                                    selected = undefined;
+                                }
+                                chart.dataProvider = generateChartData();
+                                chart.validateData();
+                            }
+                        }],
+                        "export": {
+                            "enabled": true
+                        }
+                    });
+                } else {
+                    $('#targetStatusValue').html('<div class="text-center">No Data</div>')
+                }
+                $('.js-targetStatusValue.js-loader').hide();
+
                 var chartItems = res.result.target;
 
                 if(chartItems.length) {
@@ -510,74 +712,75 @@ HPD.urls = {
                             gradeColors.D,
                             gradeColors.C
                         ],
-                        "legend": {
-                            "horizontalGap": 10,
-                            "maxColumns": 1,
-                            "position": "right",
-                            "useGraphSettings": true,
-                            "markerSize": 10
+                        labelTickColor: '#fff',
+                        legend: {
+                            position: 'right',
+                            marginRight: 100,
+                            valueText: '',
+                            autoMargins: false
                         },
-                        "dataProvider": chartItems,
-                        "valueAxes": [
-                            {
-                                "id": "ValueAxis-1",
-                                "stackType": "100%",
-                                "unit": '%',
-                                "title": "Grade Distribution"
+                        defs: {
+                            filter: [
+                                {
+                                    id: 'shadow',
+                                    width: '200%',
+                                    height: '200%',
+                                    feOffset: {
+                                        result: 'offOut',
+                                        in: 'SourceAlpha',
+                                        dx: 0,
+                                        dy: 0
+                                    },
+                                    feGaussianBlur: {
+                                        result: 'blurOut',
+                                        in: 'offOut',
+                                        stdDeviation: 5
+                                    },
+                                    feBlend: {
+                                        in: 'SourceGraphic',
+                                        in2: 'blurOut',
+                                        mode: 'normal'
+                                    }
+                                }
+                            ]
+                        },
+                        "balloonText": "[[title]]<br><span style='font-size:14px'>([[percents]]%)</span>",
+                        dataProvider: series,
+                        valueField: 'count',
+                        titleField: 'status',
+                        "listeners": [{
+                            "event": "clickSlice",
+                            "method": function(event) {
+                                var chart = event.chart;
+                                if (event.dataItem.dataContext.id != undefined) {
+                                    selected = event.dataItem.dataContext.id;
+                                } else {
+                                    selected = undefined;
+                                }
+                                chart.dataProvider = generateChartData();
+                                chart.validateData();
                             }
-                        ],
-                        "graphs": [{
-                            "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
-                            "fillAlphas": 0.8,
-                            "labelText": "[[value]]",
-                            "lineAlpha": 0.3,
-                            "title": "Yes",
-                            "type": "column",
-                            "color": "#000000",
-                            "valueField": "yes_count)"
-                        },
-                            {
-                                "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
-                                "fillAlphas": 0.8,
-                                "labelText": "[[value]]",
-                                "lineAlpha": 0.3,
-                                "title": "No",
-                                "type": "column",
-                                "color": "#000000",
-                                "valueField": "no_count"
-                            },
-                            {
-                                "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
-                                "fillAlphas": 0.8,
-                                "labelText": "[[value]]",
-                                "lineAlpha": 0.3,
-                                "title": "Partial",
-                                "type": "column",
-                                "color": "#000000",
-                                "valueField": "partial_count"
-                            }],
-                        "categoryField": filterKey,
-                        "categoryAxis": {
-                            "gridPosition": "start",
-                            "axisAlpha": 0,
-                            "gridAlpha": 0,
-                            "position": "left",
-                            labelRotation: 45
-                        },
-                        "export": {
-                            "enabled": true,
-                            "reviver": function (nodeObj) {
-                                if (nodeObj.className === 'amcharts-axis-label') {
+                        }],
+                        export: {
+                            enabled: true,
+                            "reviver": function(nodeObj) {
+                                if (nodeObj.className === 'amcharts-pie-label'){
                                     nodeObj.fill = '#333';
                                 }
                             }
                         },
-                        "chartScrollbar": {
-                            "enabled": true,
-                            "selectedBackgroundColor": '#333',
-                            "gridCount": 4
-                        }
+                        creditsPosition: 'bottom-left',
 
+                        autoMargins: false,
+                        marginTop: 10,
+                        alpha: 0.8,
+                        marginBottom: 0,
+                        marginLeft: 0,
+                        marginRight: 0,
+                        pullOutRadius: 0,
+                        responsive: {
+                            enabled: false
+                        }
                     });
                 } else {
                     $('#targetStatus').html('<div class="text-center">No Data</div>')
@@ -621,14 +824,17 @@ HPD.urls = {
                             "useGraphSettings": true,
                             "markerSize": 10
                         },
-                        "dataProvider": series,
-                        "valueAxes": [{
-                            "stackType": "regular",
-                            "axisAlpha": 0.5,
-                            "gridAlpha": 0
-                        }],
+                        "dataProvider": chartItems,
+                        "valueAxes": [
+                            {
+                                "id": "ValueAxis-1",
+                                "stackType": "100%",
+                                "unit": '%',
+                                "title": "Grade Distribution"
+                            }
+                        ],
                         "graphs": [{
-                            "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
+                            "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
                             "fillAlphas": 0.8,
                             "labelText": "[[value]]",
                             "lineAlpha": 0.3,
@@ -636,125 +842,48 @@ HPD.urls = {
                             "type": "column",
                             "color": "#000000",
                             "valueField": "yes_count"
-                        }, {
-                            "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
-                            "fillAlphas": 0.8,
-                            "labelText": "[[value]]",
-                            "lineAlpha": 0.3,
-                            "title": "No",
-                            "type": "column",
-                            "color": "#000000",
-                            "valueField": "no_count"
-                        }, {
-                            "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
-                            "fillAlphas": 0.8,
-                            "labelText": "[[value]]",
-                            "lineAlpha": 0.3,
-                            "title": "Partial",
-                            "type": "column",
-                            "color": "#000000",
-                            "valueField": "partial_count"
-                        }],
-                        "rotate": true,
-                        "categoryField": "target",
+                        },
+                            {
+                                "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
+                                "fillAlphas": 0.8,
+                                "labelText": "[[value]]",
+                                "lineAlpha": 0.3,
+                                "title": "No",
+                                "type": "column",
+                                "color": "#000000",
+                                "valueField": "no_count"
+                            },
+                            {
+                                "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
+                                "fillAlphas": 0.8,
+                                "labelText": "[[value]]",
+                                "lineAlpha": 0.3,
+                                "title": "Partial",
+                                "type": "column",
+                                "color": "#000000",
+                                "valueField": "partial_count"
+                            }],
+                        "categoryField": filterKey,
                         "categoryAxis": {
                             "gridPosition": "start",
                             "axisAlpha": 0,
                             "gridAlpha": 0,
-                            "position": "left"
+                            "position": "left",
+                            labelRotation: 45
                         },
                         "export": {
-                            "enabled": true
+                            "enabled": true,
+                            "reviver": function (nodeObj) {
+                                if (nodeObj.className === 'amcharts-axis-label') {
+                                    nodeObj.fill = '#333';
+                                }
+                            }
                         }
                     });
                 } else {
                     $('#targetStatusCategory').html('<div class="text-center">No Data</div>')
                 }
                 $('.js-targetStatusCategory.js-loader').hide();
-
-
-                var chartItems = res.result.status, series = [], filterLevel = {}, gradeObj = {};
-                if(chartItems.length) {
-
-                    chartItems.forEach(function (item) {
-                        gradeObj = {};
-                        gradeObj.status = item[filterKey];
-                        gradeObj.success = Math.round(item.success / item.total * 100);
-                        series.push(gradeObj)
-                    });
-
-                    AmCharts.makeChart('targetStatusValue', {
-                        type: 'pie',
-                        startDuration: 0,
-                        theme: 'blur',
-                        addClassNames: true,
-                        color: '#fff',
-                        "colors": [
-                            gradeColors.A,
-                            gradeColors.B,
-                            gradeColors.C,
-                        ],
-                        labelTickColor: '#fff',
-                        legend: {
-                            position: 'right',
-                            marginRight: 100,
-                            valueText: '',
-                            autoMargins: false
-                        },
-                        defs: {
-                            filter: [
-                                {
-                                    id: 'shadow',
-                                    width: '200%',
-                                    height: '200%',
-                                    feOffset: {
-                                        result: 'offOut',
-                                        in: 'SourceAlpha',
-                                        dx: 0,
-                                        dy: 0
-                                    },
-                                    feGaussianBlur: {
-                                        result: 'blurOut',
-                                        in: 'offOut',
-                                        stdDeviation: 5
-                                    },
-                                    feBlend: {
-                                        in: 'SourceGraphic',
-                                        in2: 'blurOut',
-                                        mode: 'normal'
-                                    }
-                                }
-                            ]
-                        },
-                        "balloonText": "[[title]]<br><span style='font-size:14px'>([[percents]]%)</span>",
-                        dataProvider: series,
-                        valueField: 'count',
-                        titleField: 'status',
-                        export: {
-                            enabled: true,
-                            "reviver": function(nodeObj) {
-                                if (nodeObj.className === 'amcharts-pie-label'){
-                                    nodeObj.fill = '#333';
-                                }
-                            },
-                        },
-                        creditsPosition: 'bottom-left',
-
-                        autoMargins: false,
-                        marginTop: 10,
-                        alpha: 0.8,
-                        marginBottom: 0,
-                        marginLeft: 0,
-                        marginRight: 0,
-                        pullOutRadius: 0,
-                        responsive: {
-                            enabled: false
-                        }
-                    });
-                } else {
-                    $('#targetStatusValue').html('<div class="text-center">No Data</div>')
-                }
-                $('.js-targetStatusValue.js-loader').hide();
 
             })
 //----------------------------------------------------------------------------------------------------------------------
@@ -798,9 +927,12 @@ HPD.urls = {
                 filterList[key] = res.result[key];
                 $('.js-filter[data-type="district"]').html(createOptions(filterList[key],'district'))
                 console.log(filterList)
+                $('.js-filter[data-type="district"]').val('KULLU')
+                $('.js-filter[data-type="district"]').trigger('change')
             }
         })
-        chartInit('district', '','','');
+
+        //chartInit('district', '','KULLU','');
 
     }
     init();
