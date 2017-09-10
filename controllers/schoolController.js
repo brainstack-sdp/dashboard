@@ -188,41 +188,9 @@ module.exports.sdp = function (req, res) {
       SchoolModel.count(group, where, group_name, query),
   ]).then(function(data) {
       var response = {
-          count: data[0],
+          [group_name]: data[0],
       };
       res.json({'message': 'Data', 'result':response, 'error': false});
     });
 };
 
-
-module.exports.schoolSdpFilter = function (req, res) {
-
-  let group = '';
-  let group_name = '';
-  let query = ''
-  let where = undefined;
-  if(req.query.district) {
-    query = 'block';
-    group_name = 'block';
-    group = 'block';
-    where = {'$match': {'district': req.query.district }};
-  } else if(req.query.block) {
-    query = 'school_name';
-    group_name = 'school_name';
-    group = '[question(343), option(10873)]';
-    where = {'$match': {'block': req.query.block }};
-  } else{
-    query = 'district';
-    group_name = 'district';
-    group = 'district';
-    where = {'$match': {'_id': {'$exists': true}}}
-  } 
-  Promise.all([
-      SchoolModel.count(group, where, group_name, query),
-  ]).then(function(data) {
-      var response = {
-          count: data[0],
-      };
-      res.json({'message': 'Data', 'result':response, 'error': false});
-    });
-};
