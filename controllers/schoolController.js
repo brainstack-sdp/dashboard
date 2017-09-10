@@ -168,7 +168,7 @@ module.exports.sdp = function (req, res) {
   } else if(req.query.block) {
     query = 'school_name';
     group_name = 'school_name';
-    group = '[question(343), option(10873)]';
+    group = 'school_name';
     where = {'$match': {'block': req.query.block }};
   } else{
     query = 'district';

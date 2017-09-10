@@ -40,26 +40,27 @@ schoolSchema.statics.count = function(group, where, group_name, query){
     }.bind(this));
 };
 
-schoolSchema.statics.schoolFilter = function(group, where, group_name, query){
+// schoolSchema.statics.schoolFilter = function(group, where, group_name, query){
  
-    return new Promise (function(resolve, reject){
-        "use strict";
-        this.aggregate([
-            where,
-            {
-                '$group': {
-                    '_id': '$'+group,
-                    [query]: {'$first': '$'+group_name},
-                }
-            }
-        ]).exec(function(err, data){
+//     return new Promise (function(resolve, reject){
+//         "use strict";
+//         this.aggregate([
+//             where,
+//             {
+//                 '$group': {
+//                     '_id': '$'+group,
+//                     [query]: {'$first': '$'+group_name},
+//                 }
+//             }
+//         ]).exec(function(err, data){
 
-            if(err)
-                reject(err);
-            resolve(data);
-        });
-    }.bind(this));
-};
+//             if(err)
+//                 reject(err);
+//             resolve(data);
+//         });
+//     }.bind(this));
+// };
+
 var SchoolModel = connApi.model('school', schoolSchema);
 
 module.exports = SchoolModel;
