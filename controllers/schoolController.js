@@ -16,13 +16,12 @@ let log = require("../helpers/logger");
 let SchoolModel = require("../documents/School");
 
 module.exports.index = function (req, res) {
+  if (sessionUtils.checkExists(req, res, "user")) {
     res.render('index');
-  //if (sessionUtils.checkExists(req, res, "user")) {
-  //  res.render('index');
-  //} else {
-  //  console.log("ind");
-  //  res.redirect('/login');
-  //}
+  } else {
+    console.log("ind");
+    res.redirect('/login');
+  }
 };
 
 module.exports.login = function (req, res) {
@@ -176,8 +175,8 @@ module.exports.sdp = function (req, res) {
     group_name = 'district';
     group = 'district';
     where = {'$match': {'_id': {'$exists': true}}}
-  } 
-  
+  }
+
   // if(req.query.summer_winter && whereSchool) {
   //   where['summer_winter'] = req.query.summer_winter;
   // } else if (req.query.summer_winter){
@@ -189,40 +188,7 @@ module.exports.sdp = function (req, res) {
       SchoolModel.count(group, where, group_name, query),
   ]).then(function(data) {
       var response = {
-          count: data[0],
-      };
-      res.json({'message': 'Data', 'result':response, 'error': false});
-    });
-};
-
-
-module.exports.schoolSdpFilter = function (req, res) {
-
-  let group = '';
-  let group_name = '';
-  let query = ''
-  let where = undefined;
-  if(req.query.district) {
-    query = 'block';
-    group_name = 'block';
-    group = 'block';
-    where = {'$match': {'district': req.query.district }};
-  } else if(req.query.block) {
-    query = 'school_name';
-    group_name = 'school_name';
-    group = '[question(343), option(10873)]';
-    where = {'$match': {'block': req.query.block }};
-  } else{
-    query = 'district';
-    group_name = 'district';
-    group = 'district';
-    where = {'$match': {'_id': {'$exists': true}}}
-  } 
-  Promise.all([
-      SchoolModel.count(group, where, group_name, query),
-  ]).then(function(data) {
-      var response = {
-          count: data[0],
+          [group_name]: data[0],
       };
       res.json({'message': 'Data', 'result':response, 'error': false});
     });
