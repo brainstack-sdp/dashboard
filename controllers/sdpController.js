@@ -89,6 +89,8 @@ module.exports.analyticsSurvey = function(req, res) {
         SurveyModel.targetStatus(where, resources[588], group_name, query),
         SurveyModel.targetTypeCount(where, resources[588], group_name, query),
         SurveyModel.targetTotalCount(where, resources[588], group_name, query),
+        SurveyModel.targetStatus504Count(where, resources[588], group_name, query),
+        SurveyModel.targetType504Count(where, resources[588], group_name, query),
     ]).then(function(data) {
         var response = {
             complete: data[0],
@@ -100,7 +102,9 @@ module.exports.analyticsSurvey = function(req, res) {
             target_status: data[6],
             status: data[7],
             target_type: data[8],
-            target_total: data[9]
+            target_total: data[9],
+            target_status_504: data[10],
+            target_type_504: data[11],
         };
         res.json({'message': 'Data', 'result':response, 'error': false});
     });

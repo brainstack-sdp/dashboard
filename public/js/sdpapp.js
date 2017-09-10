@@ -213,11 +213,6 @@ HPD.urls = {
             } else {
                 queryString = '?graph' + '=' + index + '&';
             }
-            $.each(el.$iFilter, function(key, item) {
-                if($(item).data('type')!='sex' && $(item).data('type')!='category' && $(item).val()){
-                    queryString += $(item).data('type') +'='+ $(item).val() + '&'
-                }
-            });
             return queryString;
         }
         var filterEnrollQuery = function () {
@@ -274,7 +269,7 @@ HPD.urls = {
                                 {
                                     axisAlpha: 0,
                                     position: 'left',
-                                    title: 'Success Percentage',
+                                    title: 'Percentage Completion',
                                     unit: '%',
                                     'minimium': 0,'maximum': 100
                                 }
@@ -300,7 +295,8 @@ HPD.urls = {
                                 gridPosition: 'start',
                                 labelRotation: 45,
                                 gridAlpha: 0.5,
-                                gridColor: '#f0fef1'
+                                gridColor: '#f0fef1',
+                                title: 'Districts/Blocks/Schools',
                             },
                             export: {
                                 enabled: true,
@@ -363,7 +359,7 @@ HPD.urls = {
                                     "id": "ValueAxis-1",
                                     "stackType": "100%",
                                     "unit": '%',
-                                    "title": "Grade Distribution"
+                                    "title": "Total Targets"
                                 }
                             ],
                             "graphs": [{
@@ -371,7 +367,7 @@ HPD.urls = {
                                 "fillAlphas": 0.8,
                                 "labelText": "[[value]]",
                                 "lineAlpha": 0.3,
-                                "title": "P",
+                                "title": "Primary",
                                 "type": "column",
                                 "color": "#000000",
                                 "valueField": "केवल प्राथमिक । Primary only (Class 1-5)"
@@ -381,7 +377,7 @@ HPD.urls = {
                                     "fillAlphas": 0.8,
                                     "labelText": "[[value]]",
                                     "lineAlpha": 0.3,
-                                    "title": "UP",
+                                    "title": "Upper Primary",
                                     "type": "column",
                                     "color": "#000000",
                                     "valueField": "केवल उच्च प्राथमिक । Upper Primary only (Class 6-8)"
@@ -391,7 +387,7 @@ HPD.urls = {
                                     "fillAlphas": 0.8,
                                     "labelText": "[[value]]",
                                     "lineAlpha": 0.3,
-                                    "title": "UP+S",
+                                    "title": "Upper Primary+Secondary",
                                     "type": "column",
                                     "color": "#000000",
                                     "valueField": "उच्च प्राथमिक एवं माध्यमिक या उच्च माध्यमिक । Upper Primary + Secondary/ Senior Secondary (Class 6-10 OR Class 6-12)"
@@ -402,7 +398,8 @@ HPD.urls = {
                                 "axisAlpha": 0,
                                 "gridAlpha": 0,
                                 "position": "left",
-                                labelRotation: 45
+                                labelRotation: 45,
+                                title: 'Districts/Blocks/Schools'
                             },
                             "export": {
                                 "enabled": true,
@@ -424,86 +421,96 @@ HPD.urls = {
                     }
                     $('.js-gradeStack.js-loader').hide();
 
-                var chartItems = res.result.target_type, series = [], filterLevel = {}, gradeObj = {}, possibleAnswer = {yes_count:{name:'Yes'}, no_count:{name:'No'},partial_count: {name:'Partial'}}, selected, total = 0;
+                var subTargetMap = {
+                        11313: 'Community Participation in School Progress',
+                        11314: 'Regular SMC Meetings',
+                        11315: 'Leverage Local Talent',
+                        11316:	'Parent-Teacher Interaction',
+
+                        11317:	'Attendance and Punctuality',
+                        11318:	'Efficiency and Teaching Methods',
+                        11319:  'Reduce Vacancies',
+
+                        11320:	'Infrastructural Improvement',
+                        11321:	'Timely Requests to DEE/SSA',
+                        15171:	'Co-curricular Focus',
+                        15172:	'Enrolment'
+                };
+
+                var chartItems = res.result.target_type, series = [], gradeObj = {}, possibleAnswer = {yes_count:{name:'Yes'}, no_count:{name:'No'},partial_count: {name:'Partial'}}, selected, total = 0;
+
+                gradeObj.coms =[]
+                gradeObj.stu =[]
+                gradeObj.teach =[]
+
+                var chartItemsNext = res.result.target_type_504;
 
                 if(chartItems.length) {
-                    chartItems = chartItems[0]
+                    chartItems = chartItems[0];
+                    chartItems.community_participation =0;
+                    chartItems.teacher_performance=0;
+                    chartItems.school_management=0;
 
+                    chartItemsNext.forEach(function (item) {
+                        chartItems.community_participation += item.community_participation;
+                        chartItems.teacher_performance += item.teacher_performance;
+                        chartItems.school_management += item.school_management;
+                        if(item.status == '11313' || item.status == '11314'|| item.status == '11315'|| item.status == '11316'){
+                            gradeObj.coms.push({type: subTargetMap[item.status], percent: item.community_participation})
+                        } else if(item.status == '11320' || item.status == '11321'|| item.status == '15171'|| item.status == '15172'){
+                            gradeObj.stu.push({type: subTargetMap[item.status], percent: item.school_management})
+                        } else if(item.status == '11317' || item.status == '11318'|| item.status == '11319') {
+                            gradeObj.teach.push({type: subTargetMap[item.status], percent: item.teacher_performance})
+                        } else {
+
+                        }
+
+                    });
                     for(var i in chartItems){
                         total += chartItems[i];
                     }
 
-                    var types = [{
+                    var target_types = [{
                         type: "Learning Levels",
-                        percent: (chartItems.learning_curve/total)*100,
+                        percent: chartItems.learning_curve,
                         color: "#9eff01",
-                        subs: [{
-                            type: "Proof",
-                            percent: 10
-                        }, {
-                            type: "No Proof",
-                            percent: 10
-                        }]
+                        subs: []
                     },{
                         type: "Others",
-                        percent: (chartItems.others/total)*100,
+                        percent: chartItems.others,
                         color: "#ff6e01",
-                        subs: [{
-                            type: "Proof",
-                            percent: 15
-                        }, {
-                            type: "No Proof",
-                            percent: 15
-                        }]
+                        subs: []
                     },{type: "Community Participation",
-                        percent: (chartItems.community_participation/total)*100,
-                        color: "#9e01ff",
-                        subs: [{
-                            type: "Proof",
-                            percent: 15
-                        }, {
-                            type: "No Proof",
-                            percent: 25
-                        }]
+                        percent: chartItems.community_participation,
+                        color: "#9e08af",
+                        subs: gradeObj.coms
                     },{type: "Teacher Performance",
-                        percent: (chartItems.teacher_performance/total)*100,
-                        color: "#9e01ff",
-                        subs: [{
-                            type: "Proof",
-                            percent: 15
-                        }, {
-                            type: "No Proof",
-                            percent: 25
-                        }]
+                        percent: chartItems.teacher_performance,
+                        color: "#3e514f",
+                        subs: gradeObj.teach
                     },{type: "School Management",
-                        percent: (chartItems.school_management/total)*100,
+                        percent: chartItems.school_management,
                         color: "#9e01ff",
-                        subs: [{
-                            type: "Proof",
-                            percent: 15
-                        }, {
-                            type: "No Proof",
-                            percent: 25
-                        }]
+                        subs: gradeObj.stu
                     }];
 
                     function generateChartData() {
                         var chartData = [];
-                        for (var i = 0; i < types.length; i++) {
-                            if (i == selected) {
-                                for (var x = 0; x < types[i].subs.length; x++) {
+                        for (var i = 0; i < target_types.length; i++) {
+                            if (i == selected && i >1) {
+                                for (var x = 0; x < target_types[i].subs.length; x++) {
                                     chartData.push({
-                                        type: types[i].subs[x].type,
-                                        percent: types[i].subs[x].percent,
-                                        color: types[i].color,
+                                        type: target_types[i].subs[x].type,
+                                        percent: target_types[i].subs[x].percent,
+                                        color: target_types[i].color,
                                         pulled: true
                                     });
                                 }
                             } else {
                                 chartData.push({
-                                    type: types[i].type,
-                                    percent: types[i].percent,
-                                    color: types[i].color,
+                                    type: target_types[i].type,
+                                    percent: target_types[i].percent,
+                                    color: target_types[i].color,
                                     id: i
                                 });
                             }
@@ -528,23 +535,21 @@ HPD.urls = {
                         "titles": [{
                             "text": "Click a slice to see the details"
                         }],
-                        "listeners": [{
-                            "event": "clickSlice",
-                            "method": function(event) {
-                                var chart = event.chart;
-                                if (event.dataItem.dataContext.id != undefined) {
-                                    selected = event.dataItem.dataContext.id;
-                                } else {
-                                    selected = undefined;
-                                }
-                                chart.dataProvider = generateChartData();
-                                chart.validateData();
-                            }
-                        }],
                         "export": {
                             "enabled": true
                         }
-                    });
+                    }).addListener("clickSlice",
+                        function(event) {
+                            console.log('in')
+                            var chart = event.chart;
+                            if (event.dataItem.dataContext.id != undefined) {
+                                selected = event.dataItem.dataContext.id;
+                            } else {
+                                selected = undefined;
+                            }
+                            chart.dataProvider = generateChartData();
+                            chart.validateData();
+                        });
                 } else {
                     $('#gradePie').html('<div class="text-center">No Data</div>')
                 }
@@ -636,6 +641,12 @@ HPD.urls = {
                                 "markerSize": 10
                             },
                             "dataProvider": series,
+                            "valueAxes": [
+                                {
+                                    "id": "ValueAxis-1",
+                                    "title": "Request Count"
+                                }
+                            ],
 
                             "graphs": labels,
                             "categoryField": 'level',
@@ -644,6 +655,7 @@ HPD.urls = {
                                 "axisAlpha": 0,
                                 "gridAlpha": 0,
                                 "position": "left",
+                                title: 'Districts/Blocks/Schools',
                                 labelRotation: 45
                             },
                             "export": {
@@ -660,7 +672,7 @@ HPD.urls = {
                                 "gridCount": 5
                             }
 
-                        });
+                        })
                     } else {
                         $('#resourceStack').html('<div class="text-center">No Data</div>')
                     }
@@ -825,7 +837,7 @@ HPD.urls = {
                                 "id": "ValueAxis-1",
                                 "stackType": "100%",
                                 "unit": '%',
-                                "title": "Grade Distribution"
+                                "title": "Compliance Percentage"
                             }
                         ],
                         "graphs": [{
@@ -864,6 +876,7 @@ HPD.urls = {
                             "axisAlpha": 0,
                             "gridAlpha": 0,
                             "position": "left",
+                            title: 'Districts/Blocks/Schools',
                             labelRotation: 45
                         },
                         "export": {
@@ -930,7 +943,7 @@ HPD.urls = {
                                 "id": "ValueAxis-1",
                                 "stackType": "100%",
                                 "unit": '%',
-                                "title": "Grade Distribution"
+                                "title": "Status of Target Completion (Percentage)"
                             }
                         ],
                         "graphs": [{
@@ -969,6 +982,7 @@ HPD.urls = {
                             "axisAlpha": 0,
                             "gridAlpha": 0,
                             "position": "left",
+                            title: 'Districts/Blocks/Schools',
                             labelRotation: 45
                         },
                         "export": {
@@ -992,31 +1006,46 @@ HPD.urls = {
                 $('.js-targetTotal.js-loader').hide();
 
                 var targetMap = {
-                    '11356': 'Community Participation',
-                    '11357':'Community Participation',
-                    '11358':'Community Participation',
-                    11361: 'Teacher Performance',
-                    11362: 'Teacher Performance',
-                    11363: 'Teacher Performance',
-                    11318: 'Teacher Performance',
-                    11319: 'Teacher Performance',
-                    11320: 'School Management',
-                    11321: 'School Management',
+                    'वि': 'Community Participation',
+                    'Commun':'Community Participation',
+                    Teache: 'Teacher Performance',
                     11366: 'Learning Levels',
                     11367: 'Learning Levels',
                     11368: 'Learning Levels',
-                    15171: 'School Management',
-                    15172: 'School Management'
+                    School: 'School Management'
                 }
 
-                var chartItems = res.result.target_status, series = [], labels=[], categoryList = {}, gradeObj = {};
+                var chartItems = res.result.target_status, series = [], labels=[], filerLevel = {}, gradeObj = {};
+
+                var chartItemsNext = res.result.target_status_504;
 
                 if(chartItems.length){
                     chartItems.forEach(function (item) {
                         gradeObj = {};
-                        item.target = targetMap[item.status] || 'Other'
+                        item.target = targetMap[item.status] || 'Other';
+                        if(filerLevel[item.target]) {
+                            filerLevel[item.target].yes_count = item.yes_count;
+                            filerLevel[item.target].no_count = item.no_count;
+                            filerLevel[item.target].partial_count = item.partial_count;
+                        }
+                        filerLevel[item.target] = item;
                     });
-                    series = chartItems
+                    chartItemsNext.forEach(function (item) {
+                        if(item.pc) {
+                            item.target = targetMap[item.pc] || 'Other';
+                            if(filerLevel[item.target]) {
+                                filerLevel[item.target].yes_count = item.yes_count;
+                                filerLevel[item.target].no_count = item.no_count;
+                                filerLevel[item.target].partial_count = item.partial_count;
+                            }
+                            filerLevel[item.target] = item;
+                        }
+
+                    });
+
+                    for (var i in filerLevel) {
+                        series.push(filerLevel[i])
+                    }
 
                     AmCharts.makeChart("targetStatusCategory", {
                         "type": "serial",
@@ -1028,13 +1057,13 @@ HPD.urls = {
                             "useGraphSettings": true,
                             "markerSize": 10
                         },
-                        "dataProvider": chartItems,
+                        "dataProvider": series,
                         "valueAxes": [
                             {
                                 "id": "ValueAxis-1",
                                 "stackType": "100%",
                                 "unit": '%',
-                                "title": "Grade Distribution"
+                                title:'Target Type'
                             }
                         ],
                         "graphs": [{
@@ -1044,7 +1073,7 @@ HPD.urls = {
                             "lineAlpha": 0.3,
                             "title": "Yes",
                             "type": "column",
-                            "color": "#000000",
+                            "color": "#fff",
                             "valueField": "yes_count"
                         },
                             {
@@ -1054,7 +1083,7 @@ HPD.urls = {
                                 "lineAlpha": 0.3,
                                 "title": "No",
                                 "type": "column",
-                                "color": "#000000",
+                                "color": "#fff",
                                 "valueField": "no_count"
                             },
                             {
@@ -1064,7 +1093,7 @@ HPD.urls = {
                                 "lineAlpha": 0.3,
                                 "title": "Partial",
                                 "type": "column",
-                                "color": "#000000",
+                                "color": "#fff",
                                 "valueField": "partial_count"
                             }],
                         "rotate": true,
@@ -1074,6 +1103,7 @@ HPD.urls = {
                             "axisAlpha": 0,
                             "gridAlpha": 0,
                             "position": "left",
+                            "title": "Status of Target Completion (Percentage)",
                             labelRotation: 45
                         },
                         "export": {
