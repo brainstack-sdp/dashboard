@@ -6,7 +6,39 @@
 
 "use strict";
 var mongoose = require('mongoose');
+let target_var = {
+    '575_1': '[question(575), question_pipe(\"यह संसाधन उपलब्ध है<br />\r\n(Already have these resources)\")]',
+    '504_1': '[question(504), question_pipe(\"यह संसाधन उपलब्ध है<br />\r\n(Already have these resources)\")]',
+    '504_2': '[question(504), question_pipe(\"इन वाजिब संसाधनों की ज़रूरत होगी<br />\r\n(Need to procure these resources - reasonable estimate)\")]',
+    '504_3': '[question(504), question_pipe(\"3\")]',
+    '647_1': '[question(647), question_pipe(\"यह संसाधन उपलब्ध है<br />\r\n(Already have these resources)\")]',
+    '647_2': '[question(647), question_pipe(\"इन वाजिब संसाधनों की ज़रूरत होगी<br />\r\n(Need to procure these resources - reasonable estimate)\")]',
+    
+    '509_1': '[question(509), question_pipe(\"यह संसाधन उपलब्ध है<br />\r\n(Already have these resources)\")]',
+    '457_1': '[question(457), question_pipe(\"यह संसाधन उपलब्ध है<br />\r\n(Already have these resources)\")]',
+    '514_1': '[question(514), question_pipe(\"यह संसाधन उपलब्ध है<br />\r\n(Already have these resources)\")]',
+    '510_1': '[question(510), question_pipe(\"यह संसाधन उपलब्ध है<br />\r\n(Already have these resources)\")]',
+    '458_1': '[question(458), question_pipe(\"यह संसाधन उपलब्ध है<br />\r\n(Already have these resources)\")]',
+    '516_1': '[question(516), question_pipe(\"यह संसाधन उपलब्ध है<br />\r\n(Already have these resources)\")]',
 
+    '511_1': '[question(511), question_pipe(\"यह संसाधन उपलब्ध है<br />\r\n(Already have these resources)\")]',
+    '460_1': '[question(460), question_pipe(\"यह संसाधन उपलब्ध है<br />\r\n(Already have these resources)\")]',
+    '517_1': '[question(517), question_pipe(\"यह संसाधन उपलब्ध है<br />\r\n(Already have these resources)\")]',
+    '512_1': '[question(512), question_pipe(\"यह संसाधन उपलब्ध है<br />\r\n(Already have these resources)\")]',
+    '461_1': '[question(461), question_pipe(\"यह संसाधन उपलब्ध है<br />\r\n(Already have these resources)\")]',
+    '518_1': '[question(518), question_pipe(\"यह संसाधन उपलब्ध है<br />\r\n(Already have these resources)\")]',
+    '535_1': '[question(535)]',
+    '537_1': '[question(537)]',
+    '589_1': '[question(589)]',
+    '540_1': '[question(540)]',
+    '536_1': '[question(536), option(12524)]',
+    '538_1': '[question(538), option(11364)]',
+    '539_1': '[question(539), option(11365)]',
+    '590_1': '[question(590), option(12240)]',
+    '584_1': '[question(584), question_pipe(\"इन वाजिब संसाधनों की ज़रूरत होगी<br />\r\n(Need to procure these resources - reasonable estimate)\")]',
+    '587_1': '[question(587), question_pipe(\"इन वाजिब संसाधनों की ज़रूरत होगी<br />\r\n(Need to procure these resources - reasonable estimate)\")]',
+    '588_1': '[question(588), question_pipe(\"इन वाजिब संसाधनों की ज़रूरत होगी<br />\r\n(Need to procure these resources - reasonable estimate)\")]'
+}
 
 var surveySchema = new mongoose.Schema({
     status : String,
@@ -278,14 +310,7 @@ surveySchema.statics.targetStatus = function(where, resource, group_name, query)
     }.bind(this));
 };
 
-let target_var = {
-    '575_1': '[question(575), question_pipe(\"यह संसाधन उपलब्ध है<br />\r\n(Already have these resources)\")]',
-    '504_1': '[question(504), question_pipe(\"यह संसाधन उपलब्ध है<br />\r\n(Already have these resources)\")]',
-    '504_2': '[question(504), question_pipe(\"इन वाजिब संसाधनों की ज़रूरत होगी<br />\r\n(Need to procure these resources - reasonable estimate)\")]',
-    '504_3': '[question(504), question_pipe(\"3\")]',
-    '647_1': '[question(647), question_pipe(\"यह संसाधन उपलब्ध है<br />\r\n(Already have these resources)\")]',
-    '647-2': '[question(647), question_pipe(\"इन वाजिब संसाधनों की ज़रूरत होगी<br />\r\n(Need to procure these resources - reasonable estimate)\")]'   
-}
+
 
 
 surveySchema.statics.targetTypeCount = function(where, resource, group_name, query){
@@ -388,10 +413,38 @@ surveySchema.statics.targetTotalCount = function(where, resource, group_name, qu
                 [query]: "$_id",
                 "yes_count": 1,
                 "no_count": 1,
-                "partial_count": 1,
-                // "noupdate_count": 1
+                "partial_count": 1
             } }
         ]).exec(function(err, data){
+            if(err)
+                reject(err);
+            resolve(data);
+        });
+    }.bind(this));
+};
+
+
+surveySchema.statics.sdpTable = function(where){
+    return new Promise (function(resolve, reject){
+        "use strict";
+        this.aggregate([
+            where,
+            {
+                '$project': {
+                    // [query]: "$_id"
+                    'school': '$[question(343), option(10873)]',
+                    'target_type': {$concat:['$'+target_var['504_1'], ', ', '$'+target_var['504_2'], ', ', '$'+target_var['504_3']] },
+                    'sa1': {$concat:[ '$'+target_var['509_1'], ', ', '$'+target_var['457_1'], ', ', '$'+target_var['514_1']]},
+                    'sa2': {$concat:[ '$'+target_var['510_1'], ', ', '$'+target_var['458_1'], ', ', '$'+target_var['516_1']]},
+                    'smc': {$concat:[ '$'+target_var['511_1'], ', ', '$'+target_var['460_1'], ', ', '$'+target_var['517_1']]},
+                    'methods': {$concat:[ '$'+target_var['512_1'], ', ', '$'+target_var['461_1'], ', ', '$'+target_var['518_1']]},
+                    'status': {$concat:[ '$'+target_var['535_1'], ', ', '$'+target_var['537_1'], ', ', '$'+target_var['589_1'], ',', '$'+target_var['540_1']]},
+                    'proof': {$concat:[ '$'+target_var['536_1'], ', ', '$'+target_var['538_1'], ', ', '$'+target_var['590_1'], ',', '$'+target_var['539_1']]},
+                    'requirememt': {$concat:[ '$'+target_var['584_1'], ', ', '$'+target_var['587_1'], ', ', '$'+target_var['588_1']]},
+                }
+            }
+        ]).exec(function(err, data){
+            console.log(err);
             if(err)
                 reject(err);
             resolve(data);
