@@ -39,3 +39,5 @@ mongoimport -h 34.230.165.196 -d test --collection survey --file data_test1.json
 
 
 ssh -i /Users/himanshujain/Downloads/btweb.pem ubuntu@34.230.165.196
+
+ssh -p 7822 eduasses@eduassessmentdata.net
