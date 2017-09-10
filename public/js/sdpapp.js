@@ -5,7 +5,7 @@
 var HPD = {};
 
 HPD.urls = {
-    filterList: '/school',
+    filterList: '/school/sdp',
     schoolCount: '/school/sdp',
     survey : '/sdp/survey'
 };
