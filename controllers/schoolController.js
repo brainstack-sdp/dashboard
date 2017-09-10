@@ -16,12 +16,13 @@ let log = require("../helpers/logger");
 let SchoolModel = require("../documents/School");
 
 module.exports.index = function (req, res) {
-  if (sessionUtils.checkExists(req, res, "user")) {
     res.render('index');
-  } else {
-    console.log("ind");
-    res.redirect('/login');
-  }
+  //if (sessionUtils.checkExists(req, res, "user")) {
+  //  res.render('index');
+  //} else {
+  //  console.log("ind");
+  //  res.redirect('/login');
+  //}
 };
 
 module.exports.login = function (req, res) {
@@ -96,7 +97,7 @@ module.exports.enrollment = function (req, res) {
     whereSchool = req.query;
   } else if(req.query.school_name) {
     whereSchool = req.query;
-  } 
+  }
   if(req.query.summer_winter && whereSchool) {
     whereSchool['summer_winter'] = req.query.summer_winter;
   } else{
@@ -125,7 +126,7 @@ module.exports.enrollment = function (req, res) {
         [sequelize.fn("SUM", sequelize.col("class_7")), "class_7"],
       ],
       where: whereSchoolManagement
-    }), 
+    }),
     schoolQuery({
       raw: true,
       attributes: [
@@ -188,9 +189,41 @@ module.exports.sdp = function (req, res) {
       SchoolModel.count(group, where, group_name, query),
   ]).then(function(data) {
       var response = {
-          [group_name]: data[0],
+          count: data[0],
       };
       res.json({'message': 'Data', 'result':response, 'error': false});
     });
 };
 
+
+module.exports.schoolSdpFilter = function (req, res) {
+
+  let group = '';
+  let group_name = '';
+  let query = ''
+  let where = undefined;
+  if(req.query.district) {
+    query = 'block';
+    group_name = 'block';
+    group = 'block';
+    where = {'$match': {'district': req.query.district }};
+  } else if(req.query.block) {
+    query = 'school_name';
+    group_name = 'school_name';
+    group = '[question(343), option(10873)]';
+    where = {'$match': {'block': req.query.block }};
+  } else{
+    query = 'district';
+    group_name = 'district';
+    group = 'district';
+    where = {'$match': {'_id': {'$exists': true}}}
+  } 
+  Promise.all([
+      SchoolModel.count(group, where, group_name, query),
+  ]).then(function(data) {
+      var response = {
+          count: data[0],
+      };
+      res.json({'message': 'Data', 'result':response, 'error': false});
+    });
+};
