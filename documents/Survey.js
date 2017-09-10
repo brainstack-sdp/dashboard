@@ -222,47 +222,26 @@ surveySchema.statics.targetStatusCount = function(where, resource, group_name, q
         "use strict";
         this.aggregate([
             where,
-            { $project: { 
-                          '[variable(535)]': '$[variable(535)]', 
-                          '[variable(537)]': '$[variable(537)]', 
-                          '[variable(589)]': '$[variable(589)]', 
-                          '[variable(540)]': '$[variable(540)]',
-                          'cp_1': { $substr: [ "$"+target_var['504_1'], 0, 6 ] },
-                          'cp_2': { $substr: [ "$"+target_var['504_2'], 0, 6 ] },
-                          'cp_3': { $substr: [ "$"+target_var['504_3'], 0, 6 ] }
-                      },
-            },
             {
                 '$group': {
-                    '_id': {
-                        'st': '$[variable(535)]', 
-                        'st': '$[variable(537)]', 
+                    '_id': { 
                         'st': '$[variable(589)]', 
-                        'st': '$[variable(540)]',
-                        'pc': '$cp_1',
-                        'pc': '$cp_2',
-                        'pc': '$cp_3',
+                        'st': '$[variable(540)]'
                     },
                     "yes_count": { "$sum": {
                         "$cond": [ { $and : [
-                            { $eq:['$[question(535)]', 'हाँ । Yes' ] },
-                            { $eq:['$[question(537)]', 'हाँ । Yes' ] },
                             { $eq:['$[question(589)]', 'हाँ । Yes' ] },
                             { $eq:['$[question(540)]', 'हाँ । Yes' ] }
                           ] }, 1, 0 ]
                     } },
                     "no_count": { "$sum": {
                         "$cond": [ { $and : [
-                            { $ne:['$[question(535)]', 'हाँ । Yes' ] },
-                            { $ne:['$[question(537)]', 'हाँ । Yes' ] },
                             { $ne:['$[question(589)]', 'हाँ । Yes' ] },
                             { $ne:['$[question(540)]', 'हाँ । Yes' ] }
                           ] }, 1, 0 ]
                     } },
                     "partial_count": { "$sum": {
                         "$cond": [ { $or : [
-                            { $eq:['$[question(535)]', 'हाँ । Yes' ] },
-                            { $eq:['$[question(537)]', 'हाँ । Yes' ] },
                             { $eq:['$[question(589)]', 'हाँ । Yes' ] },
                             { $eq:['$[question(540)]', 'हाँ । Yes' ] }
                           ] }, 1, 0 ]
@@ -272,6 +251,59 @@ surveySchema.statics.targetStatusCount = function(where, resource, group_name, q
             { "$project": {
                 "_id": 0,
                 'status': "$_id.st",
+                "yes_count": 1,
+                "no_count": 1,
+                "partial_count": 1
+            } }
+        ]).exec(function(err, data){
+            if(err)
+                reject(err);
+            resolve(data);
+        });
+    }.bind(this));
+};
+
+surveySchema.statics.targetStatus504Count = function(where, resource, group_name, query){
+    return new Promise (function(resolve, reject){
+        "use strict";
+        this.aggregate([
+            where,
+            { $project: { 
+                          '[variable(535)]': '$[variable(535)]', 
+                          '[variable(537)]': '$[variable(537)]', 
+                          'cp_1': { $substr: [ "$"+target_var['504_1'], 0, 6 ] },
+                          'cp_2': { $substr: [ "$"+target_var['504_2'], 0, 6 ] }
+                      },
+            },
+            {
+                '$group': {
+                    '_id': {
+                        'pc': '$cp_1',
+                        'pc': '$cp_2',
+                    },
+                    "yes_count": { "$sum": {
+                        "$cond": [ { $and : [
+                            { $eq:['$[question(535)]', 'हाँ । Yes' ] },
+                            { $eq:['$[question(537)]', 'हाँ । Yes' ] },
+                          ] }, 1, 0 ]
+                    } },
+                    "no_count": { "$sum": {
+                        "$cond": [ { $and : [
+                            { $ne:['$[question(535)]', 'हाँ । Yes' ] },
+                            { $ne:['$[question(537)]', 'हाँ । Yes' ] },
+                          ] }, 1, 0 ]
+                    } },
+                    "partial_count": { "$sum": {
+                        "$cond": [ { $or : [
+                            { $eq:['$[question(535)]', 'हाँ । Yes' ] },
+                            { $eq:['$[question(537)]', 'हाँ । Yes' ] },
+
+                          ] }, 1, 0 ]
+                    } },
+                }
+            },
+            { "$project": {
+                "_id": 0,
                 'pc': "$_id.pc",
                 "yes_count": 1,
                 "no_count": 1,
