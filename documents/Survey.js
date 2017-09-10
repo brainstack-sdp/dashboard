@@ -439,7 +439,7 @@ surveySchema.statics.sdpTable = function(where){
                     'smc': {$concat:[ '$'+target_var['511_1'], ', ', '$'+target_var['460_1'], ', ', '$'+target_var['517_1']]},
                     'methods': {$concat:[ '$'+target_var['512_1'], ', ', '$'+target_var['461_1'], ', ', '$'+target_var['518_1']]},
                     'status': {$concat:[ '$'+target_var['535_1'], ', ', '$'+target_var['537_1'], ', ', '$'+target_var['589_1'], ',', '$'+target_var['540_1']]},
-                    'proof': {$concat:[ '$'+target_var['536_1'], ', ', '$'+target_var['538_1'], ', ', '$'+target_var['590_1'], ',', '$'+target_var['539_1']]},
+//                    'proof': {$concat:[ '$'+target_var['536_1'], ', ', '$'+target_var['538_1'], ', ', '$'+target_var['590_1'], ',', '$'+target_var['539_1']]},
                     'requirememt': {$concat:[ '$'+target_var['584_1'], ', ', '$'+target_var['587_1'], ', ', '$'+target_var['588_1']]},
                 }
             }
