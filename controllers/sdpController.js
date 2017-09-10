@@ -46,12 +46,12 @@ module.exports.analyticsSurvey = function(req, res) {
       query = 'school_name';
       group_name = '[question(343), option(10873)]';
       group = '[question(343), option(10873)]';
-      where = {'$match': {'[question(343), option(10872)]': req.query.block }};
+      where = {'$match': {'[question(343), option(10872)]': req.query.block} }};
     } else if(req.query.school_name) {
       query = 'summer_winter';
       group_name = '[[question(591)]';
       group = '[question(591)]';
-      where = {'$match': {'[question(343), option(10873)]': req.query.school_name }};
+      where = {'$match': {'[question(343), option(10873)]': {'$regex':req.query.school_name }}};
     } else{
       query = 'district';
       group_name = '[question(343), option(10871)]';
@@ -126,7 +126,7 @@ module.exports.table = function(req, res) {
       query = 'summer_winter';
       group_name = '[[question(591)]';
       group = '[question(591)]';
-      where = {'$match': {'[question(343), option(10873)]': req.query.school_name }};
+      where = {'$match': {'[question(343), option(10873)]': {'$regex':req.query.school_name} }};
     } else{
       query = 'district';
       group_name = '[question(343), option(10871)]';
