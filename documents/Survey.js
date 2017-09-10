@@ -37,7 +37,10 @@ let target_var = {
     '590_1': '[question(590), option(12240)]',
     '584_1': '[question(584), question_pipe(\"इन वाजिब संसाधनों की ज़रूरत होगी<br />\r\n(Need to procure these resources - reasonable estimate)\")]',
     '587_1': '[question(587), question_pipe(\"इन वाजिब संसाधनों की ज़रूरत होगी<br />\r\n(Need to procure these resources - reasonable estimate)\")]',
-    '588_1': '[question(588), question_pipe(\"इन वाजिब संसाधनों की ज़रूरत होगी<br />\r\n(Need to procure these resources - reasonable estimate)\")]'
+    '588_1': '[question(588), question_pipe(\"इन वाजिब संसाधनों की ज़रूरत होगी<br />\r\n(Need to procure these resources - reasonable estimate)\")]',
+    '504_4': '[variable(504), question_pipe(\"यह संसाधन उपलब्ध है<br />\r\n(Already have these resources)\")]',
+    '504_5': '[variable(504), question_pipe(\"इन वाजिब संसाधनों की ज़रूरत होगी<br />\r\n(Need to procure these resources - reasonable estimate)\")]',
+    '504_6': '[variable(504), question_pipe(\"3\")]'    
 }
 
 var surveySchema = new mongoose.Schema({
@@ -364,14 +367,6 @@ surveySchema.statics.targetTypeCount = function(where, resource, group_name, que
         "use strict";
         this.aggregate([
             where,
-            { $project: { [target_var['575_1']]: 1,
-                          [target_var['647_1']]: 1, 
-                          [target_var['647_2']]: 1, 
-                          'cp_1': { $substr: [ "$"+target_var['504_1'], 0, 9 ] },
-                          'cp_2': { $substr: [ "$"+target_var['504_2'], 0, 9 ] },
-                          'cp_3': { $substr: [ "$"+target_var['504_3'], 0, 9 ] }
-                      },
-            },
             {
                 '$group': {
                     "_id": null,
@@ -381,7 +376,45 @@ surveySchema.statics.targetTypeCount = function(where, resource, group_name, que
                     "others": { "$sum": {
                         "$cond": [ { $or : [{ [target_var['647_1']]: { "$ifNull": [ "$field", false ] } },
                                             { [target_var['647_2']]: { "$ifNull": [ "$field", false ] } }]}, 1, 0 ]
-                    } },
+                    } },     
+                }
+            },
+            { "$project": {
+                "_id": 0,
+                "status": '$_id.st',
+                "learning_curve": 1,
+                "others": 1,
+            } }
+        ]).exec(function(err, data){
+            if(err)
+                reject(err);
+            resolve(data);
+        });
+    }.bind(this));
+};
+
+
+surveySchema.statics.targetType504Count = function(where, resource, group_name, query){
+    return new Promise (function(resolve, reject){
+        "use strict";
+        this.aggregate([
+            where,
+            { $project: { 
+                          [target_var['504_4']]: '$'+target_var['504_4'],
+                          [target_var['504_5']]: '$'+target_var['504_5'],
+                          [target_var['504_6']]: '$'+target_var['504_6'],
+                          'cp_1': { $substr: [ "$"+target_var['504_1'], 0, 9 ] },
+                          'cp_2': { $substr: [ "$"+target_var['504_2'], 0, 9 ] },
+                          'cp_3': { $substr: [ "$"+target_var['504_3'], 0, 9 ] }
+                      },
+            },
+            {
+                '$group': {
+                    "_id": { 
+                          'st': '$'+target_var['504_4'],
+                          'st': '$'+target_var['504_5'],
+                          'st': '$'+target_var['504_6']
+                    },
                     "community_participation": { "$sum": {
                         "$cond": [ { $or : [{ $eq:['$cp_1', 'Community' ] }, 
                                             { $eq:['$cp_2', 'Community' ] }, 
@@ -405,11 +438,10 @@ surveySchema.statics.targetTypeCount = function(where, resource, group_name, que
             },
             { "$project": {
                 "_id": 0,
+                "status": '$_id.st',
                 "teacher_performance": 1,
                 "community_participation": 1,
-                "school_management": 1,
-                "learning_curve": 1,
-                "others": 1,
+                "school_management": 1
             } }
         ]).exec(function(err, data){
             if(err)
@@ -418,7 +450,6 @@ surveySchema.statics.targetTypeCount = function(where, resource, group_name, que
         });
     }.bind(this));
 };
-
 
 surveySchema.statics.targetTotalCount = function(where, resource, group_name, query){
     return new Promise (function(resolve, reject){
