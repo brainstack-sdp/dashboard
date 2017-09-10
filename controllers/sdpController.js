@@ -19,7 +19,7 @@ let resources = {
   '584': '[question(584), question_pipe(\"इन वाजिब संसाधनों की ज़रूरत होगी<br />\r\n(Need to procure these resources - reasonable estimate)\")]',
   '587': '[question(587), question_pipe(\"इन वाजिब संसाधनों की ज़रूरत होगी<br />\r\n(Need to procure these resources - reasonable estimate)\")]',
   '588': '[question(588), question_pipe(\"इन वाजिब संसाधनों की ज़रूरत होगी<br />\r\n(Need to procure these resources - reasonable estimate)\")]',
-         
+
 }
 module.exports.home = function (req, res) {
     res.render('sdp_home');
@@ -46,7 +46,7 @@ module.exports.analyticsSurvey = function(req, res) {
       query = 'school_name';
       group_name = '[question(343), option(10873)]';
       group = '[question(343), option(10873)]';
-      where = {'$match': {'[question(343), option(10872)]': req.query.block} }};
+      where = {'$match': {'[question(343), option(10872)]': req.query.block} };
     } else if(req.query.school_name) {
       query = 'summer_winter';
       group_name = '[[question(591)]';
@@ -57,14 +57,14 @@ module.exports.analyticsSurvey = function(req, res) {
       group_name = '[question(343), option(10871)]';
       group = '[question(343), option(10871)]';
       where = {'$match': {'id': {'$exists': true}}}
-    } 
+    }
     if(req.query.summer_winter) {
       // query = 'school_type';
       // group_name = '[question(153)]';
       // group = '[question(153)]';
       // where = {'$match': {'[question(591)]': req.query.summer_winter }};
       where['$match']['[question(591)]'] =  {'$regex': req.query.summer_winter}; // };
-    } 
+    }
     if(req.query.school_type) {
       // query = 'school_name';
       // group_name = '[question(591)]';
@@ -132,10 +132,10 @@ module.exports.table = function(req, res) {
       group_name = '[question(343), option(10871)]';
       group = '[question(343), option(10871)]';
       where = {'$match': {'id': {'$exists': true}}}
-    } 
+    }
     if(req.query.summer_winter) {
-      where['$match']['[question(591)]'] =  {'$regex': req.query.summer_winter}; 
-    } 
+      where['$match']['[question(591)]'] =  {'$regex': req.query.summer_winter};
+    }
     if(req.query.school_type) {
       where['$match']['[question(153)]'] =  {'$regex': req.query.school_type};
     }

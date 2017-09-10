@@ -7,7 +7,8 @@ var HPD = {};
 HPD.urls = {
     filterList: '/school/sdp',
     schoolCount: '/school/sdp',
-    survey : '/sdp/survey'
+    survey : '/sdp/survey',
+    surveyTable : '/sdp/survey/table'
 };
 
 
@@ -143,6 +144,42 @@ HPD.urls = {
                 chartInit(key, type, $el.val(), iQuery);
             }
         });
+
+        if(type=="school_name") {
+            $.ajax({
+                method: 'GET',
+                url : HPD.urls.surveyTable + '?' + type +'=' +encodeURIComponent($el.val()),
+                success: function(res) {
+                    var table = res.result.table[0];
+                    table.target_type = table.target_type.split('*');
+                    table.sa1 = table.sa1.split('*');
+                    table.sa2 = table.sa2.split('*');
+                    table.smc = table.smc.split('*');
+                    table.status = table.status.split('*');
+                    table.methods = table.methods.split('*');
+                    console.log(table)
+
+                    var html='';
+
+                    for(var i=0; i< table.target_type.length; i++){
+                        var targetCat = table.target_type[i].split(':');
+                        html+= '<tr>';
+                        html+= '<td>' + table.school+  '</td>'
+                        html+= '<td>' + targetCat[0]+  '</td>'
+                        html+= '<td>' + targetCat[1]+  '</td>'
+                        html+= '<td>' + table.sa1[i]+  '</td>'
+                        html+= '<td>' + table.sa2[i]+  '</td>'
+                        html+= '<td>' + table.smc[i]+  '</td>'
+                        html+= '<td>' + table.methods[i]+  '</td>'
+                        html+= '<td>' + table.status[i]+  '</td>'
+                        html+= '<td>' + table.requirememt+  '</td>'
+                        html +='</tr>'
+                    }
+                    $('.js-table').append(html)
+
+                }
+            });
+        }
     };
 
     var createOptions = function(filters, key) {
