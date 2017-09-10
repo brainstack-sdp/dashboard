@@ -119,7 +119,7 @@ passport.use(new Strategy({
       if (!user) {
         console.log("Incorrect user_name.");
         return done(null, false, { message: "Incorrect user_name." });
-      } 
+      }
       return done(null, user);
     }).catch(function (err) {
       console.log(err);
@@ -155,12 +155,13 @@ app.post("/login", function (req, res, next) {
 app.use(function (req, res, next) {
   // next();
   res.locals.login = req.isAuthenticated();
-  if (sessionUtils.checkExists(req, res, "user")) {
-    req.user = sessionUtils.getData(req, res, "user");
     next();
-  } else {
-    res.render('login');
-  }
+  //if (sessionUtils.checkExists(req, res, "user")) {
+  //  req.user = sessionUtils.getData(req, res, "user");
+  //  next();
+  //} else {
+  //  res.render('login');
+  //}
 });
 
 /**

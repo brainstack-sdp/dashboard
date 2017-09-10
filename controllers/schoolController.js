@@ -96,7 +96,7 @@ module.exports.enrollment = function (req, res) {
     whereSchool = req.query;
   } else if(req.query.school_name) {
     whereSchool = req.query;
-  } 
+  }
   if(req.query.summer_winter && whereSchool) {
     whereSchool['summer_winter'] = req.query.summer_winter;
   } else{
@@ -125,7 +125,7 @@ module.exports.enrollment = function (req, res) {
         [sequelize.fn("SUM", sequelize.col("class_7")), "class_7"],
       ],
       where: whereSchoolManagement
-    }), 
+    }),
     schoolQuery({
       raw: true,
       attributes: [
@@ -175,8 +175,8 @@ module.exports.sdp = function (req, res) {
     group_name = 'district';
     group = 'district';
     where = {'$match': {'_id': {'$exists': true}}}
-  } 
-  
+  }
+
   // if(req.query.summer_winter && whereSchool) {
   //   where['summer_winter'] = req.query.summer_winter;
   // } else if (req.query.summer_winter){
@@ -193,4 +193,3 @@ module.exports.sdp = function (req, res) {
       res.json({'message': 'Data', 'result':response, 'error': false});
     });
 };
-

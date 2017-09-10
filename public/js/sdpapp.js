@@ -5,7 +5,7 @@
 var HPD = {};
 
 HPD.urls = {
-    filterList: '/school',
+    filterList: '/school/sdp',
     schoolCount: '/school/sdp',
     survey : '/sdp/survey'
 };
@@ -203,7 +203,9 @@ HPD.urls = {
             method: 'GET',
             url: HPD.urls.schoolCount + filterQuery(1)}))
             .then(function (result, schoolResult) {
-                var res = result[0], school = schoolResult[0].result.count;
+
+                var next_key = Object.keys(schoolResult[0].result)[0];
+                var res = result[0], school = schoolResult[0].result[next_key];
 
                     var pieData = {}, series = [], sum = 0,totalSchools= 0, gradeMap = {},
                         chartItems = res.result.complete, labels = [];
@@ -217,8 +219,11 @@ HPD.urls = {
                                 totalSchools = school.filter(function( obj ) {
                                     return obj[filterKey] == item[filterKey];
                                 });
-                                gradeObj.size = (item.size/totalSchools[0].size)*100
-                                series.push(gradeObj)
+                                if(totalSchools.length){
+                                    gradeObj.size = (item.size/totalSchools[0].size)*100
+                                    series.push(gradeObj)
+                                }
+
                             }
 
                         });
@@ -283,17 +288,17 @@ HPD.urls = {
 
                     if(chartItems.length) {
                         chartItems.forEach(function (item) {
-                            if (filterLevel[item[filterKey]]) {
-                                filterLevel[item[filterKey]].push(item)
+                            if (filterLevel[item._id[filterKey]]) {
+                                filterLevel[item._id[filterKey]].push(item)
                             } else {
-                                filterLevel[item[filterKey]] = [item];
+                                filterLevel[item._id[filterKey]] = [item];
                             }
                         });
                         for (var i in filterLevel) {
                             total = 0;
                             grades = {"केवल प्राथमिक । Primary only (Class 1-)5": 0, "केवल उच्च प्राथमिक । Upper Primary only (Class 6-8)": 0, "उच्च प्राथमिक एवं माध्यमिक या उच्च माध्यमिक । Upper Primary + Secondary/ Senior Secondary (Class 6-10 OR Class 6-12)": 0}
                             filterLevel[i].forEach(function (item) {
-                                grades[item._id] = item.size;
+                                grades[item._id.school_type] = item.size;
                             });
                             gradeObj = grades;
                             gradeObj[filterKey] = i;
@@ -629,8 +634,8 @@ HPD.urls = {
                 if(chartItems.length) {
                     chartItems.forEach(function (item) {
                         if(item.status){
-                            possibleAnswer.yes_count.proof ? possibleAnswer.yes_count.proof+=1:possibleAnswer.yes_count.proof=0
-                            possibleAnswer.partial_count.proof ? possibleAnswer.partial_count.proof=+1:possibleAnswer.partial_count.proof=0
+                            possibleAnswer.yes_count.proof = item.yes_count;
+                            possibleAnswer.partial_count.proof = item.partial_count;
                         }
                         for(var i in item){
                             if(i=='status') {continue;}
@@ -650,10 +655,10 @@ HPD.urls = {
                         color: "#9eff01",
                         subs: [{
                             type: "Proof",
-                            percent: 15
+                            percent: possibleAnswer.yes_count.proof
                         }, {
                             type: "No Proof",
-                            percent: 15
+                            percent: possibleAnswer.yes_count.count - possibleAnswer.yes_count.proof
                         }]
                     },{
                         type: "No",
@@ -661,24 +666,24 @@ HPD.urls = {
                         color: "#ff6e01",
                         subs: [{
                         type: "Proof",
-                        percent: 15
+                        percent: 0
                     }, {
                         type: "No Proof",
-                        percent: 15
+                        percent: possibleAnswer.no_count.count
                     }]
                     },{type: "Partial",
                         percent: possibleAnswer.partial_count.count,
                         color: "#9e01ff",
                         subs: [{
                             type: "Proof",
-                            percent: 15
+                            percent: possibleAnswer.partial_count.proof
                         }, {
                             type: "No Proof",
-                            percent: 25
+                            percent: possibleAnswer.partial_count.count - possibleAnswer.partial_count.proof
                         }]
                     }];
 
-                    function generateChartData() {
+                    function generateStatusChartData() {
                         var chartData = [];
                         for (var i = 0; i < types.length; i++) {
                             if (i == selected) {
@@ -706,12 +711,11 @@ HPD.urls = {
                         "type": "pie",
                         "theme": "light",
 
-                        "dataProvider": generateChartData(),
+                        "dataProvider": generateStatusChartData(),
                         "labelText": "[[title]]: [[value]]",
                         "balloonText": "[[title]]: [[value]]",
                         "titleField": "type",
                         "valueField": "percent",
-                        "outlineColor": "#FFFFFF",
                         "outlineAlpha": 0.8,
                         "outlineThickness": 2,
                         "colorField": "color",
@@ -719,23 +723,22 @@ HPD.urls = {
                         "titles": [{
                             "text": "Click a slice to see the details"
                         }],
-                        "listeners": [{
-                            "event": "clickSlice",
-                            "method": function(event) {
-                                var chart = event.chart;
-                                if (event.dataItem.dataContext.id != undefined) {
-                                    selected = event.dataItem.dataContext.id;
-                                } else {
-                                    selected = undefined;
-                                }
-                                chart.dataProvider = generateChartData();
-                                chart.validateData();
-                            }
-                        }],
                         "export": {
                             "enabled": true
                         }
-                    });
+                    }).addListener("clickSlice",
+                        function(event) {
+                            console.log('in')
+                            var chart = event.chart;
+                            if (event.dataItem.dataContext.id != undefined) {
+                                selected = event.dataItem.dataContext.id;
+                            } else {
+                                selected = undefined;
+                            }
+                            chart.dataProvider = generateStatusChartData();
+                            chart.validateData();
+                        });
+
                 } else {
                     $('#targetStatusValue').html('<div class="text-center">No Data</div>')
                 }
@@ -845,6 +848,111 @@ HPD.urls = {
                     $('#targetStatus').html('<div class="text-center">No Data</div>')
                 }
                 $('.js-targetStatus.js-loader').hide();
+
+                chartItems = res.result.target_total, grades = {}, filterLevel= {}, series = [];
+
+                if(chartItems.length) {
+                    chartItems.forEach(function (item) {
+                        if (filterLevel[item[filterKey]]) {
+                            filterLevel[item[filterKey]].push(item)
+                        } else {
+                            filterLevel[item[filterKey]] = [item];
+                        }
+                    });
+                    for (var i in filterLevel) {
+                        total = 0;
+                        grades = {"yes_count": 0, "no_count": 0, "partial_count": 0};
+                        filterLevel[i].forEach(function (item) {
+                            grades.yes_count = item.yes_count;
+                            grades.no_count = item.no_count;
+                            grades.partial_count = item.partial_count;
+                        });
+                        gradeObj = grades;
+                        gradeObj[filterKey] = i;
+                        series.push(gradeObj)
+                    }
+                    AmCharts.makeChart("targetTotal", {
+                        "type": "serial",
+                        "theme": "light",
+                        color: '#fff',
+                        "colors": [
+                            gradeColors.E,
+                            gradeColors.D,
+                            gradeColors.C
+                        ],
+                        "legend": {
+                            "horizontalGap": 10,
+                            "maxColumns": 1,
+                            "position": "right",
+                            "useGraphSettings": true,
+                            "markerSize": 10
+                        },
+                        "dataProvider": series,
+                        "valueAxes": [
+                            {
+                                "id": "ValueAxis-1",
+                                "stackType": "100%",
+                                "unit": '%',
+                                "title": "Grade Distribution"
+                            }
+                        ],
+                        "graphs": [{
+                            "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
+                            "fillAlphas": 0.8,
+                            "labelText": "[[value]]",
+                            "lineAlpha": 0.3,
+                            "title": "Yes",
+                            "type": "column",
+                            "color": "#000000",
+                            "valueField": "yes_count"
+                        },
+                            {
+                                "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
+                                "fillAlphas": 0.8,
+                                "labelText": "[[value]]",
+                                "lineAlpha": 0.3,
+                                "title": "No",
+                                "type": "column",
+                                "color": "#000000",
+                                "valueField": "no_count"
+                            },
+                            {
+                                "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
+                                "fillAlphas": 0.8,
+                                "labelText": "[[value]]",
+                                "lineAlpha": 0.3,
+                                "title": "Partial",
+                                "type": "column",
+                                "color": "#000000",
+                                "valueField": "partial_count"
+                            }],
+                        "categoryField": filterKey,
+                        "categoryAxis": {
+                            "gridPosition": "start",
+                            "axisAlpha": 0,
+                            "gridAlpha": 0,
+                            "position": "left",
+                            labelRotation: 45
+                        },
+                        "export": {
+                            "enabled": true,
+                            "reviver": function (nodeObj) {
+                                if (nodeObj.className === 'amcharts-axis-label') {
+                                    nodeObj.fill = '#333';
+                                }
+                            }
+                        },
+                        "chartScrollbar": {
+                            "enabled": true,
+                            "selectedBackgroundColor": '#333',
+                            "gridCount": 4
+                        }
+
+                    });
+                } else {
+                    $('#targetTotal').html('<div class="text-center">No Data</div>')
+                }
+                $('.js-targetTotal.js-loader').hide();
 
                 var targetMap = {
                     '11356': 'Community Participation',
