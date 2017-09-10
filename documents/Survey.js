@@ -73,14 +73,25 @@ surveySchema.statics.completeStatusCount = function(group, where, group_name, qu
 };
 
 surveySchema.statics.schoolTypeCount = function(where, group_name, query){
+    console.log({
+                '$group': {
+                    '_id': '$[question(153)]',
+                    [query]: {'$first': '$'+group_name},
+                    'size': {
+                        '$sum': 1
+                    }
+                }
+            });
     return new Promise (function(resolve, reject){
         "use strict";
         this.aggregate([
             where,
             {
                 '$group': {
-                    '_id': '$[question(153)]',
-                    [query]: {'$first': '$'+group_name},
+                    '_id': {
+                        'school_type': '$[question(153)]',
+                        [query]: '$'+group_name
+                    },
                     'size': {
                         '$sum': 1
                     }
