@@ -24,11 +24,11 @@ HPD.urls = {
         }, gradeMap = {
 
         }, gradeColors = {
-            A : "#76FF03",
-            B: "#00C853",
-            C: "#ffff00",
-            D: "#ee7810",
-            E: "#e85656"
+            A : "#CA3630",
+            B: "#FA7413",
+            C: "#FFD159",
+            D: "#5FB6C7",
+            E: "#C9C77C"
         }, typeMap ={
             1 : 'Basic',
             2 : 'Mediocre',
@@ -252,7 +252,8 @@ HPD.urls = {
                                     return obj[filterKey] == item[filterKey];
                                 });
                                 if(totalSchools.length){
-                                    gradeObj.size = (item.size/totalSchools[0].size)*100
+                                    gradeObj.size = (Math.floor(item.size/totalSchools[0].size)*10000)/100;
+                                    gradeObj.color = '#5FB6C7';
                                     series.push(gradeObj)
                                 }
 
@@ -263,7 +264,7 @@ HPD.urls = {
                         AmCharts.makeChart('sdpstatus', {
                             type: 'serial',
                             theme: 'blur',
-                            color: '#fff',
+                            color: '#333',
                             dataProvider: series,
                             valueAxes: [
                                 {
@@ -340,7 +341,7 @@ HPD.urls = {
                         AmCharts.makeChart("gradeStack", {
                             "type": "serial",
                             "theme": "light",
-                            color: '#fff',
+                            color: '#333',
                             "colors": [
                                 gradeColors.E,
                                 gradeColors.D,
@@ -473,24 +474,29 @@ HPD.urls = {
                     var target_types = [{
                         type: "Learning Levels",
                         percent: chartItems.learning_curve,
-                        color: "#9eff01",
+                        total: total,
+                        color: gradeColors.B,
                         subs: []
                     },{
                         type: "Others",
                         percent: chartItems.others,
-                        color: "#ff6e01",
+                        total: total,
+                        color: gradeColors.C,
                         subs: []
                     },{type: "Community Participation",
                         percent: chartItems.community_participation,
-                        color: "#9e08af",
+                        total: total,
+                        color: gradeColors.E,
                         subs: gradeObj.coms
                     },{type: "Teacher Performance",
                         percent: chartItems.teacher_performance,
-                        color: "#3e514f",
+                        total: total,
+                        color: gradeColors.A,
                         subs: gradeObj.teach
                     },{type: "School Management",
                         percent: chartItems.school_management,
-                        color: "#9e01ff",
+                        total: total,
+                        color: gradeColors.D,
                         subs: gradeObj.stu
                     }];
 
@@ -524,12 +530,10 @@ HPD.urls = {
 
                         "dataProvider": generateChartData(),
                         "labelText": "[[title]]: [[value]]",
-                        "balloonText": "[[title]]: [[value]]",
+                        "balloonText": "[[title]]: [[value]] | [[value/total]]",
                         "titleField": "type",
                         "valueField": "percent",
-                        "outlineColor": "#FFFFFF",
-                        "outlineAlpha": 0.8,
-                        "outlineThickness": 2,
+                        "totalField" : 'total',
                         "colorField": "color",
                         "pulledField": "pulled",
                         "titles": [{
@@ -588,7 +592,7 @@ HPD.urls = {
                                 "lineAlpha": 0.3,
                                 "title": levels[i],
                                 "type": "column",
-                                "color": "#fff",
+                                "color": "#333",
                                 "valueField": levels[i]
                             })
                         }
@@ -625,13 +629,13 @@ HPD.urls = {
                         AmCharts.makeChart("resourceStack", {
                             "type": "serial",
                             "theme": "light",
-                            color: '#fff',
+                            color: '#333',
                             "colors": [
-                                "#e85656",
-                                "#ee7810",
-                                "#e0e004",
-                                "#90b900",
-                                "#209e91"
+                                gradeColors.A,
+                                gradeColors.B,
+                                gradeColors.C,
+                                gradeColors.D,
+                                gradeColors.E
                             ],
                             "legend": {
                                 "horizontalGap": 10,
@@ -701,7 +705,7 @@ HPD.urls = {
                     var types = [{
                         type: "Yes",
                         percent: possibleAnswer.yes_count.count,
-                        color: "#9eff01",
+                        color: gradeColors.C,
                         subs: [{
                             type: "Proof",
                             percent: possibleAnswer.yes_count.proof
@@ -712,7 +716,7 @@ HPD.urls = {
                     },{
                         type: "No",
                         percent: possibleAnswer.no_count.count,
-                        color: "#ff6e01",
+                        color: gradeColors.E,
                         subs: [{
                         type: "Proof",
                         percent: 0
@@ -722,7 +726,7 @@ HPD.urls = {
                     }]
                     },{type: "Partial",
                         percent: possibleAnswer.partial_count.count,
-                        color: "#9e01ff",
+                        color: gradeColors.B,
                         subs: [{
                             type: "Proof",
                             percent: possibleAnswer.partial_count.proof
@@ -765,8 +769,6 @@ HPD.urls = {
                         "balloonText": "[[title]]: [[value]]",
                         "titleField": "type",
                         "valueField": "percent",
-                        "outlineAlpha": 0.8,
-                        "outlineThickness": 2,
                         "colorField": "color",
                         "pulledField": "pulled",
                         "titles": [{
@@ -818,7 +820,7 @@ HPD.urls = {
                     AmCharts.makeChart("targetStatus", {
                         "type": "serial",
                         "theme": "light",
-                        color: '#fff',
+                        color: '#333',
                         "colors": [
                             gradeColors.E,
                             gradeColors.D,
@@ -835,8 +837,6 @@ HPD.urls = {
                         "valueAxes": [
                             {
                                 "id": "ValueAxis-1",
-                                "stackType": "100%",
-                                "unit": '%',
                                 "title": "Compliance Percentage"
                             }
                         ],
@@ -924,7 +924,7 @@ HPD.urls = {
                     AmCharts.makeChart("targetTotal", {
                         "type": "serial",
                         "theme": "light",
-                        color: '#fff',
+                        color: '#333',
                         "colors": [
                             gradeColors.E,
                             gradeColors.D,
@@ -1073,7 +1073,7 @@ HPD.urls = {
                             "lineAlpha": 0.3,
                             "title": "Yes",
                             "type": "column",
-                            "color": "#fff",
+                            "color": "#333",
                             "valueField": "yes_count"
                         },
                             {
@@ -1083,7 +1083,7 @@ HPD.urls = {
                                 "lineAlpha": 0.3,
                                 "title": "No",
                                 "type": "column",
-                                "color": "#fff",
+                                "color": "#333",
                                 "valueField": "no_count"
                             },
                             {
@@ -1093,7 +1093,7 @@ HPD.urls = {
                                 "lineAlpha": 0.3,
                                 "title": "Partial",
                                 "type": "column",
-                                "color": "#fff",
+                                "color": "#333",
                                 "valueField": "partial_count"
                             }],
                         "rotate": true,

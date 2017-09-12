@@ -1,8 +1,34 @@
 body.blur-theme::before {
-    opacity: 0.2
+    opacity: 0
 }
 .page-top {
-    background: #fff;
+    background: #FFD159;
+}
+.page-top .inline-block {
+    display: inline-block;
+}
+
+.page-top .inline-block img {
+    width: 100%;
+    max-width: 70px;
+    margin: 0 8px;
+}
+
+ul.nav.nav-tabs li.uib-tab.nav-item >a {
+    color: #333;
+}
+
+.blur-theme .nav.nav-tabs>li.active>a{
+ background: #FA7413;
+    opacity: 1;
+
+}
+
+.blur-theme .nav.nav-tabs>li>a{
+    color: #333;
+    background: #FA7413;
+    opacity: 0.6;
+
 }
 
 a.al-logo {
@@ -10,10 +36,47 @@ a.al-logo {
 }
 
 .al-sidebar {
- background: #343a40;
+ background: #FFD159;
     padding-top: 5px;
 
 }
+.al-sidebar-list  li {
+    margin-bottom: 25px;
+}
+
+
 .al-sidebar-list  h4 {
-    color: #ccc;
+    color: #333;
+}
+
+.panel.panel-blur {
+    background: none;
+}
+
+.panel .panel-heading {
+    color: #333 !important;
+}
+
+.table {
+    table-layout: fixed;
+    width: 100%;
+    background: #fff;
+}
+.table th {
+    background: #CCCCCC;
+    font-weight: 600;
+}
+
+.table td , .table>tbody>tr>th {
+    padding: 5px;
+    border: 1px solid #AAAAAA;
+    word-break: break-word;
+}
+
+tr:nth-child(even) {
+    background-color: #C9C77C;
+}
+
+.al-footer {
+    padding-top: 50px;
 }

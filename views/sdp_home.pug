@@ -10,18 +10,21 @@ html
     body.blur-theme.light
         header
             .page-top.clearfix(scroll-position="scrolled" max-height="50")
-                .col-xs-4
-                    a(href="/sdp" class="al-logo clearfix")
+                .col-xs-3.text-center
+                    .inline-block
                         img(src="/assets/img/himachal-pradesh-sarkar.png")
-                        span HP
-                        | SDP Data
-                .col-xs-4.text-center
-                    img(src="/assets/img/samarth-logo-v9---lowres.png")
-                .col-xs-4.text-right
-                    img(src="/assets/img/ssabglogo.jpg")
+                    .inline-block
+                        img(src="/assets/img/samarth-logo-v9---lowres.png")
+                    .inline-block
+                        img(src="/assets/img/ssabglogo.jpg")
+                .col-xs-6
+                    h1 Student Development Plan Dashboard
+
         .body-bg
         main
             aside.al-sidebar
+                .text-center
+                    a.btn.btn-default(href="/sdp") Reset Filters
                 ul.al-sidebar-list
                     li
                         h4 District
@@ -49,8 +52,6 @@ html
 
             .chart-main.al-main
                 .al-content
-                    .pull-right
-                        a.btn.btn-default(href="/") Reset Filters
                     .col-md-12
                         ul.nav.nav-tabs
                             li.uib-tab.nav-item.active
@@ -120,15 +121,15 @@ html
                         h3.panel-title 9. Target Data Table(Applicable at School Level)
                         table.js-table.table
                             tr
-                                td UDISE School
-                                td Target Type
-                                td Sub-Target Type
-                                td Action I will take by SA1
-                                td Action I will take by SA2
-                                td SMC Member Incharge
-                                td Method for me to evaluate success of my plan
-                                td Status
-                                td Resource Requirements
+                                th UDISE School
+                                th Target Type
+                                th Sub-Target Type
+                                th Action I will take by SA1
+                                th Action I will take by SA2
+                                th SMC Member Incharge
+                                th Method for me to evaluate success of my plan
+                                th Status
+                                th Resource Requirements
             footer.al-footer.clearfix
                 .al-footer-right Created by Samarth
             .modal.fade.js-modal
