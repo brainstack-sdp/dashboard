@@ -3,6 +3,7 @@ body.blur-theme::before {
 }
 .page-top {
     background: #FFD159;
+    padding: 10px 0 0 0;
 }
 .page-top .inline-block {
     display: inline-block;
