@@ -61,10 +61,15 @@ a.al-logo {
     color: #333 !important;
 }
 
+.tab-content {
+    padding: 0;
+}
+
 .table {
     table-layout: fixed;
     width: 100%;
     background: #fff;
+    color: #333 !important;
 }
 .table th {
     background: #CCCCCC;
@@ -78,7 +83,7 @@ a.al-logo {
 }
 
 tr:nth-child(even) {
-    background-color: #C9C77C;
+    background-color: rgba(250, 116, 19, 0.4);
 }
 
 .al-footer {
