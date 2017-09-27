@@ -252,7 +252,7 @@ HPD.urls = {
                                     return obj[filterKey] == item[filterKey];
                                 });
                                 if(totalSchools.length){
-                                    gradeObj.size = (Math.floor(item.size/totalSchools[0].size)*10000)/100;
+                                    gradeObj.size = (Math.floor(item.size/totalSchools[0].size*10000))/100;
                                     gradeObj.color = '#5FB6C7';
                                     series.push(gradeObj)
                                 }

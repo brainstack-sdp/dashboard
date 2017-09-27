@@ -41,6 +41,9 @@ a.al-logo {
     padding-top: 5px;
 
 }
+.al-sidebar-list {
+    margin: 20px 0;
+}
 .al-sidebar-list  li {
     margin-bottom: 25px;
 }
