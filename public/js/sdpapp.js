@@ -157,13 +157,12 @@ HPD.urls = {
                     table.smc = table.smc.split('*');
                     table.status = table.status.split('*');
                     table.methods = table.methods.split('*');
-                    console.log(table)
 
                     var html='';
 
                     for(var i=0; i< table.target_type.length; i++){
                         var targetCat = table.target_type[i].split(':');
-                        html+= '<tr>';
+                        html+= '<tr class="js-row">';
                         html+= '<td>' + table.school+  '</td>'
                         html+= '<td>' + targetCat[0]+  '</td>'
                         html+= '<td>' + targetCat[1]+  '</td>'
@@ -175,10 +174,14 @@ HPD.urls = {
                         html+= '<td>' + table.requirememt+  '</td>'
                         html +='</tr>'
                     }
+                    $('.js-tableBar').show();
                     $('.js-table').append(html)
 
                 }
             });
+        } else {
+            $('.js-row').remove();
+            $('.js-tableBar').hide();
         }
     };
 
@@ -247,6 +250,8 @@ HPD.urls = {
                         chartItems.forEach(function (item) {
                             gradeObj = {};
                             if(item[filterKey]){
+                                filterKey== 'school_name' && item[filterKey].replace(/[0-9]/g, '').trim();
+
                                 gradeObj[filterKey] = item[filterKey];
                                 totalSchools = school.filter(function( obj ) {
                                     return obj[filterKey] == item[filterKey];
@@ -1057,6 +1062,11 @@ HPD.urls = {
                             "useGraphSettings": true,
                             "markerSize": 10
                         },
+                        "colors": [
+                            gradeColors.E,
+                            gradeColors.D,
+                            gradeColors.C
+                        ],
                         "dataProvider": series,
                         "valueAxes": [
                             {
