@@ -250,7 +250,9 @@ HPD.urls = {
                         chartItems.forEach(function (item) {
                             gradeObj = {};
                             if(item[filterKey]){
-                                filterKey== 'school_name' && item[filterKey].replace(/[0-9]/g, '').trim();
+                                if(filterKey== 'school_name'){
+                                    item[filterKey]= item[filterKey].replace(/[0-9]/g, '').trim();
+                                }
 
                                 gradeObj[filterKey] = item[filterKey];
                                 totalSchools = school.filter(function( obj ) {
