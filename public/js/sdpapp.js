@@ -175,6 +175,7 @@ HPD.urls = {
                         html +='</tr>'
                     }
                     $('.js-tableBar').show();
+                    $('.js-row').remove();
                     $('.js-table').append(html)
 
                 }
