@@ -11,7 +11,11 @@ for i in range(1,307):
     u = url.format(page_number=i)
     res = requests.get(u).json()
     print(res)
-    result = survey.insert_many(res['data'])
+    for r in res['data']:
+        try: 
+        survey.insert(r)
+    # result = survey.insert_many(res['data'])
+
     # with open('data_test.json', 'r') as f:
         # res2 = json.load(f)
         # print(res2)

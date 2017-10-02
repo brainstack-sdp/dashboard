@@ -56,7 +56,7 @@ var surveySchema = new mongoose.Schema({
     "[question(343), option(10872)]" : { type: String,  index: true},
     "[question(343), option(10873)]" : { type: String,  index: true},
     "[question(153)]": { type: String,  index: true},
-    "question(591)]": { type: String,  index: true},
+    "[question(591)]": { type: String,  index: true},
     "[question(535)]": { type: String,  index: true},
     "[variable(537)]": { type: String,  index: true},
     "[variable(587)]": { type: String,  index: true},
@@ -194,14 +194,14 @@ surveySchema.statics.targetCount = function(where, resource, group_name, query){
                             { $eq:['$[question(540)]', 'हाँ । Yes' ] }
                           ] }, 1, 0 ]
                     } },
-                    // "noupdate_count": { "$sum": {
-                    //     "$cond": [ { $and : [
-                    //         { '[question(535)]': { $eq: "" } },
-                    //         { '[question(537)]': { $eq: "" } },
-                    //         { '[question(589)]': { $eq: "" } },
-                    //         { '[question(540)]': { $eq: "" } }
-                    //       ] }, 1, 0 ]
-                    // } },
+                    "not_updated_count": { "$sum": {
+                        "$cond": [ { $and : [
+                            { '[question(535)]': { $eq: "" } },
+                            { '[question(537)]': { $eq: "" } },
+                            { '[question(589)]': { $eq: "" } },
+                            { '[question(540)]': { $eq: "" } }
+                          ] }, 1, 0 ]
+                    } },
                 }
             },
             { "$project": {
@@ -247,6 +247,12 @@ surveySchema.statics.targetStatusCount = function(where, resource, group_name, q
                         "$cond": [ { $or : [
                             { $eq:['$[question(589)]', 'हाँ । Yes' ] },
                             { $eq:['$[question(540)]', 'हाँ । Yes' ] }
+                          ] }, 1, 0 ]
+                    } },
+                    "not_updated_count": { "$sum": {
+                        "$cond": [ { $or : [
+                            { $eq:['$[question(589)]', '' ] },
+                            { $eq:['$[question(540)]', '' ] }
                           ] }, 1, 0 ]
                     } },
                 }
@@ -303,6 +309,13 @@ surveySchema.statics.targetStatus504Count = function(where, resource, group_name
 
                           ] }, 1, 0 ]
                     } },
+                    "not_updated_count": { "$sum": {
+                        "$cond": [ { $or : [
+                            { $eq:['$[question(535)]', '' ] },
+                            { $eq:['$[question(537)]', '' ] },
+
+                          ] }, 1, 0 ]
+                    } },
                 }
             },
             { "$project": {
@@ -341,6 +354,9 @@ surveySchema.statics.targetStatus = function(where, resource, group_name, query)
                     } },
                     "partial_count": { "$sum": {
                         "$cond": [ { $eq:['$[question(535)]', 'हाँ । Yes' ] }, 1, 0 ]
+                    } },
+                    "not_updated_count": { "$sum": {
+                        "$cond": [ { $eq:['$[question(535)]', '' ] }, 1, 0 ]
                     } },
                 }
             },
@@ -482,7 +498,16 @@ surveySchema.statics.targetTotalCount = function(where, resource, group_name, qu
                             { $eq:['$[question(589)]', 'कुछ हद तक, हाँ । Partially' ] },
                             { $eq:['$[question(540)]', 'कुछ हद तक, हाँ । Partially' ] }
                           ] }, 1, 0 ]
+                    } },
+                    "not_updated_count": { "$sum": {
+                        "$cond": [ { $or : [
+                            { $eq:['$[question(535)]', '' ] },
+                            { $eq:['$[question(537)]', '' ] },
+                            { $eq:['$[question(589)]', '' ] },
+                            { $eq:['$[question(540)]', '' ] }
+                          ] }, 1, 0 ]
                     } }
+
                 }
             },
             { "$project": {
