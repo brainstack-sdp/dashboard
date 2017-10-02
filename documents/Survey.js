@@ -13,7 +13,7 @@ let target_var = {
     '504_3': '[question(504), question_pipe(\"3\")]',
     '647_1': '[question(647), question_pipe(\"यह संसाधन उपलब्ध है<br />\r\n(Already have these resources)\")]',
     '647_2': '[question(647), question_pipe(\"इन वाजिब संसाधनों की ज़रूरत होगी<br />\r\n(Need to procure these resources - reasonable estimate)\")]',
-    
+
     '509_1': '[question(509), question_pipe(\"यह संसाधन उपलब्ध है<br />\r\n(Already have these resources)\")]',
     '457_1': '[question(457), question_pipe(\"यह संसाधन उपलब्ध है<br />\r\n(Already have these resources)\")]',
     '514_1': '[question(514), question_pipe(\"यह संसाधन उपलब्ध है<br />\r\n(Already have these resources)\")]',
@@ -40,7 +40,7 @@ let target_var = {
     '588_1': '[question(588), question_pipe(\"इन वाजिब संसाधनों की ज़रूरत होगी<br />\r\n(Need to procure these resources - reasonable estimate)\")]',
     '504_4': '[variable(504), question_pipe(\"यह संसाधन उपलब्ध है<br />\r\n(Already have these resources)\")]',
     '504_5': '[variable(504), question_pipe(\"इन वाजिब संसाधनों की ज़रूरत होगी<br />\r\n(Need to procure these resources - reasonable estimate)\")]',
-    '504_6': '[variable(504), question_pipe(\"3\")]'    
+    '504_6': '[variable(504), question_pipe(\"3\")]'
 }
 
 var surveySchema = new mongoose.Schema({
@@ -48,7 +48,7 @@ var surveySchema = new mongoose.Schema({
     SessionID : String,
     iLinkID : String,
     responseID : String,
-    id:{ type: String, index: { unique: true}}, 
+    id:{ type: String, index: { unique: true}},
     "[question(343), option(10871)]" : String,
     "[question(343), option(10872)]" : String,
     "[question(343), option(10873)]" : String,
@@ -76,7 +76,7 @@ var surveySchema = new mongoose.Schema({
 
 
 surveySchema.statics.completeStatusCount = function(group, where, group_name, query){
- 
+
     return new Promise (function(resolve, reject){
         "use strict";
         this.aggregate([
@@ -227,8 +227,8 @@ surveySchema.statics.targetStatusCount = function(where, resource, group_name, q
             where,
             {
                 '$group': {
-                    '_id': { 
-                        'st': '$[variable(589)]', 
+                    '_id': {
+                        'st': '$[variable(589)]',
                         'st': '$[variable(540)]'
                     },
                     "yes_count": { "$sum": {
@@ -277,9 +277,9 @@ surveySchema.statics.targetStatus504Count = function(where, resource, group_name
         "use strict";
         this.aggregate([
             where,
-            { $project: { 
-                          '[variable(535)]': '$[variable(535)]', 
-                          '[variable(537)]': '$[variable(537)]', 
+            { $project: {
+                          '[variable(535)]': '$[variable(535)]',
+                          '[variable(537)]': '$[variable(537)]',
                           'cp_1': { $substr: [ "$"+target_var['504_1'], 0, 6 ] },
                           'cp_2': { $substr: [ "$"+target_var['504_2'], 0, 6 ] }
                       },
@@ -344,7 +344,7 @@ surveySchema.statics.targetStatus = function(where, resource, group_name, query)
                         'st': '$[question(535)]',
                         'st': '$[variable(\"536-shown\")]'
                         // 'st': '$[question(536), option(12524)]'
-                        
+
                     },
                     "yes_count": { "$sum": {
                         "$cond": [ { $eq:['$[question(535)]', 'हाँ । Yes' ] }, 1, 0 ]
@@ -365,7 +365,7 @@ surveySchema.statics.targetStatus = function(where, resource, group_name, query)
                 'status': "$_id.st",
                 "yes_count": 1,
                 "no_count": 1,
-                "partial_count": 1            
+                "partial_count": 1
             } }
         ]).exec(function(err, data){
             if(err)
@@ -392,7 +392,7 @@ surveySchema.statics.targetTypeCount = function(where, resource, group_name, que
                     "others": { "$sum": {
                         "$cond": [ { $or : [{ [target_var['647_1']]: { "$ifNull": [ "$field", false ] } },
                                             { [target_var['647_2']]: { "$ifNull": [ "$field", false ] } }]}, 1, 0 ]
-                    } },     
+                    } },
                 }
             },
             { "$project": {
@@ -415,7 +415,7 @@ surveySchema.statics.targetType504Count = function(where, resource, group_name, 
         "use strict";
         this.aggregate([
             where,
-            { $project: { 
+            { $project: {
                           [target_var['504_4']]: '$'+target_var['504_4'],
                           [target_var['504_5']]: '$'+target_var['504_5'],
                           [target_var['504_6']]: '$'+target_var['504_6'],
@@ -426,30 +426,30 @@ surveySchema.statics.targetType504Count = function(where, resource, group_name, 
             },
             {
                 '$group': {
-                    "_id": { 
+                    "_id": {
                           'st': '$'+target_var['504_4'],
                           'st': '$'+target_var['504_5'],
                           'st': '$'+target_var['504_6']
                     },
                     "community_participation": { "$sum": {
-                        "$cond": [ { $or : [{ $eq:['$cp_1', 'Community' ] }, 
-                                            { $eq:['$cp_2', 'Community' ] }, 
-                                            { $eq:['$cp_3', 'Community' ] }] 
+                        "$cond": [ { $or : [{ $eq:['$cp_1', 'Community' ] },
+                                            { $eq:['$cp_2', 'Community' ] },
+                                            { $eq:['$cp_3', 'Community' ] }]
                                         }, 1, 0 ]
                     } },
                     "teacher_performance": { "$sum": {
-                        "$cond": [ { $or : [{ $eq:['$cp_1', 'Teacher P' ] }, 
-                                            { $eq:['$cp_2', 'Teacher P' ] }, 
-                                            { $eq:['$cp_3', 'Teacher P' ] }] 
+                        "$cond": [ { $or : [{ $eq:['$cp_1', 'Teacher P' ] },
+                                            { $eq:['$cp_2', 'Teacher P' ] },
+                                            { $eq:['$cp_3', 'Teacher P' ] }]
                                         }, 1, 0 ]
                     } },
                     "school_management": { "$sum": {
-                        "$cond": [ { $or : [{ $eq:['$cp_1', 'School Ma' ] }, 
-                                            { $eq:['$cp_2', 'School Ma' ] }, 
+                        "$cond": [ { $or : [{ $eq:['$cp_1', 'School Ma' ] },
+                                            { $eq:['$cp_2', 'School Ma' ] },
                                             { $eq:['$cp_3', 'School Ma' ] },
-                                            { $eq:['$cp_3', 'विद्यालय' ] }] 
+                                            { $eq:['$cp_3', 'विद्यालय' ] }]
                                         }, 1, 0 ]
-                    } },        
+                    } },
                 }
             },
             { "$project": {
@@ -466,6 +466,7 @@ surveySchema.statics.targetType504Count = function(where, resource, group_name, 
         });
     }.bind(this));
 };
+
 
 surveySchema.statics.targetTotalCount = function(where, resource, group_name, query){
     return new Promise (function(resolve, reject){
@@ -535,14 +536,14 @@ surveySchema.statics.sdpTable = function(where){
                 '$project': {
                     // [query]: "$_id"
                     'school': '$[question(343), option(10873)]',
-                    'target_type': {$concat:['$'+target_var['504_1'], ', ', '$'+target_var['504_2'], ', ', '$'+target_var['504_3']] },
-                    'sa1': {$concat:[ '$'+target_var['509_1'], ', ', '$'+target_var['457_1'], ', ', '$'+target_var['514_1']]},
-                    'sa2': {$concat:[ '$'+target_var['510_1'], ', ', '$'+target_var['458_1'], ', ', '$'+target_var['516_1']]},
-                    'smc': {$concat:[ '$'+target_var['511_1'], ', ', '$'+target_var['460_1'], ', ', '$'+target_var['517_1']]},
-                    'methods': {$concat:[ '$'+target_var['512_1'], ', ', '$'+target_var['461_1'], ', ', '$'+target_var['518_1']]},
-                    'status': {$concat:[ '$'+target_var['535_1'], ', ', '$'+target_var['537_1'], ', ', '$'+target_var['589_1'], ',', '$'+target_var['540_1']]},
+                    'target_type': {$concat:['$'+target_var['504_1'], '* ', '$'+target_var['504_2'], '* ', '$'+target_var['504_3']] },
+                    'sa1': {$concat:[ '$'+target_var['509_1'], '* ', '$'+target_var['457_1'], '* ', '$'+target_var['514_1']]},
+                    'sa2': {$concat:[ '$'+target_var['510_1'], '* ', '$'+target_var['458_1'], '* ', '$'+target_var['516_1']]},
+                    'smc': {$concat:[ '$'+target_var['511_1'], '* ', '$'+target_var['460_1'], '* ', '$'+target_var['517_1']]},
+                    'methods': {$concat:[ '$'+target_var['512_1'], '* ', '$'+target_var['461_1'], '* ', '$'+target_var['518_1']]},
+                    'status': {$concat:[ '$'+target_var['535_1'], '* ', '$'+target_var['537_1'], '* ', '$'+target_var['589_1'], ',', '$'+target_var['540_1']]},
 //                    'proof': {$concat:[ '$'+target_var['536_1'], ', ', '$'+target_var['538_1'], ', ', '$'+target_var['590_1'], ',', '$'+target_var['539_1']]},
-                    'requirememt': {$concat:[ '$'+target_var['584_1'], ', ', '$'+target_var['587_1'], ', ', '$'+target_var['588_1']]},
+                    'requirememt': {$concat:[ '$'+target_var['584_1'], '* ', '$'+target_var['587_1'], '* ', '$'+target_var['588_1']]},
                 }
             }
         ]).exec(function(err, data){

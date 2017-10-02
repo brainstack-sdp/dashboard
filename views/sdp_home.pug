@@ -10,18 +10,21 @@ html
     body.blur-theme.light
         header
             .page-top.clearfix(scroll-position="scrolled" max-height="50")
-                .col-xs-4
-                    a(href="/sdp" class="al-logo clearfix")
+                .col-xs-3
+                    .inline-block
                         img(src="/assets/img/himachal-pradesh-sarkar.png")
-                        span HP
-                        | SDP Data
-                .col-xs-4.text-center
-                    img(src="/assets/img/samarth-logo-v9---lowres.png")
-                .col-xs-4.text-right
-                    img(src="/assets/img/ssabglogo.jpg")
+                    .inline-block
+                        img(src="/assets/img/samarth-logo-v9---lowres.png")
+                    .inline-block
+                        img(src="/assets/img/ssabglogo.jpg")
+                .col-xs-6.text-center
+                    h1 Student Development Plan Dashboard
+
         .body-bg
         main
             aside.al-sidebar
+                .text-center
+                    a.btn.btn-default(href="/sdp") Reset Filters
                 ul.al-sidebar-list
                     li
                         h4 District
@@ -34,7 +37,7 @@ html
                         h4 School
                         select(class="form-control js-filter" data-cat="upper" data-type="school_name")
                     li
-                        h4 Level
+                        h4 School Type
                         select(class="form-control js-iFilter"  data-type="school_type")
                             option(value="") All
                             option(value="Primary") Primary only (Class 1-5)
@@ -49,8 +52,6 @@ html
 
             .chart-main.al-main
                 .al-content
-                    .pull-right
-                        a.btn.btn-default(href="/") Reset Filters
                     .col-md-12
                         ul.nav.nav-tabs
                             li.uib-tab.nav-item.active
@@ -61,7 +62,7 @@ html
                             .tab-pane.active
                                 .panel.panel-blur
                                     .panel-heading
-                                        h3.panel-title 1. Completion of SDP
+                                        h3.panel-title 1. Percentage Completion of SDP
                                     .panel-body
                                         div(id="sdpstatus" style="width: 100%; height: 480px;")
                                         .preloader.js-loader.js-subjectStack
@@ -69,21 +70,21 @@ html
 
                                 .panel.panel-blur
                                     .panel-heading
-                                        h3.panel-title 2. Total SDPs Targets filled by School Type
+                                        h3.panel-title 2. Total SDP Targets Filled, by School Type
                                     .panel-body
                                         .ct-chart(id="gradeStack" style="width: 100%; height: 400px;")
                                         .preloader.js-loader.js-gradeStack
                                             div
                                 .panel.panel-blur
                                     .panel-heading
-                                        h3.panel-title 3. Type of Target
+                                        h3.panel-title 3. Type of Targets Set
                                     .panel-body
-                                        .ct-chart(id='gradePie' style="width: 100%; height: 400px;")
+                                        .ct-chart(id='gradePie' style="width: 100%; height: 700px;")
                                         .preloader.js-loader.js-gradePie
                                             div
                                 .panel.panel-blur
                                     .panel-heading
-                                        h3.panel-title 4. Resource Requirements
+                                        h3.panel-title 4. Resource Requests
                                     .panel-body
                                         div(id="resourceStack" style="width: 100%; height: 480px;")
                                         .preloader.js-loader.js-resourceStack
@@ -91,32 +92,47 @@ html
                             .tab-pane
                                 .panel.panel-blur
                                     .panel-heading
-                                        h3.panel-title 5. Target Status
+                                        h3.panel-title 5. Overall Status of Target Completion
                                     .panel-body
-                                        .ct-chart(id="targetStatusValue" style="width: 100%; height: 400px;")
+                                        .ct-chart(id="targetStatusValue" style="width: 100%; height: 700px;")
                                         .preloader.js-loader.js-targetStatusValue
                                             div
                                 .panel.panel-blur
                                     .panel-heading
-                                        h3.panel-title 6. Target Completion Status
+                                        h3.panel-title 6. Compliance with SA1 Progress Check-In
                                     .panel-body
                                         .ct-chart(id="targetStatus" style="width: 100%; height: 400px;")
                                         .preloader.js-loader.js-targetStatus
                                             div
                                 .panel.panel-blur
                                     .panel-heading
-                                        h3.panel-title 7. Percentage of Targets by Status (Administrative Units)
+                                        h3.panel-title 7. Status of Target Completion per District/Block/School
                                     .panel-body
                                         .ct-chart(id="targetTotal" style="width: 100%; height: 400px;")
                                         .preloader.js-loader.js-targetTotal
                                             div
                                 .panel.panel-blur
                                     .panel-heading
-                                        h3.panel-title 8. Percentage of Targets by Status (Target Category),
+                                        h3.panel-title 8. Status of Target Completion for each Type
                                     .panel-body
                                         .ct-chart(id="targetStatusCategory" style="width: 100%; height: 400px;")
                                         .preloader.js-loader.js-targetStatusCategory
                                             div
+                        .tab-pane.active.js-tableBar
+                            .panel.panel-blur
+                                h3.panel-heading 9. Target Data Table(Applicable at School Level)
+                                .panel-body
+                                    table.js-table.table
+                                        tr
+                                            th UDISE School
+                                            th Target Type
+                                            th Sub-Target Type
+                                            th Action I will take by SA1
+                                            th Action I will take by SA2
+                                            th SMC Member Incharge
+                                            th Method for me to evaluate success of my plan
+                                            th Status
+                                            th Resource Requirements
             footer.al-footer.clearfix
                 .al-footer-right Created by Samarth
             .modal.fade.js-modal
