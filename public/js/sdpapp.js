@@ -690,7 +690,7 @@ HPD.urls = {
                     }
                     $('.js-resourceStack.js-loader').hide();
 
-                var chartItems = res.result.status, possibleAnswer = {yes_count:{name:'Yes'}, no_count:{name:'No'},partial_count: {name:'Partial'}}, selected, total = 0;
+                var chartItems = res.result.status, possibleAnswer = {yes_count:{name:'Yes'}, no_count:{name:'No'},partial_count: {name:'Partial'}, not_updated: {name:'Not updated'}}, selected, total = 0;
 
                 if(chartItems.length) {
                     chartItems.forEach(function (item) {
@@ -708,7 +708,7 @@ HPD.urls = {
 
                         }
                     });
-                    total = possibleAnswer.yes_count.count + possibleAnswer.no_count.count + possibleAnswer.partial_count.count
+                    total = possibleAnswer.yes_count.count + possibleAnswer.no_count.count + possibleAnswer.partial_count.count+possibleAnswer.not_updated.count
 
                     var types = [{
                         type: "Yes",
@@ -732,6 +732,17 @@ HPD.urls = {
                         type: "No Proof",
                         percent: possibleAnswer.no_count.count
                     }]
+                    },{
+                        type: "Not updated",
+                        percent: possibleAnswer.not_updated.count,
+                        color: gradeColors.D,
+                        subs: [{
+                            type: "Proof",
+                            percent: 0
+                        }, {
+                            type: "No Proof",
+                            percent: possibleAnswer.not_updated.count
+                        }]
                     },{type: "Partial",
                         percent: possibleAnswer.partial_count.count,
                         color: gradeColors.B,
@@ -815,11 +826,12 @@ HPD.urls = {
                     });
                     for (var i in filterLevel) {
                         total = 0;
-                        grades = {"yes_count": 0, "no_count": 0, "partial_count": 0};
+                        grades = {"yes_count": 0, "no_count": 0, "partial_count": 0, "not_updated_count":0};
                         filterLevel[i].forEach(function (item) {
                             grades.yes_count = item.yes_count;
                             grades.no_count = item.no_count;
                             grades.partial_count = item.partial_count;
+                            grades.not_updated_count = item.not_updated;
                         });
                         gradeObj = grades;
                         gradeObj[filterKey] = i;
@@ -832,7 +844,8 @@ HPD.urls = {
                         "colors": [
                             gradeColors.E,
                             gradeColors.D,
-                            gradeColors.C
+                            gradeColors.C,
+                            gradeColors.B
                         ],
                         "legend": {
                             "horizontalGap": 10,
@@ -919,11 +932,12 @@ HPD.urls = {
                     });
                     for (var i in filterLevel) {
                         total = 0;
-                        grades = {"yes_count": 0, "no_count": 0, "partial_count": 0};
+                        grades = {"yes_count": 0, "no_count": 0, "partial_count": 0, "not_updated_count":0};
                         filterLevel[i].forEach(function (item) {
                             grades.yes_count = item.yes_count;
                             grades.no_count = item.no_count;
                             grades.partial_count = item.partial_count;
+                            grades.not_updated_count = item.not_updated_count;
                         });
                         gradeObj = grades;
                         gradeObj[filterKey] = i;
@@ -936,7 +950,8 @@ HPD.urls = {
                         "colors": [
                             gradeColors.E,
                             gradeColors.D,
-                            gradeColors.C
+                            gradeColors.C,
+                            gradeColors.B
                         ],
                         "legend": {
                             "horizontalGap": 10,
@@ -1035,6 +1050,7 @@ HPD.urls = {
                             filerLevel[item.target].yes_count = item.yes_count;
                             filerLevel[item.target].no_count = item.no_count;
                             filerLevel[item.target].partial_count = item.partial_count;
+                            filerLevel[item.target].not_updated_count = item.not_updated_count;
                         }
                         filerLevel[item.target] = item;
                     });
@@ -1045,6 +1061,7 @@ HPD.urls = {
                                 filerLevel[item.target].yes_count = item.yes_count;
                                 filerLevel[item.target].no_count = item.no_count;
                                 filerLevel[item.target].partial_count = item.partial_count;
+                                filerLevel[item.target].not_updated_count = item.not_updated_count;
                             }
                             filerLevel[item.target] = item;
                         }
@@ -1068,7 +1085,8 @@ HPD.urls = {
                         "colors": [
                             gradeColors.E,
                             gradeColors.D,
-                            gradeColors.C
+                            gradeColors.C,
+                            gradeColors.B
                         ],
                         "dataProvider": series,
                         "valueAxes": [
