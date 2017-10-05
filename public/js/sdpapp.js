@@ -351,14 +351,16 @@ HPD.urls = {
                             }
                         });
                         for (var i in filterLevel) {
-                            total = 0;
-                            grades = {"केवल प्राथमिक । Primary only (Class 1-)5": 0, "केवल उच्च प्राथमिक । Upper Primary only (Class 6-8)": 0, "उच्च प्राथमिक एवं माध्यमिक या उच्च माध्यमिक । Upper Primary + Secondary/ Senior Secondary (Class 6-10 OR Class 6-12)": 0}
-                            filterLevel[i].forEach(function (item) {
-                                grades[item._id.school_type] = item.size;
-                            });
-                            gradeObj = grades;
-                            gradeObj[filterKey] = i;
-                            series.push(gradeObj)
+                            if(i){
+                                total = 0;
+                                grades = {"केवल प्राथमिक । Primary only (Class 1-)5": 0, "केवल उच्च प्राथमिक । Upper Primary only (Class 6-8)": 0, "उच्च प्राथमिक एवं माध्यमिक या उच्च माध्यमिक । Upper Primary + Secondary/ Senior Secondary (Class 6-10 OR Class 6-12)": 0}
+                                filterLevel[i].forEach(function (item) {
+                                    grades[item._id.school_type] = item.size;
+                                });
+                                gradeObj = grades;
+                                gradeObj[filterKey] = i;
+                                series.push(gradeObj)
+                            }
                         }
                         AmCharts.makeChart("gradeStack", {
                             "type": "serial",
@@ -466,6 +468,8 @@ HPD.urls = {
                 gradeObj.stu =[]
                 gradeObj.teach =[]
 
+                var coms= 0, stu= 0, teach=0
+
                 var chartItemsNext = res.result.target_type_504;
 
                 if(chartItems.length) {
@@ -479,16 +483,22 @@ HPD.urls = {
                         chartItems.teacher_performance += item.teacher_performance;
                         chartItems.school_management += item.school_management;
                         if(item.status == '11313' || item.status == '11314'|| item.status == '11315'|| item.status == '11316'){
+                            coms +=item.community_participation
                             gradeObj.coms.push({type: subTargetMap[item.status], percent: item.community_participation})
                         } else if(item.status == '11320' || item.status == '11321'|| item.status == '15171'|| item.status == '15172'){
+                            stu +=item.school_management
                             gradeObj.stu.push({type: subTargetMap[item.status], percent: item.school_management})
                         } else if(item.status == '11317' || item.status == '11318'|| item.status == '11319') {
+                            teach += item.teacher_performance
                             gradeObj.teach.push({type: subTargetMap[item.status], percent: item.teacher_performance})
                         } else {
 
                         }
 
                     });
+                    gradeObj.coms.push({type: 'Others', percent: chartItems.community_participation-coms})
+                    gradeObj.stu.push({type: 'Others', percent: chartItems.school_management - stu})
+                    gradeObj.teach.push({type: 'Others', percent: chartItems.teacher_performance - teach})
                     for(var i in chartItems){
                         total += chartItems[i];
                     }
