@@ -123,17 +123,19 @@ HPD.urls = {
                 var key = Object.keys(res.result)[0];
                 appliedFilter.key = key
                 filterList[key] = res.result[key];
-                if(filterAheadMap[type]) {
-                    filterAheadMap[type].forEach(function(item) {
-                        delete filters[item];
-                        $('.js-filter[data-type="'+item+'"]').html('');
-                    })
-                    $('.js-filter[data-type="'+key+'"]').html(createOptions(filterList[key],key))
-                } else {
-                    filterAheadMap.district.forEach(function(item) {
-                        delete filters[item];
-                        $('.js-filter[data-type="'+item+'"]').html('');
-                    })
+                if(type!="school_name") {
+                    if (filterAheadMap[type]) {
+                        filterAheadMap[type].forEach(function (item) {
+                            delete filters[item];
+                            $('.js-filter[data-type="' + item + '"]').html('');
+                        })
+                        $('.js-filter[data-type="' + key + '"]').html(createOptions(filterList[key], key))
+                    } else {
+                        filterAheadMap.district.forEach(function (item) {
+                            delete filters[item];
+                            $('.js-filter[data-type="' + item + '"]').html('');
+                        })
+                    }
                 }
                 var iQuery = '&';
                 $.each(el.$iFilter, function(key, item) {
@@ -713,7 +715,7 @@ HPD.urls = {
                     var types = [{
                         type: "Yes",
                         percent: possibleAnswer.yes_count.count,
-                        color: gradeColors.C,
+                        color: gradeColors.E,
                         subs: [{
                             type: "Proof",
                             percent: possibleAnswer.yes_count.proof
@@ -724,7 +726,7 @@ HPD.urls = {
                     },{
                         type: "No",
                         percent: possibleAnswer.no_count.count,
-                        color: gradeColors.E,
+                        color: gradeColors.D,
                         subs: [{
                         type: "Proof",
                         percent: 0
@@ -735,7 +737,7 @@ HPD.urls = {
                     },{
                         type: "Not updated",
                         percent: possibleAnswer.not_updated_count.count,
-                        color: gradeColors.D,
+                        color: gradeColors.B,
                         subs: [{
                             type: "Proof",
                             percent: 0
@@ -745,7 +747,7 @@ HPD.urls = {
                         }]
                     },{type: "Partial",
                         percent: possibleAnswer.partial_count.count,
-                        color: gradeColors.B,
+                        color: gradeColors.C,
                         subs: [{
                             type: "Proof",
                             percent: possibleAnswer.partial_count.proof
