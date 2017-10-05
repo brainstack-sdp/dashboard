@@ -192,31 +192,6 @@ module.exports.table = function(req, res) {
 
 
 
-var html2Img = function(htmlSource, cb){
-    html_pdf.create(htmlSource, download_config.image).toBuffer(function(err, buffer){
-        if (err) {
-            console.log(err);
-            cb && cb(false);
-        }
-        cb && cb(buffer);
-    });
-}
-
-var img2Pdf = function(imgBuffer, cb){
-
-    var imgHtml = '<html><head></head><body><img src="data:image/jpg;base64,' + imgBuffer.toString('base64') +'"></body></html>'
-    html_pdf.create(imgHtml, download_config.pdf).toBuffer(function(err, buffer){
-        if(err) {
-            console.log(err);
-            cb && cb(false);
-        }
-        cb && cb(buffer);
-    });
-}
-
-
-
-
 module.exports.pdf = function(req, res) {
     //let group = '';
     //let group_name = '';

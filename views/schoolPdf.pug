@@ -1,6 +1,26 @@
 doctype html
 html(lang="en")
     head
+        style.
+            .table {
+                table-layout: fixed;
+                width: 100%;
+                background: #fff;
+                color: #333 !important;
+            }
+            .table th {
+                background: #CCCCCC;
+                font-weight: 600;
+            }
+            .table td , .table>tbody>tr>th {
+                padding: 5px;
+                border: 1px solid #AAAAAA;
+                font-size: 14px;
+                word-break: break-word;
+            }
+            tr:nth-child(even) {
+                background-color: rgba(250, 116, 19, 0.4);
+            }
     body.blur-theme
         -table = result.table[0];
         -table.target_type = table.target_type.split('*');
