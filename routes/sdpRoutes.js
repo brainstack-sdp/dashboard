@@ -18,5 +18,6 @@ let sdpController = require("../controllers/sdpController");
 
 router.get("/", sdpController.analyticsSurvey);
 router.get("/table", sdpController.table);
+router.get("/pdf", sdpController.pdf);
 
 module.exports = router;
