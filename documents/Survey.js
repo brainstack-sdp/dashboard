@@ -196,10 +196,10 @@ surveySchema.statics.targetCount = function(where, resource, group_name, query){
                     } },
                     "not_updated_count": { "$sum": {
                         "$cond": [ { $and : [
-                            { '[question(535)]': { $eq: "" } },
-                            { '[question(537)]': { $eq: "" } },
-                            { '[question(589)]': { $eq: "" } },
-                            { '[question(540)]': { $eq: "" } }
+                            { $eq:['$[question(535)]', '' ] },
+                            { $eq:['$[question(537)]', '' ] },
+                            { $eq:['$[question(589)]', '' ] },
+                            { $eq:['$[question(540)]', '' ] }
                           ] }, 1, 0 ]
                     } },
                 }
