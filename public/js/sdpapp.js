@@ -8,6 +8,7 @@ HPD.urls = {
     filterList: '/school/sdp',
     schoolCount: '/school/sdp',
     survey : '/sdp/survey',
+    schoolPdf : '/sdp/pdf',
     surveyTable : '/sdp/survey/table'
 };
 
@@ -1234,4 +1235,39 @@ HPD.urls = {
 
     }
     init();
+
+    var getDistributionFile = function(school_name){
+
+        var resType = {type: 'application/pdf'};
+        fileWindow = window.open('','_blank');
+        fileWindow.document.write("<h3>Loading file...</h3> Do not close this window.");
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', HPD.urls.schoolPdf, true);
+        xhr.responseType = 'blob';
+        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhr.onload = function(e) {
+            if (this.status == 200) {
+                var blob = new Blob([this.response], resType),
+                    url = URL.createObjectURL(blob);
+                fileWindow.location.href=url;
+            }else{
+                fileWindow.close();
+                console.log('Cannot Load File');
+            }
+        };
+        xhr.ontimeout = function(e) {
+            fileWindow.close();
+            console.log('Cannot Load File');
+        };
+        xhr.onerror = function(e){
+            fileWindow.close();
+            console.log('Cannot Load File');
+        }
+        xhr.send("school_name=" + school_name);
+    }
+
+    $('body').on('.js-schoolPdf', 'click', function() {
+        getDistributionFile($(this).attr('data-school'));
+    });
+
 })()
