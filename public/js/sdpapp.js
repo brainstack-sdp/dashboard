@@ -690,7 +690,7 @@ HPD.urls = {
                     }
                     $('.js-resourceStack.js-loader').hide();
 
-                var chartItems = res.result.status, possibleAnswer = {yes_count:{name:'Yes'}, no_count:{name:'No'},partial_count: {name:'Partial'}, not_updated: {name:'Not updated'}}, selected, total = 0;
+                var chartItems = res.result.status, possibleAnswer = {yes_count:{name:'Yes'}, no_count:{name:'No'},partial_count: {name:'Partial'}, not_updated_count: {name:'Not updated'}}, selected, total = 0;
 
                 if(chartItems.length) {
                     chartItems.forEach(function (item) {
@@ -708,7 +708,7 @@ HPD.urls = {
 
                         }
                     });
-                    total = possibleAnswer.yes_count.count + possibleAnswer.no_count.count + possibleAnswer.partial_count.count+possibleAnswer.not_updated.count
+                    total = possibleAnswer.yes_count.count + possibleAnswer.no_count.count + possibleAnswer.partial_count.count+possibleAnswer.not_updated_count.count
 
                     var types = [{
                         type: "Yes",
@@ -734,14 +734,14 @@ HPD.urls = {
                     }]
                     },{
                         type: "Not updated",
-                        percent: possibleAnswer.not_updated.count,
+                        percent: possibleAnswer.not_updated_count.count,
                         color: gradeColors.D,
                         subs: [{
                             type: "Proof",
                             percent: 0
                         }, {
                             type: "No Proof",
-                            percent: possibleAnswer.not_updated.count
+                            percent: possibleAnswer.not_updated_count.count
                         }]
                     },{type: "Partial",
                         percent: possibleAnswer.partial_count.count,
@@ -831,7 +831,7 @@ HPD.urls = {
                             grades.yes_count = item.yes_count;
                             grades.no_count = item.no_count;
                             grades.partial_count = item.partial_count;
-                            grades.not_updated_count = item.not_updated;
+                            grades.not_updated_count = item.not_updated_count;
                         });
                         gradeObj = grades;
                         gradeObj[filterKey] = i;
@@ -890,6 +890,16 @@ HPD.urls = {
                                 "type": "column",
                                 "color": "#000000",
                                 "valueField": "partial_count"
+                            },
+                            {
+                                "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
+                                "fillAlphas": 0.8,
+                                "labelText": "[[value]]",
+                                "lineAlpha": 0.3,
+                                "title": "Not update",
+                                "type": "column",
+                                "color": "#000000",
+                                "valueField": "not_updated_count"
                             }],
                         "categoryField": filterKey,
                         "categoryAxis": {
@@ -998,6 +1008,16 @@ HPD.urls = {
                                 "type": "column",
                                 "color": "#000000",
                                 "valueField": "partial_count"
+                            },
+                            {
+                                "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
+                                "fillAlphas": 0.8,
+                                "labelText": "[[value]]",
+                                "lineAlpha": 0.3,
+                                "title": "Not updated",
+                                "type": "column",
+                                "color": "#000000",
+                                "valueField": "not_updated_count"
                             }],
                         "categoryField": filterKey,
                         "categoryAxis": {
@@ -1126,6 +1146,16 @@ HPD.urls = {
                                 "type": "column",
                                 "color": "#333",
                                 "valueField": "partial_count"
+                            },
+                            {
+                                "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
+                                "fillAlphas": 0.8,
+                                "labelText": "[[value]]",
+                                "lineAlpha": 0.3,
+                                "title": "Not updated",
+                                "type": "column",
+                                "color": "#333",
+                                "valueField": "not_updated_count"
                             }],
                         "rotate": true,
                         "categoryField": 'target',
