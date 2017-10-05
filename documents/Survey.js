@@ -560,6 +560,21 @@ surveySchema.statics.sdpTable = function(where){
     }.bind(this));
 };
 
+
+surveySchema.statics.sdpPdf = function(where){
+    return new Promise (function(resolve, reject){
+        "use strict";
+        this.find([
+            where,
+           
+        ]).exec(function(err, data){
+            console.log(err);
+            if(err)
+                reject(err);
+            resolve(data);
+        });
+    }.bind(this));
+};
 var SurveryModel = connApi.model('survey', surveySchema);
 
 module.exports = SurveryModel;
