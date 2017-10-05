@@ -8,7 +8,7 @@ HPD.urls = {
     filterList: '/school/sdp',
     schoolCount: '/school/sdp',
     survey : '/sdp/survey',
-    schoolPdf : '/sdp/pdf',
+    schoolPdf : '/sdp/survey/pdf',
     surveyTable : '/sdp/survey/table'
 };
 
@@ -138,6 +138,9 @@ HPD.urls = {
                         })
                     }
                 }
+                if(key == "school_name"){
+                $('.js-schools').html(createPdfList(filterList[key], key))
+                }
                 var iQuery = '&';
                 $.each(el.$iFilter, function(key, item) {
                     if($(item).val()){
@@ -196,6 +199,14 @@ HPD.urls = {
         }
         return options;
     }
+    var createPdfList = function(filters, key) {
+        var options = '';
+        for (var i=0;i<filters.length;i++) {
+            options += '<li class="js-schoolPdf">' + filters[i][key] + '.pdf</li>'
+        }
+        return options;
+    }
+
     var chartInit = function(filterKey, type, val, iQuery) {
         $('.js-loader').show();
 
@@ -1237,12 +1248,12 @@ HPD.urls = {
     init();
 
     var getDistributionFile = function(school_name){
-
+        var schools = "?school_name=" +encodeURIComponent(school_name);
         var resType = {type: 'application/pdf'};
         fileWindow = window.open('','_blank');
         fileWindow.document.write("<h3>Loading file...</h3> Do not close this window.");
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', HPD.urls.schoolPdf, true);
+        xhr.open('GET', HPD.urls.schoolPdf + schools);
         xhr.responseType = 'blob';
         xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xhr.onload = function(e) {
@@ -1263,11 +1274,11 @@ HPD.urls = {
             fileWindow.close();
             console.log('Cannot Load File');
         }
-        xhr.send("school_name=" + school_name);
+        xhr.send();
     }
 
-    $('body').on('.js-schoolPdf', 'click', function() {
-        getDistributionFile($(this).attr('data-school'));
+    $('body').on('click','.js-schoolPdf', function() {
+        getDistributionFile($(this).text().split('.')[0]);
     });
 
 })()
