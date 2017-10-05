@@ -210,6 +210,7 @@ surveySchema.statics.targetCount = function(where, resource, group_name, query){
                 "yes_count": 1,
                 "no_count": 1,
                 "partial_count": 1,
+                "not_updated_count": 1
                 // "noupdate_count": 1
             } }
         ]).exec(function(err, data){
@@ -262,7 +263,8 @@ surveySchema.statics.targetStatusCount = function(where, resource, group_name, q
                 'status': "$_id.st",
                 "yes_count": 1,
                 "no_count": 1,
-                "partial_count": 1
+                "partial_count": 1,
+                "not_updated_count": 1
             } }
         ]).exec(function(err, data){
             if(err)
@@ -323,7 +325,8 @@ surveySchema.statics.targetStatus504Count = function(where, resource, group_name
                 'pc': "$_id.pc",
                 "yes_count": 1,
                 "no_count": 1,
-                "partial_count": 1
+                "partial_count": 1,
+                "not_updated_count": 1
             } }
         ]).exec(function(err, data){
             if(err)
@@ -365,7 +368,8 @@ surveySchema.statics.targetStatus = function(where, resource, group_name, query)
                 'status': "$_id.st",
                 "yes_count": 1,
                 "no_count": 1,
-                "partial_count": 1
+                "partial_count": 1,
+                "not_updated_count": 1
             } }
         ]).exec(function(err, data){
             if(err)
@@ -516,7 +520,8 @@ surveySchema.statics.targetTotalCount = function(where, resource, group_name, qu
                 [query]: "$_id",
                 "yes_count": 1,
                 "no_count": 1,
-                "partial_count": 1
+                "partial_count": 1,
+                "not_updated_count": 1
             } }
         ]).exec(function(err, data){
             if(err)
