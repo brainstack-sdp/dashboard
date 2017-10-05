@@ -107,6 +107,9 @@ module.exports.analyticsSurvey = function(req, res) {
             target_type_504: data[11],
         };
         res.json({'message': 'Data', 'result':response, 'error': false});
+    }).catch(function(err){
+      console.log(err);
+      res.status(500).json({"message": "err", "err": err, "error": true});
     });
 };
 
@@ -152,5 +155,6 @@ module.exports.table = function(req, res) {
       res.json({'message': 'Data', 'result': response, 'error': false});
     }).catch(function(err){
       console.log(err);
+      res.status(500).json({"message": "err", "err": err, "error": true});
     });
 };
