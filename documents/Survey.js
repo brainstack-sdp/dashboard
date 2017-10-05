@@ -263,7 +263,8 @@ surveySchema.statics.targetStatusCount = function(where, resource, group_name, q
                 'status': "$_id.st",
                 "yes_count": 1,
                 "no_count": 1,
-                "partial_count": 1
+                "partial_count": 1,
+                "not_updated_count": 1
             } }
         ]).exec(function(err, data){
             if(err)
