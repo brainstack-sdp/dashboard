@@ -1,0 +1,57 @@
+doctype html
+html(lang="en")
+    head
+        style.
+            .table {
+                table-layout: fixed;
+                width: 100%;
+                background: #fff;
+                color: #333 !important;
+            }
+            .table th {
+                background: #CCCCCC;
+                font-weight: 600;
+            }
+            .table td , .table>tbody>tr>th {
+                padding: 5px;
+                border: 1px solid #AAAAAA;
+                font-size: 14px;
+                word-break: break-word;
+            }
+            tr:nth-child(even) {
+                background-color: rgba(250, 116, 19, 0.4);
+            }
+    body.blur-theme
+        -table = result.table[0];
+        -table.target_type = table.target_type.split('*');
+        -table.sa1 = table.sa1.split('*');
+        -table.sa2 = table.sa2.split('*');
+        -table.smc = table.smc.split('*');
+        -table.status = table.status.split('*');
+        -table.methods = table.methods.split('*');
+
+
+        table.js-table.table
+            tr
+                th UDISE School
+                th Target Type
+                th Sub-Target Type
+                th Action I will take by SA1
+                th Action I will take by SA2
+                th SMC Member Incharge
+                th Method for me to evaluate success of my plan
+                th Status
+                th Resource Requirements
+
+            - for(i=0; i< table.target_type.length; i++)
+                -targetCat = table.target_type[i].split(':');
+                tr
+                    td #{table.school}
+                    td #{targetCat[0]}
+                    td #{targetCat[2]}
+                    td #{table.sa1[i]}
+                    td #{table.sa2[i]}
+                    td #{table.smc[i]}
+                    td #{table.methods[i]}
+                    td #{table.status[i]}
+                    td #{table.requirememt}

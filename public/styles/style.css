@@ -26,7 +26,7 @@ ul.nav.nav-tabs li.uib-tab.nav-item >a{
 .al-sidebar-list {
     padding: 0 15px;
 }
-.al-sidebar-list  li {
+ul.al-sidebar-list  li {
     margin-bottom: 15px;
 }
 

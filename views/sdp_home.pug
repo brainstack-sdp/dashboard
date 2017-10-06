@@ -49,6 +49,7 @@ html
                             option(value="") All
                             option(value="Summer") Summer
                             option(value="Winter") Winter
+                ul.al-sidebar-list.js-schools
 
             .chart-main.al-main
                 .al-content
@@ -89,20 +90,20 @@ html
                                         div(id="resourceStack" style="width: 100%; height: 480px;")
                                         .preloader.js-loader.js-resourceStack
                                             div
-                            .tab-pane
                                 .panel.panel-blur
                                     .panel-heading
-                                        h3.panel-title 5. Overall Status of Target Completion
-                                    .panel-body
-                                        .ct-chart(id="targetStatusValue" style="width: 100%; height: 700px;")
-                                        .preloader.js-loader.js-targetStatusValue
-                                            div
-                                .panel.panel-blur
-                                    .panel-heading
-                                        h3.panel-title 6. Compliance with SA1 Progress Check-In
+                                        h3.panel-title 5. Compliance with SA1 Progress Check-In
                                     .panel-body
                                         .ct-chart(id="targetStatus" style="width: 100%; height: 400px;")
                                         .preloader.js-loader.js-targetStatus
+                                            div
+                            .tab-pane
+                                .panel.panel-blur
+                                    .panel-heading
+                                        h3.panel-title 6. Overall Status of Target Completion
+                                    .panel-body
+                                        .ct-chart(id="targetStatusValue" style="width: 100%; height: 700px;")
+                                        .preloader.js-loader.js-targetStatusValue
                                             div
                                 .panel.panel-blur
                                     .panel-heading
