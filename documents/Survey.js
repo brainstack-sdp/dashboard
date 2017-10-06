@@ -202,6 +202,7 @@ surveySchema.statics.targetCount = function(where, resource, group_name, query){
                             { $eq:['$[question(540)]', '' ] }
                           ] }, 1, 0 ]
                     } },
+                    "total_count": { "$sum": 1 },
                 }
             },
             { "$project": {
@@ -257,6 +258,7 @@ surveySchema.statics.targetStatusCount = function(where, resource, group_name, q
                             { $eq:['$[question(540)]', '' ] }
                           ] }, 1, 0 ]
                     } },
+                    "total_count": { "$sum": 1 },
                 }
             },
             { "$project": {
@@ -319,6 +321,7 @@ surveySchema.statics.targetStatus504Count = function(where, resource, group_name
 
                           ] }, 1, 0 ]
                     } },
+                    "total_count": { "$sum": 1 },
                 }
             },
             { "$project": {
@@ -362,6 +365,7 @@ surveySchema.statics.targetStatus = function(where, resource, group_name, query)
                     "not_updated_count": { "$sum": {
                         "$cond": [ { $eq:['$[question(535)]', '' ] }, 1, 0 ]
                     } },
+                     "total_count": { "$sum": 1 },
                 }
             },
             { "$project": {
@@ -370,7 +374,8 @@ surveySchema.statics.targetStatus = function(where, resource, group_name, query)
                 "yes_count": 1,
                 "no_count": 1,
                 "partial_count": 1,
-                "not_updated_count": 1
+                "not_updated_count": 1,
+                "total_count": 1
             } }
         ]).exec(function(err, data){
             if(err)
