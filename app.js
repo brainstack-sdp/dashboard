@@ -152,17 +152,17 @@ app.post("/login", function (req, res, next) {
   })(req, res, next);
 });
 
-app.use(function (req, res, next) {
+//app.use(function (req, res, next) {
   // next();
-  res.locals.login = req.isAuthenticated();
-    next();
+  //res.locals.login = req.isAuthenticated();
+  //  next();
   //if (sessionUtils.checkExists(req, res, "user")) {
   //  req.user = sessionUtils.getData(req, res, "user");
   //  next();
   //} else {
   //  res.render('login');
   //}
-});
+//});
 
 /**
  * our routes will be contained in routes/indexRoutes.js
