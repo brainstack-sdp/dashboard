@@ -16,12 +16,13 @@ let log = require("../helpers/logger");
 let SchoolModel = require("../documents/School");
 
 module.exports.index = function (req, res) {
-  if (sessionUtils.checkExists(req, res, "user")) {
     res.render('index');
-  } else {
-    console.log("ind");
-    res.redirect('/login');
-  }
+  //if (sessionUtils.checkExists(req, res, "user")) {
+  //
+  //} else {
+  //  console.log("ind");
+  //  res.redirect('/login');
+  //}
 };
 
 module.exports.login = function (req, res) {

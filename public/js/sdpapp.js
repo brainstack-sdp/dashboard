@@ -714,7 +714,7 @@ HPD.urls = {
                     }
                     $('.js-resourceStack.js-loader').hide();
 
-                var chartItems = res.result.status, possibleAnswer = {yes_count:{name:'Yes'}, no_count:{name:'No'},partial_count: {name:'Partial'}, not_updated_count: {name:'Not updated'}}, selected, total = 0;
+                var chartItems = res.result.status, possibleAnswer = {yes_count:{name:'Yes'}, no_count:{name:'No'},partial_count: {name:'Partial'}, not_updated_count: {name:'Not updated'}, total_count: {name:'Total'}}, selected, total = 0;
 
                 if(chartItems.length) {
                     chartItems.forEach(function (item) {
@@ -732,7 +732,11 @@ HPD.urls = {
 
                         }
                     });
-                    total = possibleAnswer.yes_count.count + possibleAnswer.no_count.count + possibleAnswer.partial_count.count+possibleAnswer.not_updated_count.count
+                    possibleAnswer.partial_count.count =possibleAnswer.partial_count.count- possibleAnswer.yes_count.count;
+
+                    possibleAnswer.no_count.count = possibleAnswer.total_count.count - possibleAnswer.yes_count.count - possibleAnswer.not_updated_count.count - possibleAnswer.partial_count.count;
+
+
 
                     var types = [{
                         type: "Yes",
