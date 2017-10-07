@@ -176,20 +176,20 @@ surveySchema.statics.targetCount = function(where, resource, group_name, query){
                             { $eq:['$[question(535)]', 'हाँ । Yes' ] },
                             { $eq:['$[question(537)]', 'हाँ । Yes' ] },
                             { $eq:['$[question(589)]', 'हाँ । Yes' ] },
-                            { $eq:['$[question(540)]', 'हाँ । Yes' ] }
+                            { $eq:['$[question(540)]', 'हाँ (Yes)' ] }
                           ] }, 1, 0 ]
                     } },
                     "no_count": { "$sum": {
                         "$cond": [ { $and : [
-                            { $ne:['$[question(535)]', 'हाँ । Yes' ] },
-                            { $ne:['$[question(537)]', 'हाँ । Yes' ] },
-                            { $ne:['$[question(589)]', 'हाँ । Yes' ] },
-                            { $ne:['$[question(540)]', 'हाँ । Yes' ] }
+                            { $eq:['$[question(535)]', 'न । No' ] },
+                            { $eq:['$[question(537)]', 'न । No' ] },
+                            { $eq:['$[question(589)]', 'न । No' ] },
+                            { $eq:['$[question(540)]', 'न (No)' ] }
                           ] }, 1, 0 ]
                     } },
                     "partial_count": { "$sum": {
                         "$cond": [ { $or: [{ $and : [
-                            { $eq:['$[question(535)]', 'कुछ हद तक, हाँ । Partially' ] },
+                            { $eq:['$[question(535)]', 'कुछ हद तक, हाँ  । Partially' ] },
                             { $eq:['$[question(537)]', 'कुछ हद तक, हाँ । Partially' ] },
                             { $eq:['$[question(589)]', 'कुछ हद तक, हाँ । Partially' ] },
                             { $eq:['$[question(540)]', 'कुछ हद तक, हाँ । Partially' ] }
@@ -198,7 +198,7 @@ surveySchema.statics.targetCount = function(where, resource, group_name, query){
                             { $eq:['$[question(535)]', 'हाँ । Yes' ] },
                             { $eq:['$[question(537)]', 'हाँ । Yes' ] },
                             { $eq:['$[question(589)]', 'हाँ । Yes' ] },
-                            { $eq:['$[question(540)]', 'हाँ । Yes' ] }
+                            { $eq:['$[question(540)]', 'हाँ (Yes)' ] }
                           ] 
                         }]}, 1, 0 ]
                     } },
