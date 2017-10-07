@@ -80,7 +80,7 @@ module.exports.analyticsSurvey = function(req, res) {
     } else if(req.query.school_name) {
       query = 'school_name';
       group_name = '[question(343), option(10873)]';
-      group = '[question(591)]';
+      group = '[question(343), option(10873)]';
       where = {'$match': {'[question(343), option(10873)]': {'$regex':req.query.school_name }}};
     } else{
       query = 'district';

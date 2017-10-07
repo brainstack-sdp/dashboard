@@ -163,6 +163,7 @@ surveySchema.statics.resourceCount = function(where, resource, group_name, query
 };
 
 surveySchema.statics.targetCount = function(where, resource, group_name, query){
+    // and
     return new Promise (function(resolve, reject){
         "use strict";
         this.aggregate([
@@ -242,45 +243,59 @@ surveySchema.statics.targetStatusCount = function(where, resource, group_name, q
                         'st': '$[variable(589)]',
                         'st': '$[variable(540)]'
                     },
-                    "yes_count": { "$sum": {
-                        "$cond": [ { $and : [
+                    "yes_count_589": { "$sum": {
+                        "$cond": [  
                             { $eq:['$[question(589)]', 'हाँ । Yes' ] },
-                            { $eq:['$[question(540)]', 'हाँ । Yes' ] }
-                          ] }, 1, 0 ]
+                            1, 0 ]
                     } },
-                    "no_count": { "$sum": {
-                        "$cond": [ { $and : [
-                            { $ne:['$[question(589)]', 'हाँ । Yes' ] },
-                            { $ne:['$[question(540)]', 'हाँ । Yes' ] }
-                          ] }, 1, 0 ]
+                    "yes_count_540": { "$sum": {
+                        "$cond": [  
+                            { $eq:['$[question(540)]', 'हाँ (Yes)' ] },
+                            1, 0 ]
                     } },
-                    "partial_count": { "$sum": {
-                        "$cond": [ { $or: [{ $and : [
+                    
+                    "no_count_589": { "$sum": {
+                        "$cond": [  
+                            { $eq:['$[question(589)]', 'न । No' ] },
+                            1, 0 ]
+                    } },
+                    "no_count_540": { "$sum": {
+                        "$cond": [  
+                            { $eq:['$[question(540)]', 'न (No)' ] },
+                            1, 0 ]
+                    } },
+                    
+                    "partial_count_589": { "$sum": {
+                        "$cond": [  
                             { $eq:['$[question(589)]', 'कुछ हद तक, हाँ । Partially' ] },
-                            { $eq:['$[question(540)]', 'कुछ हद तक, हाँ । Partially' ] }
-                          ] 
-                        }, { $or : [
-                            { $eq:['$[question(589)]', 'हाँ । Yes' ] },
-                            { $eq:['$[question(540)]', 'हाँ । Yes' ] }
-                          ] 
-                        }]}, 1, 0 ]
+                            1, 0 ]
                     } },
-                    "not_updated_count": { "$sum": {
-                        "$cond": [ { $and : [
+                    "partial_count_540": { "$sum": {
+                        "$cond": [  
+                            { $eq:['$[question(540)]', 'कुछ हद तक हाँ (Partially‌‌‌)' ] },
+                            1, 0 ]
+                    } },
+                    
+                    "not_updated_count_589": { "$sum": {
+                        "$cond": [  
                             { $eq:['$[question(589)]', '' ] },
-                            { $eq:['$[question(540)]', '' ] }
-                          ] }, 1, 0 ]
+                            1, 0 ]
                     } },
-                    "total_count": { "$sum": 1 },
+                    "not_updated_count_540": { "$sum": {
+                        "$cond": [  
+                            { $eq:['$[question(540)]', '' ] },
+                             1, 0 ]
+                    } },
+                    "total_count": { "$sum": 2 },
                 }
             },
             { "$project": {
                 "_id": 0,
                 'status': "$_id.st",
-                "yes_count": 1,
-                "no_count": 1,
-                "partial_count": 1,
-                "not_updated_count": 1,
+                "yes_count": { '$add' : [ '$yes_count_589', '$yes_count_540' ] },
+                "no_count": { '$add' : [ '$no_count_589', '$no_count_540' ] },
+                "partial_count": { '$add' : [ '$partial_count_589', '$partial_count_540'] },
+                "not_updated_count": { '$add' : [ '$not_updated_count_589', '$not_updated_count_540' ] },
                 "total_count": 1
             } }
         ]).exec(function(err, data){
@@ -298,7 +313,9 @@ surveySchema.statics.targetStatus504Count = function(where, resource, group_name
             where,
             { $project: {
                           '[variable(535)]': '$[variable(535)]',
+                          '[question(535)]': '$[question(535)]',
                           '[variable(537)]': '$[variable(537)]',
+                          '[question(537)]': '$[question(537)]',
                           'cp_1': { $substr: [ "$"+target_var['504_1'], 0, 6 ] },
                           'cp_2': { $substr: [ "$"+target_var['504_2'], 0, 6 ] }
                       },
@@ -309,48 +326,62 @@ surveySchema.statics.targetStatus504Count = function(where, resource, group_name
                         'pc': '$cp_1',
                         'pc': '$cp_2',
                     },
-                    "yes_count": { "$sum": {
-                        "$cond": [ { $and : [
-                            { $eq:['$[question(535)]', 'हाँ । Yes' ] },
-                            { $eq:['$[question(537)]', 'हाँ । Yes' ] },
-                          ] }, 1, 0 ]
-                    } },
-                    "no_count": { "$sum": {
-                        "$cond": [ { $and : [
-                            { $ne:['$[question(535)]', 'हाँ । Yes' ] },
-                            { $ne:['$[question(537)]', 'हाँ । Yes' ] },
-                          ] }, 1, 0 ]
-                    } },
-                    "partial_count": { "$sum": {
-                        "$cond": [ 
-                          { $or: [{ $and : [
-                            { $eq:['$[question(535)]', 'कुछ हद तक, हाँ । Partially' ] },
-                            { $eq:['$[question(537)]', 'कुछ हद तक, हाँ । Partially' ] }
-                          ] 
-                        }, { $or : [
-                            { $eq:['$[question(535)]', 'हाँ । Yes' ] },
-                            { $eq:['$[question(537)]', 'हाँ । Yes' ] }
-                          ] 
-                        }]}
-                          , 1, 0 ]
-                    } },
-                    "not_updated_count": { "$sum": {
-                        "$cond": [ { $and : [
-                            { $eq:['$[question(535)]', '' ] },
-                            { $eq:['$[question(537)]', '' ] },
 
-                          ] }, 1, 0 ]
+                    "yes_count_535": { "$sum": {
+                        "$cond": [  
+                            { $eq:['$[question(535)]', 'हाँ । Yes' ] },
+                            1, 0 ]
                     } },
-                    "total_count": { "$sum": 1 },
+                    "yes_count_537": { "$sum": {
+                        "$cond": [  
+                            { $eq:['$[question(537)]', 'हाँ । Yes' ] },
+                            1, 0 ]
+                    } },
+                 
+                    "no_count_535": { "$sum": {
+                        "$cond": [  
+                            { $eq:['$[question(535)]', 'न । No' ] },
+                            1, 0 ]
+                    } },
+                    "no_count_537": { "$sum": {
+                        "$cond": [  
+                            { $eq:['$[question(537)]', 'न । No' ] },
+                            1, 0 ]
+                    } },
+                   
+                    "partial_count_535": { "$sum": {
+                        "$cond": [  
+                            { $eq:['$[question(535)]', 'कुछ हद तक, हाँ  । Partially' ] },
+                            1, 0 ]
+                    } },
+                    "partial_count_537": { "$sum": {
+                        "$cond": [  
+                            { $eq:['$[question(537)]', 'कुछ हद तक, हाँ । Partially' ] },
+                            1, 0 ]
+                    } },
+                    
+                    "not_updated_count_535": { "$sum": {
+                        "$cond": [  
+                            { $eq:['$[question(535)]', '' ] },
+                            1, 0 ]
+                    } },
+                    "not_updated_count_537": { "$sum": {
+                        "$cond": [  
+                            { $eq:['$[question(537)]', '' ] },
+                            1, 0 ]
+                    } },
+                    
+                    "total_count": { "$sum": 2 },
                 }
             },
             { "$project": {
                 "_id": 0,
                 'pc': "$_id.pc",
-                "yes_count": 1,
-                "no_count": 1,
-                "partial_count": 1,
-                "not_updated_count": 1,
+                "yes_count": { '$add' : [ '$yes_count_535', '$yes_count_537' ] },
+                "no_count": { '$add' : ['$no_count_535', '$no_count_537' ] },
+                "partial_count": { '$add' : [ '$partial_count_535', '$partial_count_537'] },
+                "not_updated_count": { '$add' : [ '$not_updated_count_535', '$not_updated_count_537' ] },
+                
                 "total_count": 1
             } }
         ]).exec(function(err, data){
@@ -378,12 +409,12 @@ surveySchema.statics.targetStatus = function(where, resource, group_name, query)
                         "$cond": [ { $eq:['$[question(535)]', 'हाँ । Yes' ] }, 1, 0 ]
                     } },
                     "no_count": { "$sum": {
-                        "$cond": [ { $ne:['$[question(535)]', 'हाँ । Yes' ] }, 1, 0 ]
+                        "$cond": [ { $eq:['$[question(535)]', 'न । No' ] }, 1, 0 ]
                     } },
                     "partial_count": { "$sum": {
                         "$cond": [ 
                          { $or : [
-                            { $eq:['$[question(535)]', 'कुछ हद तक, हाँ । Partially'  ] },
+                            { $eq:['$[question(535)]', 'कुछ हद तक, हाँ  । Partially'  ] },
                             { $eq:['$[question(535)]', 'हाँ । Yes' ] }
                           ] 
                         }, 1, 0 ]
@@ -419,18 +450,18 @@ surveySchema.statics.targetTypeCount = function(where, resource, group_name, que
         "use strict";
         this.aggregate([
             where,
-            {
-                '$group': {
-                    "_id": null,
-                    "learning_curve": { "$sum": {
-                        "$cond": [ { [target_var['575_1']]: { "$ifNull": [ "$field", false ] } }, 1, 0 ]
-                    } },
-                    "others": { "$sum": {
-                        "$cond": [ { $or : [{ [target_var['647_1']]: { "$ifNull": [ "$field", false ] } },
-                                            { [target_var['647_2']]: { "$ifNull": [ "$field", false ] } }]}, 1, 0 ]
-                    } },
-                }
-            },
+                {
+                    '$group': {
+                        "_id": null,
+                        "learning_curve": { "$sum": {
+                            "$cond": [ { [target_var['575_1']]: { "$ifNull": [ "$field", false ] } }, 1, 0 ]
+                        } },
+                        "others": { "$sum": {
+                            "$cond": [ { $or : [{ [target_var['647_1']]: { "$ifNull": [ "$field", false ] } },
+                                                { [target_var['647_2']]: { "$ifNull": [ "$field", false ] } }]}, 1, 0 ]
+                        } },
+                    }
+                },
             { "$project": {
                 "_id": 0,
                 "status": '$_id.st',
@@ -512,57 +543,96 @@ surveySchema.statics.targetTotalCount = function(where, resource, group_name, qu
             {
                 '$group': {
                     '_id': '$'+group_name,
-                    "yes_count": { "$sum": {
-                        "$cond": [ { $or : [
+                    "yes_count_535": { "$sum": {
+                        "$cond": [  
                             { $eq:['$[question(535)]', 'हाँ । Yes' ] },
+                            1, 0 ]
+                    } },
+                    "yes_count_537": { "$sum": {
+                        "$cond": [  
                             { $eq:['$[question(537)]', 'हाँ । Yes' ] },
+                            1, 0 ]
+                    } },
+                    "yes_count_589": { "$sum": {
+                        "$cond": [  
                             { $eq:['$[question(589)]', 'हाँ । Yes' ] },
-                            { $eq:['$[question(540)]', 'हाँ । Yes' ] }
-                          ] }, 1, 0 ]
+                            1, 0 ]
                     } },
-                    "no_count": { "$sum": {
-                        "$cond": [ { $or : [
-                            { $ne:['$[question(535)]', 'हाँ । Yes' ] },
-                            { $ne:['$[question(537)]', 'हाँ । Yes' ] },
-                            { $ne:['$[question(589)]', 'हाँ । Yes' ] },
-                            { $ne:['$[question(540)]', 'हाँ । Yes' ] }
-                          ] }, 1, 0 ]
+                    "yes_count_540": { "$sum": {
+                        "$cond": [  
+                            { $eq:['$[question(540)]', 'हाँ (Yes)' ] },
+                            1, 0 ]
                     } },
-                    "partial_count": { "$sum": {
-                        "$cond": [ 
-                          { $or: [{ $and : [
-                            { $eq:['$[question(535)]', 'कुछ हद तक, हाँ । Partially' ] },
+                    "no_count_535": { "$sum": {
+                        "$cond": [  
+                            { $eq:['$[question(535)]', 'न । No' ] },
+                            1, 0 ]
+                    } },
+                    "no_count_537": { "$sum": {
+                        "$cond": [  
+                            { $eq:['$[question(537)]', 'न । No' ] },
+                            1, 0 ]
+                    } },
+                    "no_count_589": { "$sum": {
+                        "$cond": [  
+                            { $eq:['$[question(589)]', 'न । No' ] },
+                            1, 0 ]
+                    } },
+                    "no_count_540": { "$sum": {
+                        "$cond": [  
+                            { $eq:['$[question(540)]', 'न (No)' ] },
+                            1, 0 ]
+                    } },
+                    "partial_count_535": { "$sum": {
+                        "$cond": [  
+                            { $eq:['$[question(535)]', 'कुछ हद तक, हाँ  । Partially' ] },
+                            1, 0 ]
+                    } },
+                    "partial_count_537": { "$sum": {
+                        "$cond": [  
                             { $eq:['$[question(537)]', 'कुछ हद तक, हाँ । Partially' ] },
+                            1, 0 ]
+                    } },
+                    "partial_count_589": { "$sum": {
+                        "$cond": [  
                             { $eq:['$[question(589)]', 'कुछ हद तक, हाँ । Partially' ] },
-                            { $eq:['$[question(540)]', 'कुछ हद तक, हाँ । Partially' ] }
-                          ] 
-                        }, { $or : [
-                            { $eq:['$[question(535)]', 'हाँ । Yes' ] },
-                            { $eq:['$[question(537)]', 'हाँ । Yes' ] },
-                            { $eq:['$[question(589)]', 'हाँ । Yes' ] },
-                            { $eq:['$[question(540)]', 'हाँ । Yes' ] }
-                          ] 
-                        }]}
-                          , 1, 0 ]
+                            1, 0 ]
                     } },
-                    "not_updated_count": { "$sum": {
-                        "$cond": [ { $or : [
+                    "partial_count_540": { "$sum": {
+                        "$cond": [  
+                            { $eq:['$[question(540)]', 'कुछ हद तक हाँ (Partially‌‌‌)' ] },
+                            1, 0 ]
+                    } },
+                    "not_updated_count_535": { "$sum": {
+                        "$cond": [  
                             { $eq:['$[question(535)]', '' ] },
-                            { $eq:['$[question(537)]', '' ] },
-                            { $eq:['$[question(589)]', '' ] },
-                            { $eq:['$[question(540)]', '' ] }
-                          ] }, 1, 0 ]
+                            1, 0 ]
                     } },
-                     "total_count": { "$sum": 1 },
+                    "not_updated_count_537": { "$sum": {
+                        "$cond": [  
+                            { $eq:['$[question(537)]', '' ] },
+                            1, 0 ]
+                    } },
+                    "not_updated_count_589": { "$sum": {
+                        "$cond": [  
+                            { $eq:['$[question(589)]', '' ] },
+                            1, 0 ]
+                    } },
+                    "not_updated_count_540": { "$sum": {
+                        "$cond": [  
+                            { $eq:['$[question(540)]', '' ] },
+                             1, 0 ]
+                    } },
+                     "total_count": { "$sum": 4 },
                 }
             },
             { "$project": {
                 "_id": 0,
                 [query]: "$_id",
-                "yes_count": 1,
-                "no_count": 1,
-                "partial_count": 1,
-                "not_updated_count": 1,
+                "yes_count": { '$add' : [ '$yes_count_535', '$yes_count_537', '$yes_count_589', '$yes_count_540' ] },
+                "no_count": { '$add' : ['$no_count_535', '$no_count_537', '$no_count_589', '$no_count_540' ] },
+                "partial_count": { '$add' : [ '$partial_count_535', '$partial_count_537', '$partial_count_589', '$partial_count_540'] },
+                "not_updated_count": { '$add' : [ '$not_updated_count_535', '$not_updated_count_537', '$not_updated_count_589', '$not_updated_count_540' ] },
                 "total_count": 1
             } }
         ]).exec(function(err, data){
