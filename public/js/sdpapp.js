@@ -274,7 +274,7 @@ HPD.urls = {
                                     return obj[filterKey] == item[filterKey];
                                 });
                                 if(totalSchools.length){
-                                    gradeObj.size = (item.size/totalSchools[0].size)/100;
+                                    gradeObj.size = (item.size/totalSchools[0].size)*100;
                                     if(gradeObj.size>100) {
                                         gradeObj.size = 100;
                                     }
