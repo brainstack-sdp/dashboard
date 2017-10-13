@@ -171,13 +171,13 @@ HPD.urls = {
                         html+= '<tr class="js-row">';
                         html+= '<td>' + table.school+  '</td>'
                         html+= '<td>' + targetCat[0]+  '</td>'
-                        html+= '<td>' + targetCat[1]+  '</td>'
+                        html+= '<td>' + targetCat[1].replace(new RegExp("\\+","g"),' ')+  '</td>'
                         html+= '<td>' + table.sa1[i]+  '</td>'
                         html+= '<td>' + table.sa2[i]+  '</td>'
                         html+= '<td>' + table.smc[i]+  '</td>'
                         html+= '<td>' + table.methods[i]+  '</td>'
                         html+= '<td>' + table.status[i]+  '</td>'
-                        html+= '<td>' + table.requirememt+  '</td>'
+                        html+= '<td>' + table.requirememt.replace(new RegExp("\\*","g"),'<br>')+  '</td>'
                         html +='</tr>'
                     }
                     $('.js-tableBar').show();
@@ -274,7 +274,10 @@ HPD.urls = {
                                     return obj[filterKey] == item[filterKey];
                                 });
                                 if(totalSchools.length){
-                                    gradeObj.size = (Math.floor(item.size/totalSchools[0].size*10000))/100;
+                                    gradeObj.size = (item.size/totalSchools[0].size)/100;
+                                    if(gradeObj.size>100) {
+                                        gradeObj.size = 100;
+                                    }
                                     gradeObj.color = '#5FB6C7';
                                     series.push(gradeObj)
                                 }
@@ -1245,9 +1248,9 @@ HPD.urls = {
                 var key = Object.keys(res.result)[0];
                 filterList[key] = res.result[key];
                 $('.js-filter[data-type="district"]').html(createOptions(filterList[key],'district'))
-                console.log(filterList)
-                $('.js-filter[data-type="district"]').val('KULLU')
-                $('.js-filter[data-type="district"]').trigger('change')
+                //console.log(filterList)
+                //$('.js-filter[data-type="district"]').val('KULLU')
+                //$('.js-filter[data-type="district"]').trigger('change')
             }
         })
 
