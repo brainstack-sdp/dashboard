@@ -732,11 +732,6 @@ HPD.urls = {
 
                         }
                     });
-                    possibleAnswer.partial_count.count =possibleAnswer.partial_count.count- possibleAnswer.yes_count.count;
-
-                    possibleAnswer.no_count.count = possibleAnswer.total_count.count - possibleAnswer.yes_count.count - possibleAnswer.not_updated_count.count - possibleAnswer.partial_count.count;
-
-
 
                     var types = [{
                         type: "Yes",
