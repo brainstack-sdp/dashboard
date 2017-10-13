@@ -1249,8 +1249,8 @@ HPD.urls = {
                 filterList[key] = res.result[key];
                 $('.js-filter[data-type="district"]').html(createOptions(filterList[key],'district'))
                 //console.log(filterList)
-                //$('.js-filter[data-type="district"]').val('KULLU')
-                //$('.js-filter[data-type="district"]').trigger('change')
+                $('.js-filter[data-type="district"]').val('KULLU')
+                $('.js-filter[data-type="district"]').trigger('change')
             }
         })
 
