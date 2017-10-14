@@ -22,6 +22,11 @@ HPD.urls = {
             district : ['block', 'school_name'],
             block : ['school_name'],
             school_name : []
+        },
+        filterParentMap = {
+            district : ['district'],
+            block : ['district'],
+            school_name : ['block']
         }, gradeMap = {
 
         }, gradeColors = {
@@ -117,41 +122,45 @@ HPD.urls = {
         appliedFilter.type = type;
         appliedFilter.value = $el.val();
 
-         $.ajax({
-            method: 'GET',
-            url : HPD.urls.filterList + '?' + type +'=' +encodeURIComponent($el.val()),
-            success: function(res) {
-                var key = Object.keys(res.result)[0];
-                appliedFilter.key = key
-                filterList[key] = res.result[key];
-                if(type!="school_name") {
-                    if (filterAheadMap[type]) {
-                        filterAheadMap[type].forEach(function (item) {
-                            delete filters[item];
-                            $('.js-filter[data-type="' + item + '"]').html('');
-                        })
-                        $('.js-filter[data-type="' + key + '"]').html(createOptions(filterList[key], key))
-                    } else {
-                        filterAheadMap.district.forEach(function (item) {
-                            delete filters[item];
-                            $('.js-filter[data-type="' + item + '"]').html('');
-                        })
+        if(appliedFilter.value){
+            $.ajax({
+                method: 'GET',
+                url : HPD.urls.filterList + '?' + type +'=' +encodeURIComponent($el.val()),
+                success: function(res) {
+                    var key = Object.keys(res.result)[0];
+                    appliedFilter.key = key
+                    filterList[key] = res.result[key];
+                    if(type!="school_name") {
+                        if (filterAheadMap[type]) {
+                            filterAheadMap[type].forEach(function (item) {
+                                delete filters[item];
+                                $('.js-filter[data-type="' + item + '"]').html('');
+                            })
+                            $('.js-filter[data-type="' + key + '"]').html(createOptions(filterList[key], key))
+                        } else {
+                            filterAheadMap.district.forEach(function (item) {
+                                delete filters[item];
+                                $('.js-filter[data-type="' + item + '"]').html('');
+                            })
+                        }
                     }
-                }
-                if(key == "school_name"){
-                $('.js-schools').html(createPdfList(filterList[key], key))
-                }
-                var iQuery = '&';
-                $.each(el.$iFilter, function(key, item) {
-                    if($(item).val()){
-                        iQuery += $(item).data('type') +'='+ $(item).val() + '&'
+                    if(key == "school_name"){
+                        $('.js-schools').html(createPdfList(filterList[key], key))
                     }
-                });
-                chartInit(key, type, $el.val(), iQuery);
-            }
-        });
+                    var iQuery = '&';
+                    $.each(el.$iFilter, function(key, item) {
+                        if($(item).val()){
+                            iQuery += $(item).data('type') +'='+ $(item).val() + '&'
+                        }
+                    });
+                    chartInit(key, type, $el.val(), iQuery);
+                }
+            });
+        }
 
-        if(type=="school_name") {
+
+
+        if(type=="school_name" && appliedFilter.value) {
             $.ajax({
                 method: 'GET',
                 url : HPD.urls.surveyTable + '?' + type +'=' +encodeURIComponent($el.val()),
@@ -171,13 +180,13 @@ HPD.urls = {
                         html+= '<tr class="js-row">';
                         html+= '<td>' + table.school+  '</td>'
                         html+= '<td>' + targetCat[0]+  '</td>'
-                        html+= '<td>' + targetCat[1]+  '</td>'
+                        html+= '<td>' + targetCat[1].replace(new RegExp("\\+","g"),' ')+  '</td>'
                         html+= '<td>' + table.sa1[i]+  '</td>'
                         html+= '<td>' + table.sa2[i]+  '</td>'
                         html+= '<td>' + table.smc[i]+  '</td>'
                         html+= '<td>' + table.methods[i]+  '</td>'
                         html+= '<td>' + table.status[i]+  '</td>'
-                        html+= '<td>' + table.requirememt+  '</td>'
+                        html+= '<td>' + table.requirememt.replace(new RegExp("\\*","g"),'<br>')+  '</td>'
                         html +='</tr>'
                     }
                     $('.js-tableBar').show();
@@ -274,7 +283,10 @@ HPD.urls = {
                                     return obj[filterKey] == item[filterKey];
                                 });
                                 if(totalSchools.length){
-                                    gradeObj.size = (Math.floor(item.size/totalSchools[0].size*10000))/100;
+                                    gradeObj.size = Math.floor((item.size/totalSchools[0].size)*100);
+                                    if(gradeObj.size>100) {
+                                        gradeObj.size = 100;
+                                    }
                                     gradeObj.color = '#5FB6C7';
                                     series.push(gradeObj)
                                 }
@@ -1212,7 +1224,13 @@ HPD.urls = {
         for(var key in pendingCalls){
             pendingCalls[key].fail();
         }
-        loadFilters($(this));
+        var $this = $(this), parent =  $this.attr('data-type')
+        if($this.val()){
+            loadFilters($(this));
+        } else {
+            loadFilters($('[data-type="'+filterParentMap[parent]+'"]'));
+        }
+
     });
     el.$iFilter.on('change', function() {
         var iQuery = '&';
@@ -1245,7 +1263,7 @@ HPD.urls = {
                 var key = Object.keys(res.result)[0];
                 filterList[key] = res.result[key];
                 $('.js-filter[data-type="district"]').html(createOptions(filterList[key],'district'))
-                console.log(filterList)
+                //console.log(filterList)
                 $('.js-filter[data-type="district"]').val('KULLU')
                 $('.js-filter[data-type="district"]').trigger('change')
             }
