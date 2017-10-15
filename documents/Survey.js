@@ -316,17 +316,26 @@ surveySchema.statics.targetStatus504Count = function(where, resource, group_name
                           '[question(535)]': '$[question(535)]',
                           '[variable(537)]': '$[variable(537)]',
                           '[question(537)]': '$[question(537)]',
-                          'cp_1': { $substr: [ "$"+target_var['504_1'], 0, 6 ] },
-                          'cp_2': { $substr: [ "$"+target_var['504_2'], 0, 6 ] }
+                          // 'cp_1': { $substr: [ "$"+target_var['504_1'], 0, 6 ] },
+                          // 'cp_2': { $substr: [ "$"+target_var['504_2'], 0, 6 ] },   
+                          // 'cp_3': { $substr: [ "$"+target_var['504_3'], 0, 6 ] },
+                          'cp':
+                               { $map:
+                                  {
+                                     input: ["$"+target_var['504_1'], "$"+target_var['504_2'], "$"+target_var['504_3']],
+                                     as: "cp",
+                                     in: { $substr: [ "$$cp", 0, 6 ] }
+                                  }
+                            }
+                          
                       },
             },
+            {$unwind: "$cp"},
             {
                 '$group': {
                     '_id': {
-                        'pc': '$cp_1',
-                        'pc': '$cp_2',
+                        'pc': '$cp'
                     },
-
                     "yes_count_535": { "$sum": {
                         "$cond": [  
                             { $eq:['$[question(535)]', 'हाँ । Yes' ] },
@@ -377,11 +386,11 @@ surveySchema.statics.targetStatus504Count = function(where, resource, group_name
             { "$project": {
                 "_id": 0,
                 'pc': "$_id.pc",
+                'cp': 1,
                 "yes_count": { '$add' : [ '$yes_count_535', '$yes_count_537' ] },
                 "no_count": { '$add' : ['$no_count_535', '$no_count_537' ] },
                 "partial_count": { '$add' : [ '$partial_count_535', '$partial_count_537'] },
                 "not_updated_count": { '$add' : [ '$not_updated_count_535', '$not_updated_count_537' ] },
-                
                 "total_count": 1
             } }
         ]).exec(function(err, data){
@@ -502,8 +511,6 @@ surveySchema.statics.targetStatus = function(where, resource, group_name, query)
                 "partial_count": { '$add' : [ '$partial_count_535', '$partial_count_537', '$partial_count_589', '$partial_count_540'] },
                 "not_updated_count": { '$add' : [ '$not_updated_count_535', '$not_updated_count_537', '$not_updated_count_589', '$not_updated_count_540' ] },
                 "total_count": 1
-
-              
              
             } }
         ]).exec(function(err, data){
@@ -550,6 +557,7 @@ surveySchema.statics.targetTypeCount = function(where, resource, group_name, que
 
 
 surveySchema.statics.targetType504Count = function(where, resource, group_name, query){
+    console.log(where)
     return new Promise (function(resolve, reject){
         "use strict";
         this.aggregate([
@@ -561,7 +569,7 @@ surveySchema.statics.targetType504Count = function(where, resource, group_name, 
                           'cp_1': { $substr: [ "$"+target_var['504_1'], 0, 9 ] },
                           'cp_2': { $substr: [ "$"+target_var['504_2'], 0, 9 ] },
                           'cp_3': { $substr: [ "$"+target_var['504_3'], 0, 9 ] }
-                      },
+                },
             },
             {
                 '$group': {
