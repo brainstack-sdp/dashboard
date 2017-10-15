@@ -122,41 +122,39 @@ HPD.urls = {
         appliedFilter.type = type;
         appliedFilter.value = $el.val();
 
-        if(appliedFilter.value){
-            $.ajax({
-                method: 'GET',
-                url : HPD.urls.filterList + '?' + type +'=' +encodeURIComponent($el.val()),
-                success: function(res) {
-                    var key = Object.keys(res.result)[0];
-                    appliedFilter.key = key
-                    filterList[key] = res.result[key];
-                    if(type!="school_name") {
-                        if (filterAheadMap[type]) {
-                            filterAheadMap[type].forEach(function (item) {
-                                delete filters[item];
-                                $('.js-filter[data-type="' + item + '"]').html('');
-                            })
-                            $('.js-filter[data-type="' + key + '"]').html(createOptions(filterList[key], key))
-                        } else {
-                            filterAheadMap.district.forEach(function (item) {
-                                delete filters[item];
-                                $('.js-filter[data-type="' + item + '"]').html('');
-                            })
-                        }
+        $.ajax({
+            method: 'GET',
+            url : HPD.urls.filterList + '?' + type +'=' +encodeURIComponent($el.val()),
+            success: function(res) {
+                var key = Object.keys(res.result)[0];
+                appliedFilter.key = key
+                filterList[key] = res.result[key];
+                if(type!="school_name") {
+                    if (filterAheadMap[type]) {
+                        filterAheadMap[type].forEach(function (item) {
+                            delete filters[item];
+                            $('.js-filter[data-type="' + item + '"]').html('');
+                        })
+                        $('.js-filter[data-type="' + key + '"]').html(createOptions(filterList[key], key))
+                    } else {
+                        filterAheadMap.district.forEach(function (item) {
+                            delete filters[item];
+                            $('.js-filter[data-type="' + item + '"]').html('');
+                        })
                     }
-                    if(key == "school_name"){
-                        $('.js-schools').html(createPdfList(filterList[key], key))
-                    }
-                    var iQuery = '&';
-                    $.each(el.$iFilter, function(key, item) {
-                        if($(item).val()){
-                            iQuery += $(item).data('type') +'='+ $(item).val() + '&'
-                        }
-                    });
-                    chartInit(key, type, $el.val(), iQuery);
                 }
-            });
-        }
+                if(key == "school_name"){
+                    $('.js-schools').html(createPdfList(filterList[key], key))
+                }
+                var iQuery = '&';
+                $.each(el.$iFilter, function(key, item) {
+                    if($(item).val()){
+                        iQuery += $(item).data('type') +'='+ $(item).val() + '&'
+                    }
+                });
+                chartInit(key, type, $el.val(), iQuery);
+            }
+        });
 
 
 
@@ -1307,5 +1305,9 @@ HPD.urls = {
     $('body').on('click','.js-schoolPdf', function() {
         getDistributionFile($(this).text().split('.')[0]);
     });
+    $('.js-reset').click(function() {
+        $('.js-filter[data-type="district"]').val('')
+        $('.js-filter[data-type="district"]').trigger('change')
+    })
 
 })()
