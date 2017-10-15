@@ -967,11 +967,14 @@ HPD.urls = {
 
                 if(chartItems.length) {
                     chartItems.forEach(function (item) {
-                        if (filterLevel[item[filterKey]]) {
-                            filterLevel[item[filterKey]].push(item)
-                        } else {
-                            filterLevel[item[filterKey]] = [item];
+                        if(item[filterKey]) {
+                            if (filterLevel[item[filterKey]]) {
+                                filterLevel[item[filterKey]].push(item)
+                            } else {
+                                filterLevel[item[filterKey]] = [item];
+                            }
                         }
+
                     });
                     for (var i in filterLevel) {
                         total = 0;
@@ -1082,7 +1085,7 @@ HPD.urls = {
                 $('.js-targetTotal.js-loader').hide();
 
                 var targetMap = {
-                    'वि': 'Community Participation',
+                    'वि': 'School Management',
                     'Commun':'Community Participation',
                     Teache: 'Teacher Performance',
                     11366: 'Learning Levels',
@@ -1100,26 +1103,37 @@ HPD.urls = {
                         gradeObj = {};
                         item.target = targetMap[item.status] || 'Other';
                         if(filerLevel[item.target]) {
-                            filerLevel[item.target].yes_count = item.yes_count;
-                            filerLevel[item.target].no_count = item.no_count;
-                            filerLevel[item.target].partial_count = item.partial_count;
-                            filerLevel[item.target].not_updated_count = item.not_updated_count;
+                            filerLevel[item.target].yes_count += item.yes_count;
+                            filerLevel[item.target].no_count += item.no_count;
+                            filerLevel[item.target].partial_count += item.partial_count;
+                            filerLevel[item.target].not_updated_count += item.not_updated_count;
+                        } else {
+                            filerLevel[item.target] = item;
                         }
-                        filerLevel[item.target] = item;
+
                     });
                     chartItemsNext.forEach(function (item) {
                         if(item.pc) {
                             item.target = targetMap[item.pc] || 'Other';
                             if(filerLevel[item.target]) {
-                                filerLevel[item.target].yes_count = item.yes_count;
-                                filerLevel[item.target].no_count = item.no_count;
-                                filerLevel[item.target].partial_count = item.partial_count;
-                                filerLevel[item.target].not_updated_count = item.not_updated_count;
+                                filerLevel[item.target].yes_count += Math.floor(item.yes_count/2);
+                                filerLevel[item.target].no_count += Math.floor(item.no_count/2);
+                                filerLevel[item.target].partial_count += Math.floor(item.partial_count/2);
+                                filerLevel[item.target].not_updated_count += Math.floor(item.not_updated_count/2);
+                            } else {
+                                filerLevel[item.target] = item;
+                                filerLevel[item.target].yes_count = Math.floor(item.yes_count/2);
+                                filerLevel[item.target].no_count = Math.floor(item.no_count/2);
+                                filerLevel[item.target].partial_count = Math.floor(item.partial_count/2);
+                                filerLevel[item.target].not_updated_count = Math.floor(item.not_updated_count/2);
                             }
-                            filerLevel[item.target] = item;
-                        }
 
+                        }
                     });
+                    filerLevel['Other'].yes_count = Math.floor(filerLevel['Other'].yes_count/2);
+                    filerLevel['Other'].no_count = Math.floor(filerLevel['Other'].no_count/2);
+                    filerLevel['Other'].partial_count = Math.floor(filerLevel['Other'].partial_count/2);
+                    filerLevel['Other'].not_updated_count = Math.floor(filerLevel['Other'].not_updated_count/2);
 
                     for (var i in filerLevel) {
                         series.push(filerLevel[i])
