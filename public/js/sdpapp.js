@@ -1072,9 +1072,9 @@ HPD.urls = {
                     15171:	'School Management',
                     15172:	'School Management',
                     
-                    11366: 'Learning Levels',
-                    11367: 'Learning Levels',
-                    11368: 'Learning Levels',
+                    15673: 'Learning Levels',
+                    15674: 'Learning Levels',
+                    15675: 'Learning Levels',
                     "": 'Learning Levels',
                 }
 
