@@ -25,6 +25,19 @@ First Tab:
 $ node app
 ```
 
+### Production
+
+1. `cd` into `dashboard`
+2. `git branch` to verify that you're on the branch `master`
+3. `git fetch`
+4. `git pull --rebase`
+5. `pm2 restart dashboard` to restart the application
+
+You can use `pm2 list` to see the application status.
+If you're not successful at step #4, you may have to resolve conflicts or `git stash`
+
+You can use `pm2 logs dashboard` to see all logs of dashboard.
+
 **Awesome stuff, Hell Yeah!**
 
 
