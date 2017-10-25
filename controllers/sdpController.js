@@ -73,10 +73,15 @@ module.exports.analyticsSurvey = function(req, res) {
       group = '[question(343), option(10872)]';
       where = {'$match': {'[question(343), option(10871)]': req.query.district }};
     } else if(req.query.block) {
-      query = 'school_name';
-      group_name = '[question(343), option(10873)]';
-      group = '[question(343), option(10873)]';
+      query = 'cluster';
+      group_name = 'cluster';
+      group = 'cluster';
       where = {'$match': {'[question(343), option(10872)]': req.query.block} };
+    } else if(req.query.cluster) {
+        query = 'school_name';
+        group_name = '[question(343), option(10873)]';
+        group = '[question(343), option(10873)]';
+        where = {'$match': {'cluster': req.query.cluster} };
     } else if(req.query.school_name) {
       query = 'school_name';
       group_name = '[question(343), option(10873)]';
@@ -155,10 +160,15 @@ module.exports.table = function(req, res) {
       group = '[question(343), option(10872)]';
       where = {'$match': {'[question(343), option(10871)]': req.query.district }};
     } else if(req.query.block) {
+      query = 'cluster';
+      group_name = 'cluster';
+      group = 'cluster';
+      where = {'$match': {'[question(343), option(10872)]': req.query.block }};
+    } else if(req.query.cluster) { 
       query = 'school_name';
       group_name = '[question(343), option(10873)]';
       group = '[question(343), option(10873)]';
-      where = {'$match': {'[question(343), option(10872)]': req.query.block }};
+      where = {'$match': {'cluster': req.query.cluster }};
     } else if(req.query.school_name) {
       query = 'school_name';
       group_name = '[question(343), option(10873)]';
@@ -225,10 +235,15 @@ module.exports.pdf = function(req, res) {
         group = '[question(343), option(10872)]';
         where = {'$match': {'[question(343), option(10871)]': req.query.district }};
     } else if(req.query.block) {
+        query = 'cluster';
+        group_name = 'cluster';
+        group = 'cluster';
+        where = {'$match': {'[question(343), option(10872)]': req.query.block }};
+      } else if(req.query.cluster) { 
         query = 'school_name';
         group_name = '[question(343), option(10873)]';
         group = '[question(343), option(10873)]';
-        where = {'$match': {'[question(343), option(10872)]': req.query.block }};
+        where = {'$match': {'cluster': req.query.cluster }};
     } else if(req.query.school_name) {
         query = 'school_name';
         group_name = '[question(343), option(10873)]';

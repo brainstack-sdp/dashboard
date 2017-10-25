@@ -167,10 +167,15 @@ module.exports.sdp = function (req, res) {
     group = 'block';
     where = {'$match': {'district': req.query.district }};
   } else if(req.query.block) {
+    query = 'cluster';
+    group_name = 'cluster';
+    group = 'cluster';
+    where = {'$match': {'block': req.query.block }};
+  } else if(req.query.cluster) {
     query = 'school_name';
     group_name = 'school_name';
     group = 'school_name';
-    where = {'$match': {'block': req.query.block }};
+    where = {'$match': {'cluster': req.query.cluster }};
   } else if(req.query.school_name) {
     query = 'school_name';
     group_name = 'school_name';

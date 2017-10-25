@@ -20,13 +20,15 @@ HPD.urls = {
         }, filterList = {}, filters = {}, $scope={}, pendingCalls ={},
         filterAheadMap = {
             district : ['block', 'school_name'],
-            block : ['school_name'],
+            block : [ 'cluster' ],
+            cluster: ['school_name'],
             school_name : []
         },
         filterParentMap = {
             district : ['district'],
             block : ['district'],
-            school_name : ['block']
+            cluster: [ 'block' ],
+            school_name : ['cluster']
         }, gradeMap = {
 
         }, gradeColors = {
@@ -329,7 +331,7 @@ HPD.urls = {
                                 labelRotation: 45,
                                 gridAlpha: 0.5,
                                 gridColor: '#f0fef1',
-                                title: 'Districts/Blocks/Schools',
+                                title: 'Districts/Blocks/Clusters/Schools',
                             },
                             export: {
                                 enabled: true,
@@ -434,7 +436,7 @@ HPD.urls = {
                                 "gridAlpha": 0,
                                 "position": "left",
                                 labelRotation: 45,
-                                title: 'Districts/Blocks/Schools'
+                                title: 'Districts/Blocks/Clusters/Schools'
                             },
                             "export": {
                                 "enabled": true,
@@ -489,16 +491,16 @@ HPD.urls = {
                     chartItems.school_management=0;
 
                     chartItemsNext.forEach(function (item) {
-                        chartItems.community_participation += item.community_participation;
-                        chartItems.teacher_performance += item.teacher_performance;
-                        chartItems.school_management += item.school_management;
                         if(item.status == '11313' || item.status == '11314'|| item.status == '11315'|| item.status == '11316'){
+                            chartItems.community_participation += item.community_participation;
                             coms +=item.community_participation
                             gradeObj.coms.push({type: subTargetMap[item.status], percent: item.community_participation})
                         } else if(item.status == '11320' || item.status == '11321'|| item.status == '15171'|| item.status == '15172'){
+                            chartItems.school_management += item.school_management;
                             stu +=item.school_management
                             gradeObj.stu.push({type: subTargetMap[item.status], percent: item.school_management})
                         } else if(item.status == '11317' || item.status == '11318'|| item.status == '11319') {
+                            chartItems.teacher_performance += item.teacher_performance;
                             teach += item.teacher_performance
                             gradeObj.teach.push({type: subTargetMap[item.status], percent: item.teacher_performance})
                         } else {
@@ -701,7 +703,7 @@ HPD.urls = {
                                 "axisAlpha": 0,
                                 "gridAlpha": 0,
                                 "position": "left",
-                                title: 'Districts/Blocks/Schools',
+                                title: 'Districts/Blocks/Clusters/Schools',
                                 labelRotation: 45
                             },
                             "export": {
@@ -862,9 +864,9 @@ HPD.urls = {
                         grades = {"yes_count": 0, "no_count": 0, "partial_count": 0, "not_updated_count":0};
                         filterLevel[i].forEach(function (item) {
                             grades.yes_count = item.yes_count;
-                            grades.no_count = item.no_count;
-                            grades.partial_count = item.partial_count;
-                            grades.not_updated_count = item.not_updated_count;
+                        //    grades.no_count = item.no_count;
+                         //   grades.partial_count = item.partial_count;
+                         //   grades.not_updated_count = item.not_updated_count;
                         });
                         gradeObj = grades;
                         gradeObj[filterKey] = i;
@@ -903,44 +905,14 @@ HPD.urls = {
                             "type": "column",
                             "color": "#000000",
                             "valueField": "yes_count"
-                        },
-                            {
-                                "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
-                                "fillAlphas": 0.8,
-                                "labelText": "[[value]]",
-                                "lineAlpha": 0.3,
-                                "title": "No",
-                                "type": "column",
-                                "color": "#000000",
-                                "valueField": "no_count"
-                            },
-                            {
-                                "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
-                                "fillAlphas": 0.8,
-                                "labelText": "[[value]]",
-                                "lineAlpha": 0.3,
-                                "title": "Partial",
-                                "type": "column",
-                                "color": "#000000",
-                                "valueField": "partial_count"
-                            },
-                            {
-                                "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
-                                "fillAlphas": 0.8,
-                                "labelText": "[[value]]",
-                                "lineAlpha": 0.3,
-                                "title": "Not update",
-                                "type": "column",
-                                "color": "#000000",
-                                "valueField": "not_updated_count"
-                            }],
+                        }],
                         "categoryField": filterKey,
                         "categoryAxis": {
                             "gridPosition": "start",
                             "axisAlpha": 0,
                             "gridAlpha": 0,
                             "position": "left",
-                            title: 'Districts/Blocks/Schools',
+                            title: 'Districts/Blocks/Clusters/Schools',
                             labelRotation: 45
                         },
                         "export": {
@@ -1061,7 +1033,7 @@ HPD.urls = {
                             "axisAlpha": 0,
                             "gridAlpha": 0,
                             "position": "left",
-                            title: 'Districts/Blocks/Schools',
+                            title: 'Districts/Blocks/Clusters/Schools',
                             labelRotation: 45
                         },
                         "export": {
@@ -1085,13 +1057,25 @@ HPD.urls = {
                 $('.js-targetTotal.js-loader').hide();
 
                 var targetMap = {
-                    'वि': 'School Management',
-                    'Commun':'Community Participation',
-                    Teache: 'Teacher Performance',
+                    
+                    11313: 'Community Participation',
+                    11314: 'Community Participation',
+                    11315: 'Community Participation',
+                    11316: 'Community Participation',
+
+                    11317:	'Teacher Performance',
+                    11318:	'Teacher Performance',
+                    11319:  'Teacher Performance',
+
+                    11320:	'School Management',
+                    11321:	'School Management',
+                    15171:	'School Management',
+                    15172:	'School Management',
+                    
                     11366: 'Learning Levels',
                     11367: 'Learning Levels',
                     11368: 'Learning Levels',
-                    School: 'School Management'
+                    "": 'Learning Levels',
                 }
 
                 var chartItems = res.result.target_status, series = [], labels=[], filerLevel = {}, gradeObj = {};
@@ -1103,18 +1087,29 @@ HPD.urls = {
                         gradeObj = {};
                         item.target = targetMap[item.status] || 'Other';
                         if(filerLevel[item.target]) {
-                            filerLevel[item.target].yes_count += item.yes_count;
-                            filerLevel[item.target].no_count += item.no_count;
-                            filerLevel[item.target].partial_count += item.partial_count;
-                            filerLevel[item.target].not_updated_count += item.not_updated_count;
+                            filerLevel[item.target].yes_count += item.yes_count > 1 ? Math.floor(item.yes_count/2) : item.yes_count;
+                            filerLevel[item.target].no_count += item.no_count > 1 ? Math.floor(item.no_count/2) : item.no_count;
+                            filerLevel[item.target].partial_count += item.partial_count > 1 ? Math.floor(item.partial_count/2) : item.partial_count;
+                            filerLevel[item.target].not_updated_count += item.not_updated_count > 1 ? Math.floor(item.not_updated_count/2) : item.not_updated_count;
                         } else {
                             filerLevel[item.target] = item;
+                            filerLevel[item.target].yes_count = item.yes_count > 1 ? Math.floor(item.yes_count/2) : item.yes_count;
+                            filerLevel[item.target].no_count = item.no_count > 1 ? Math.floor(item.no_count/2) : item.no_count;
+                            filerLevel[item.target].partial_count = item.partial_count > 1 ? Math.floor(item.partial_count/2) : item.partial_count;
+                            filerLevel[item.target].not_updated_count = item.not_updated_count > 1 ? Math.floor(item.not_updated_count/2) : item.not_updated_count;
                         }
 
                     });
+                    filerLevel['Other'] = {
+                        target: 'Other',
+                        yes_count: filerLevel['Learning Levels'].yes_count,
+                        no_count: filerLevel['Learning Levels'].no_count,
+                        partial_count: filerLevel['Learning Levels'].partial_count,
+                        not_updated_count: filerLevel['Learning Levels'].not_updated_count,
+                    }
                     chartItemsNext.forEach(function (item) {
-                        if(item.pc) {
-                            item.target = targetMap[item.pc] || 'Other';
+                        if(item.status) {
+                            item.target = targetMap[item.status] || 'Other';
                             if(filerLevel[item.target]) {
                                 filerLevel[item.target].yes_count += Math.floor(item.yes_count/2);
                                 filerLevel[item.target].no_count += Math.floor(item.no_count/2);
@@ -1130,10 +1125,10 @@ HPD.urls = {
 
                         }
                     });
-                    filerLevel['Other'].yes_count = Math.floor(filerLevel['Other'].yes_count/2);
-                    filerLevel['Other'].no_count = Math.floor(filerLevel['Other'].no_count/2);
-                    filerLevel['Other'].partial_count = Math.floor(filerLevel['Other'].partial_count/2);
-                    filerLevel['Other'].not_updated_count = Math.floor(filerLevel['Other'].not_updated_count/2);
+                    // filerLevel['Other'].yes_count = Math.floor(filerLevel['Other'].yes_count/2);
+                    // filerLevel['Other'].no_count = Math.floor(filerLevel['Other'].no_count/2);
+                    // filerLevel['Other'].partial_count = Math.floor(filerLevel['Other'].partial_count/2);
+                    // filerLevel['Other'].not_updated_count = Math.floor(filerLevel['Other'].not_updated_count/2);
 
                     for (var i in filerLevel) {
                         series.push(filerLevel[i])
