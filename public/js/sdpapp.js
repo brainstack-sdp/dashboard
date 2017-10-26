@@ -145,9 +145,9 @@ HPD.urls = {
                         })
                     }
                 }
-                if(key == "school_name"){
-                    $('.js-schools').html(createPdfList(filterList[key], key))
-                }
+                // if(key == "school_name"){
+                //     $('.js-schools').html(createPdfList(filterList[key], key))
+                // }
                 var iQuery = '&';
                 $.each(el.$iFilter, function(key, item) {
                     if($(item).val()){
@@ -172,7 +172,8 @@ HPD.urls = {
                     table.smc = table.smc.split('*');
                     table.status = table.status.split('*');
                     table.methods = table.methods.split('*');
-
+                    table.target_type[0] = 'Learning Levels:' + table.target_type[0];
+                    table.target_type[2] = 'Others:' + table.target_type[2];
                     var html='';
 
                     for(var i=0; i< table.target_type.length; i++){
@@ -863,10 +864,13 @@ HPD.urls = {
                         total = 0;
                         grades = {"yes_count": 0, "no_count": 0, "partial_count": 0, "not_updated_count":0};
                         filterLevel[i].forEach(function (item) {
-                            grades.yes_count = item.yes_count;
+                            grades.yes_count = Math.floor((item.yes_count/item.total_count)*100);
+                            if (grades.yes_count > 100) {
+                                grades.yes_count = 100;
+                            }
                         //    grades.no_count = item.no_count;
-                         //   grades.partial_count = item.partial_count;
-                         //   grades.not_updated_count = item.not_updated_count;
+                        //   grades.partial_count = item.partial_count;
+                        //   grades.not_updated_count = item.not_updated_count;
                         });
                         gradeObj = grades;
                         gradeObj[filterKey] = i;
@@ -893,7 +897,9 @@ HPD.urls = {
                         "valueAxes": [
                             {
                                 "id": "ValueAxis-1",
-                                "title": "Compliance Percentage"
+                                "title": "Compliance Percentage",
+                                "unit": '%',
+                                "minimium": 0, "maximum": 100
                             }
                         ],
                         "graphs": [{
