@@ -130,7 +130,7 @@ var surveySchema = new mongoose.Schema({
     // ideal_stay_time : String
 }, {
     strict: false,
-    collection: 'survey_251017'
+    collection: 'survey'
 });
 
 
@@ -1113,7 +1113,7 @@ surveySchema.statics.sdpTable = function (where) {
                     // [query]: "$_id"
                     'school': '$[question(343), option(10873)]',
                     'target_type': {
-                        $concat: ['$' + target_var['504_1'], '* ', '$' + target_var['504_2'], '* ', '$' + target_var['504_3']]
+                        $concat: ['$' + target_var['575_1'], '* ', '$' + target_var['504_3'], '* ', '$' + target_var['647_1']]
                     },
                     'sa1': {
                         $concat: ['$' + target_var['509_1'], '* ', '$' + target_var['457_1'], '* ', '$' + target_var['514_1']]
@@ -1140,7 +1140,7 @@ surveySchema.statics.sdpTable = function (where) {
         ]).exec(function (err, data) {
             if (err)
                 reject(err);
-            resolve(data);
+                resolve(data);
         });
     }.bind(this));
 };
@@ -1159,6 +1159,6 @@ surveySchema.statics.sdpPdf = function (where) {
         });
     }.bind(this));
 };
-var SurveryModel = connApi.model('survey_251017', surveySchema);
+var SurveryModel = connApi.model('survey', surveySchema);
 
 module.exports = SurveryModel;
