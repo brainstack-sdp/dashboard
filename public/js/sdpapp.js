@@ -19,8 +19,8 @@ HPD.urls = {
         $filter : $('.js-filter'),$iFilter : $('.js-iFilter'), $preLoader : $('#preloader'), $modal: $('.js-modal'), $navs : $('a.nav-link')
         }, filterList = {}, filters = {}, $scope={}, pendingCalls ={},
         filterAheadMap = {
-            district : ['block', 'school_name'],
-            block : [ 'cluster' ],
+            district : ['block', 'cluster', 'school_name'],
+            block : ['cluster', 'school_name'],
             cluster: ['school_name'],
             school_name : []
         },
@@ -205,7 +205,7 @@ HPD.urls = {
     var createOptions = function(filters, key) {
         var options = '<option value="">All</option>';
         for (var i=0;i<filters.length;i++) {
-            options += '<option value="'+ filters[i][key] +'">' + filters[i][key] + '</option>'
+            options += '<option value="'+ filters[i]._id +'">' + filters[i][key] + '</option>'
         }
         return options;
     }

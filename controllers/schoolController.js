@@ -174,7 +174,7 @@ module.exports.sdp = function (req, res) {
   } else if(req.query.cluster) {
     query = 'school_name';
     group_name = 'school_name';
-    group = 'school_name';
+    group = 'udise';
     where = {'$match': {'cluster': req.query.cluster }};
   } else if(req.query.school_name) {
     query = 'school_name';
