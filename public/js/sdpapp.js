@@ -493,20 +493,23 @@ HPD.urls = {
 
                     chartItemsNext.forEach(function (item) {
                         if(item.status == '11313' || item.status == '11314'|| item.status == '11315'|| item.status == '11316'){
-                            chartItems.community_participation += item.community_participation;
+                            //chartItems.community_participation += item.community_participation;
                             coms +=item.community_participation
                             gradeObj.coms.push({type: subTargetMap[item.status], percent: item.community_participation})
                         } else if(item.status == '11320' || item.status == '11321'|| item.status == '15171'|| item.status == '15172'){
-                            chartItems.school_management += item.school_management;
+                            //chartItems.school_management += item.school_management;
                             stu +=item.school_management
                             gradeObj.stu.push({type: subTargetMap[item.status], percent: item.school_management})
                         } else if(item.status == '11317' || item.status == '11318'|| item.status == '11319') {
-                            chartItems.teacher_performance += item.teacher_performance;
+                            //chartItems.teacher_performance += item.teacher_performance;
                             teach += item.teacher_performance
                             gradeObj.teach.push({type: subTargetMap[item.status], percent: item.teacher_performance})
                         } else {
 
                         }
+                        chartItems.community_participation += item.community_participation;
+                        chartItems.school_management += item.school_management;
+                        chartItems.teacher_performance += item.teacher_performance;
 
                     });
                     gradeObj.coms.push({type: 'Others', percent: chartItems.community_participation-coms})

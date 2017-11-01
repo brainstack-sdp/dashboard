@@ -821,7 +821,7 @@ surveySchema.statics.targetTypeCount = function (where, resource, group_name, qu
                                         }
                                     }
                                 ]
-                            }, 1, 0]
+                            }, 2, 0]
                         }
                     },
                 }
