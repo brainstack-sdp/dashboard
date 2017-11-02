@@ -187,10 +187,13 @@ module.exports.table = function(req, res) {
       where['$match']['[question(153)]'] =  {'$regex': req.query.school_type};
     }
     Promise.all([
-        SurveyModel.sdpTable(where)
+        SurveyModel.sdpTable(where),
     ]).then(function(data) {
         var response = {
-          table: data[0]
+          table: data[0],
+          target_status_504: data[1],
+          target_type_504: data[2],
+          target_status: data[3]
         };
       res.json({'message': 'Data', 'result': response, 'error': false});
     }).catch(function(err){

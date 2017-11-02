@@ -76,6 +76,7 @@ module.exports.school = function (req, res) {
   ]).then(function (data) {
       let response = {};
       response[group] = data[0];
+      console.log('1 ' + JSON.stringify(data));
     res.json({"message": "Data", "result": response, "error": false});
   }).catch(function (err) {
     log.error(err);
@@ -201,6 +202,7 @@ module.exports.sdp = function (req, res) {
       var response = {
           [group_name]: data[0],
       };
+      console.log('2 ' + JSON.stringify(data));
       res.json({'message': 'Data', 'result':response, 'error': false});
     });
 };

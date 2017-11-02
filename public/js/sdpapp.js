@@ -493,15 +493,12 @@ HPD.urls = {
 
                     chartItemsNext.forEach(function (item) {
                         if(item.status == '11313' || item.status == '11314'|| item.status == '11315'|| item.status == '11316'){
-                            //chartItems.community_participation += item.community_participation;
                             coms +=item.community_participation
                             gradeObj.coms.push({type: subTargetMap[item.status], percent: item.community_participation})
                         } else if(item.status == '11320' || item.status == '11321'|| item.status == '15171'|| item.status == '15172'){
-                            //chartItems.school_management += item.school_management;
                             stu +=item.school_management
                             gradeObj.stu.push({type: subTargetMap[item.status], percent: item.school_management})
                         } else if(item.status == '11317' || item.status == '11318'|| item.status == '11319') {
-                            //chartItems.teacher_performance += item.teacher_performance;
                             teach += item.teacher_performance
                             gradeObj.teach.push({type: subTargetMap[item.status], percent: item.teacher_performance})
                         } else {
@@ -575,7 +572,6 @@ HPD.urls = {
                     AmCharts.makeChart("gradePie", {
                         "type": "pie",
                         "theme": "light",
-
                         "dataProvider": generateChartData(),
                         "labelText": "[[title]]: [[value]]",
                         "balloonText": "[[title]]: [[value]] | [[value/total]]",
@@ -592,7 +588,6 @@ HPD.urls = {
                         }
                     }).addListener("clickSlice",
                         function(event) {
-                            console.log('in')
                             var chart = event.chart;
                             if (event.dataItem.dataContext.id != undefined) {
                                 selected = event.dataItem.dataContext.id;
@@ -740,12 +735,13 @@ HPD.urls = {
                         }
                         for(var i in item){
                             if(i=='status') {continue;}
-                            if(possibleAnswer[i].count) {
-                                possibleAnswer[i].count += item[i];
-                            } else {
-                                possibleAnswer[i].count = item[i];
+                            if (possibleAnswer[i]) {
+                                if(possibleAnswer[i].count) {
+                                    possibleAnswer[i].count += item[i];
+                                } else {
+                                    possibleAnswer[i].count = item[i];
+                                }
                             }
-
                         }
                     });
 
@@ -821,7 +817,6 @@ HPD.urls = {
                     AmCharts.makeChart("targetStatusValue", {
                         "type": "pie",
                         "theme": "light",
-
                         "dataProvider": generateStatusChartData(),
                         "labelText": "[[title]]: [[value]]",
                         "balloonText": "[[title]]: [[value]]",
@@ -837,7 +832,6 @@ HPD.urls = {
                         }
                     }).addListener("clickSlice",
                         function(event) {
-                            console.log('in')
                             var chart = event.chart;
                             if (event.dataItem.dataContext.id != undefined) {
                                 selected = event.dataItem.dataContext.id;
@@ -854,7 +848,6 @@ HPD.urls = {
                 $('.js-targetStatusValue.js-loader').hide();
 
                 chartItems = res.result.target, grades = {}, filterLevel= {}, series = [];
-
                 if(chartItems.length) {
                     chartItems.forEach(function (item) {
                         if (filterLevel[item[filterKey]]) {
@@ -1088,9 +1081,8 @@ HPD.urls = {
                 }
 
                 var chartItems = res.result.target_status, series = [], labels=[], filerLevel = {}, gradeObj = {};
-
+                OthersCount = res.result.status[0];
                 var chartItemsNext = res.result.target_status_504;
-
                 if(chartItems.length){
                     chartItems.forEach(function (item) {
                         gradeObj = {};
@@ -1111,10 +1103,10 @@ HPD.urls = {
                     });
                     filerLevel['Other'] = {
                         target: 'Other',
-                        yes_count: filerLevel['Learning Levels'].yes_count,
-                        no_count: filerLevel['Learning Levels'].no_count,
-                        partial_count: filerLevel['Learning Levels'].partial_count,
-                        not_updated_count: filerLevel['Learning Levels'].not_updated_count,
+                        yes_count: OthersCount.yes_count,
+                        no_count: OthersCount.no_count,
+                        partial_count: OthersCount.partial_count,
+                        not_updated_count: OthersCount.not_updated_count,
                     }
                     chartItemsNext.forEach(function (item) {
                         if(item.status) {
@@ -1178,36 +1170,36 @@ HPD.urls = {
                             "color": "#333",
                             "valueField": "yes_count"
                         },
-                            {
-                                "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
-                                "fillAlphas": 0.8,
-                                "labelText": "[[value]]",
-                                "lineAlpha": 0.3,
-                                "title": "No",
-                                "type": "column",
-                                "color": "#333",
-                                "valueField": "no_count"
-                            },
-                            {
-                                "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
-                                "fillAlphas": 0.8,
-                                "labelText": "[[value]]",
-                                "lineAlpha": 0.3,
-                                "title": "Partial",
-                                "type": "column",
-                                "color": "#333",
-                                "valueField": "partial_count"
-                            },
-                            {
-                                "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
-                                "fillAlphas": 0.8,
-                                "labelText": "[[value]]",
-                                "lineAlpha": 0.3,
-                                "title": "Not updated",
-                                "type": "column",
-                                "color": "#333",
-                                "valueField": "not_updated_count"
-                            }],
+                        {
+                            "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
+                            "fillAlphas": 0.8,
+                            "labelText": "[[value]]",
+                            "lineAlpha": 0.3,
+                            "title": "No",
+                            "type": "column",
+                            "color": "#333",
+                            "valueField": "no_count"
+                        },
+                        {
+                            "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
+                            "fillAlphas": 0.8,
+                            "labelText": "[[value]]",
+                            "lineAlpha": 0.3,
+                            "title": "Partial",
+                            "type": "column",
+                            "color": "#333",
+                            "valueField": "partial_count"
+                        },
+                        {
+                            "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
+                            "fillAlphas": 0.8,
+                            "labelText": "[[value]]",
+                            "lineAlpha": 0.3,
+                            "title": "Not updated",
+                            "type": "column",
+                            "color": "#333",
+                            "valueField": "not_updated_count"
+                        }],
                         "rotate": true,
                         "categoryField": 'target',
                         "categoryAxis": {
@@ -1279,7 +1271,6 @@ HPD.urls = {
                 var key = Object.keys(res.result)[0];
                 filterList[key] = res.result[key];
                 $('.js-filter[data-type="district"]').html(createOptions(filterList[key],'district'))
-                //console.log(filterList)
                 $('.js-filter[data-type="district"]').val('KULLU')
                 $('.js-filter[data-type="district"]').trigger('change')
             }
