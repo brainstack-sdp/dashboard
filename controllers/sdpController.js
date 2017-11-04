@@ -63,6 +63,7 @@ module.exports.home = function (req, res) {
 
 
 module.exports.analyticsSurvey = function(req, res) {
+    console.log('abba jana ' + req.query.cluster);
     let group = '';
     let group_name = '';
     let query = ''
@@ -82,6 +83,9 @@ module.exports.analyticsSurvey = function(req, res) {
         group_name = '[question(343), option(10873)]';
         group = '[question(343), option(10873)]';
         where = {'$match': {'cluster': req.query.cluster} };
+
+        console.log(query + ' ' + group_name +  ' ' + group +  ' ' + JSON.stringify(where));
+        console.log(resources[588]);
     } else if(req.query.school_name) {
       query = 'school_name';
       group_name = '[question(343), option(10873)]';
@@ -126,6 +130,10 @@ module.exports.analyticsSurvey = function(req, res) {
         SurveyModel.targetTotalCount(where, resources[588], group_name, query),
         SurveyModel.targetStatus504Count(where, resources[588], group_name, query),
         SurveyModel.targetType504Count(where, resources[588], group_name, query),
+
+        SurveyModel.targetStatus504_4Count(where, resources[588], group_name, query),
+        SurveyModel.targetStatus504_5Count(where, resources[588], group_name, query),
+        SurveyModel.targetStatus504_6Count(where, resources[588], group_name, query),
     ]).then(function(data) {
         var response = {
             complete: data[0],
@@ -140,7 +148,13 @@ module.exports.analyticsSurvey = function(req, res) {
             target_total: data[9],
             target_status_504: data[10],
             target_type_504: data[11],
+            target_status_504_4: data[12],
+            target_status_504_5: data[13],
+            target_status_504_6: data[14],
         };
+        console.log("learning levels : \n"+JSON.stringify(data[6]) + '\n');
+        console.log("niche wale : \n"+JSON.stringify(data[10]) + '\n');
+        console.log("others : \n"+JSON.stringify(data[7]) + '\n');
         res.json({'message': 'Data', 'result':response, 'error': false});
     }).catch(function(err){
       console.log(err);

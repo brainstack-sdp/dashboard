@@ -166,12 +166,31 @@ HPD.urls = {
                 url : HPD.urls.surveyTable + '?' + type +'=' +encodeURIComponent($el.val()),
                 success: function(res) {
                     var table = res.result.table[0];
-                    table.target_type = table.target_type.split('*');
-                    table.sa1 = table.sa1.split('*');
-                    table.sa2 = table.sa2.split('*');
-                    table.smc = table.smc.split('*');
-                    table.status = table.status.split('*');
-                    table.methods = table.methods.split('*');
+                    console.log(JSON.stringify(table));
+                    if (table.target_type)
+                        table.target_type = table.target_type.split('*');
+                    else
+                        table.target_type = '';
+                    if (table.sa1)
+                        table.sa1 = table.sa1.split('*');
+                    else
+                        table.sa1 = '';
+                    if (table.sa2)
+                        table.sa2 = table.sa2.split('*');
+                    else
+                        table.sa2 = '';
+                    if (table.smc)
+                        table.smc = table.smc.split('*');
+                    else
+                        table.smc = '';
+                    if (table.status)
+                        table.status = table.status.split('*');
+                    else
+                        table.status = '';
+                    if (table.methods)
+                        table.methods = table.methods.split('*');
+                    else
+                        table.methods = '';
                     table.target_type[0] = 'Learning Levels:' + table.target_type[0];
                     table.target_type[2] = 'Others:' + table.target_type[2];
                     var html='';
@@ -476,7 +495,6 @@ HPD.urls = {
                 };
 
                 var chartItems = res.result.target_type, series = [], gradeObj = {}, possibleAnswer = {yes_count:{name:'Yes'}, no_count:{name:'No'},partial_count: {name:'Partial'}}, selected, total = 0;
-
                 gradeObj.coms =[]
                 gradeObj.stu =[]
                 gradeObj.teach =[]
@@ -484,7 +502,6 @@ HPD.urls = {
                 var coms= 0, stu= 0, teach=0
 
                 var chartItemsNext = res.result.target_type_504;
-
                 if(chartItems.length) {
                     chartItems = chartItems[0];
                     chartItems.community_participation =0;
@@ -1081,51 +1098,114 @@ HPD.urls = {
                 }
 
                 var chartItems = res.result.target_status, series = [], labels=[], filerLevel = {}, gradeObj = {};
+                var totalCountOfAllResponse = res.result.target_type[0];
                 OthersCount = res.result.status[0];
-                var chartItemsNext = res.result.target_status_504;
+                var chartItems504_4 = res.result.target_status_504_4;
+                var chartItems504_5 = res.result.target_status_504_5;
+                var chartItems504_6 = res.result.target_status_504_6;
+                var item_Target_Value = '';
                 if(chartItems.length){
                     chartItems.forEach(function (item) {
+                        console.log(JSON.stringify(item));
                         gradeObj = {};
-                        item.target = targetMap[item.status] || 'Other';
+                        item.target = targetMap[item.status];
                         if(filerLevel[item.target]) {
-                            filerLevel[item.target].yes_count += item.yes_count > 1 ? Math.floor(item.yes_count/2) : item.yes_count;
-                            filerLevel[item.target].no_count += item.no_count > 1 ? Math.floor(item.no_count/2) : item.no_count;
-                            filerLevel[item.target].partial_count += item.partial_count > 1 ? Math.floor(item.partial_count/2) : item.partial_count;
-                            filerLevel[item.target].not_updated_count += item.not_updated_count > 1 ? Math.floor(item.not_updated_count/2) : item.not_updated_count;
+                            filerLevel[item.target].yes_count += item.yes_count;// > 1 ? Math.floor(item.yes_count/2) : item.yes_count;
+                            filerLevel[item.target].no_count += item.no_count;// > 1 ? Math.floor(item.no_count/2) : item.no_count;
+                            filerLevel[item.target].partial_count += item.partial_count;// > 1 ? Math.floor(item.partial_count/2) : item.partial_count;
+                            filerLevel[item.target].not_updated_count += item.not_updated_count;// > 1 ? Math.floor(item.not_updated_count/2) : item.not_updated_count;
                         } else {
                             filerLevel[item.target] = item;
-                            filerLevel[item.target].yes_count = item.yes_count > 1 ? Math.floor(item.yes_count/2) : item.yes_count;
-                            filerLevel[item.target].no_count = item.no_count > 1 ? Math.floor(item.no_count/2) : item.no_count;
-                            filerLevel[item.target].partial_count = item.partial_count > 1 ? Math.floor(item.partial_count/2) : item.partial_count;
-                            filerLevel[item.target].not_updated_count = item.not_updated_count > 1 ? Math.floor(item.not_updated_count/2) : item.not_updated_count;
+                            filerLevel[item.target].yes_count = item.yes_count;// > 1 ? Math.floor(item.yes_count/2) : item.yes_count;
+                            filerLevel[item.target].no_count = item.no_count;// > 1 ? Math.floor(item.no_count/2) : item.no_count;
+                            filerLevel[item.target].partial_count = item.partial_count;// > 1 ? Math.floor(item.partial_count/2) : item.partial_count;
+                            filerLevel[item.target].not_updated_count = item.not_updated_count;// > 1 ? Math.floor(item.not_updated_count/2) : item.not_updated_count;
                         }
-
                     });
+                    //filerLevel[item.target].not_updated_count = totalCountOfAllResponse.filerLevel[item.target].yes_count + filerLevel[item.target].no_count + filerLevel[item.target].partial_count
                     filerLevel['Other'] = {
                         target: 'Other',
                         yes_count: OthersCount.yes_count,
                         no_count: OthersCount.no_count,
                         partial_count: OthersCount.partial_count,
-                        not_updated_count: OthersCount.not_updated_count,
+                        not_updated_count: totalCountOfAllResponse.others - (OthersCount.yes_count + OthersCount.no_count + OthersCount.partial_count),
                     }
-                    chartItemsNext.forEach(function (item) {
-                        if(item.status) {
-                            item.target = targetMap[item.status] || 'Other';
+                    chartItems504_4.forEach(function (item) {
+                        console.log(JSON.stringify(item));
+                        //if(item.status) {
+                            
+                            item.target = targetMap[item.status];
                             if(filerLevel[item.target]) {
-                                filerLevel[item.target].yes_count += Math.floor(item.yes_count/2);
-                                filerLevel[item.target].no_count += Math.floor(item.no_count/2);
-                                filerLevel[item.target].partial_count += Math.floor(item.partial_count/2);
-                                filerLevel[item.target].not_updated_count += Math.floor(item.not_updated_count/2);
+                                filerLevel[item.target].yes_count += item.yes_count;//Math.floor(item.yes_count/2);
+                                filerLevel[item.target].no_count += item.no_count; //Math.floor(item.no_count/2);
+                                filerLevel[item.target].partial_count += item.partial_count;//Math.floor(item.partial_count/2);
+                                filerLevel[item.target].not_updated_count += item.not_updated_count;//Math.floor(item.not_updated_count/2);
                             } else {
                                 filerLevel[item.target] = item;
-                                filerLevel[item.target].yes_count = Math.floor(item.yes_count/2);
-                                filerLevel[item.target].no_count = Math.floor(item.no_count/2);
-                                filerLevel[item.target].partial_count = Math.floor(item.partial_count/2);
-                                filerLevel[item.target].not_updated_count = Math.floor(item.not_updated_count/2);
+                                filerLevel[item.target].yes_count = item.yes_count;//Math.floor(item.yes_count/2);
+                                filerLevel[item.target].no_count = item.no_count;//Math.floor(item.no_count/2);
+                                filerLevel[item.target].partial_count = item.partial_count;//Math.floor(item.partial_count/2);
+                                filerLevel[item.target].not_updated_count = item.not_updated_count;//Math.floor(item.not_updated_count/2);
                             }
 
-                        }
+                        //}
                     });
+
+                    chartItems504_5.forEach(function (item) {
+                        console.log(JSON.stringify(item));
+                        //if(item.status) {
+                            
+                            item.target = targetMap[item.status];
+                            if(filerLevel[item.target]) {
+                                filerLevel[item.target].yes_count += item.yes_count;//Math.floor(item.yes_count/2);
+                                filerLevel[item.target].no_count += item.no_count; //Math.floor(item.no_count/2);
+                                filerLevel[item.target].partial_count += item.partial_count;//Math.floor(item.partial_count/2);
+                                filerLevel[item.target].not_updated_count += item.not_updated_count;//Math.floor(item.not_updated_count/2);
+                            } else {
+                                filerLevel[item.target] = item;
+                                filerLevel[item.target].yes_count = item.yes_count;//Math.floor(item.yes_count/2);
+                                filerLevel[item.target].no_count = item.no_count;//Math.floor(item.no_count/2);
+                                filerLevel[item.target].partial_count = item.partial_count;//Math.floor(item.partial_count/2);
+                                filerLevel[item.target].not_updated_count = item.not_updated_count;//Math.floor(item.not_updated_count/2);
+                            }
+
+                        //}
+                    });
+
+                    chartItems504_6.forEach(function (item) {
+                        console.log(JSON.stringify(item));
+                        //if(item.status) {
+                            
+                            item.target = targetMap[item.status];
+                            if(filerLevel[item.target]) {
+                                filerLevel[item.target].yes_count += item.yes_count;//Math.floor(item.yes_count/2);
+                                filerLevel[item.target].no_count += item.no_count; //Math.floor(item.no_count/2);
+                                filerLevel[item.target].partial_count += item.partial_count;//Math.floor(item.partial_count/2);
+                                filerLevel[item.target].not_updated_count += item.not_updated_count;//Math.floor(item.not_updated_count/2);
+                            } else {
+                                filerLevel[item.target] = item;
+                                filerLevel[item.target].yes_count = item.yes_count;//Math.floor(item.yes_count/2);
+                                filerLevel[item.target].no_count = item.no_count;//Math.floor(item.no_count/2);
+                                filerLevel[item.target].partial_count = item.partial_count;//Math.floor(item.partial_count/2);
+                                filerLevel[item.target].not_updated_count = item.not_updated_count;//Math.floor(item.not_updated_count/2);
+                            }
+
+                        //}
+                    });
+                    for (var i in filerLevel) {
+                        //filerLevel[i].not_updated_count = totalCountOfAllResponse.
+                        var total = filerLevel[i].yes_count + filerLevel[i].no_count + filerLevel[i].partial_count;
+                        if (filerLevel[i].target == "Learning Levels")
+                            filerLevel[i].not_updated_count = totalCountOfAllResponse.learning_curve - total;
+                        else if (filerLevel[i].target == "Community Participation")
+                            filerLevel[i].not_updated_count = totalCountOfAllResponse.community_participation - total;
+                        else if (filerLevel[i].target == "Teacher Performance")
+                            filerLevel[i].not_updated_count = totalCountOfAllResponse.teacher_performance - total;
+                        else if (filerLevel[i].target == "School Management")
+                            filerLevel[i].not_updated_count = totalCountOfAllResponse.school_management - total;
+                    }
+
+                    // /console.log(JSON.stringify(filerLevel));
                     // filerLevel['Other'].yes_count = Math.floor(filerLevel['Other'].yes_count/2);
                     // filerLevel['Other'].no_count = Math.floor(filerLevel['Other'].no_count/2);
                     // filerLevel['Other'].partial_count = Math.floor(filerLevel['Other'].partial_count/2);

@@ -76,7 +76,6 @@ module.exports.school = function (req, res) {
   ]).then(function (data) {
       let response = {};
       response[group] = data[0];
-      console.log('1 ' + JSON.stringify(data));
     res.json({"message": "Data", "result": response, "error": false});
   }).catch(function (err) {
     log.error(err);
@@ -144,7 +143,6 @@ module.exports.enrollment = function (req, res) {
       let response = {student_enrolled:0};
 
       for(let cls in Object.assign(data[0][0], data[0][0])){
-        console.log('class_'+req.query.class_code)
         if(cls!= 'class_'+req.query.class_code){
           response['student_enrolled'] += data[0][0][cls];
         }
@@ -202,7 +200,6 @@ module.exports.sdp = function (req, res) {
       var response = {
           [group_name]: data[0],
       };
-      console.log('2 ' + JSON.stringify(data));
       res.json({'message': 'Data', 'result':response, 'error': false});
     });
 };
