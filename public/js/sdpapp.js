@@ -166,7 +166,7 @@ HPD.urls = {
                 url : HPD.urls.surveyTable + '?' + type +'=' +encodeURIComponent($el.val()),
                 success: function(res) {
                     var table = res.result.table[0];
-                    console.log(JSON.stringify(table));
+                    //console.log(JSON.stringify(table));
                     if (table.target_type)
                         table.target_type = table.target_type.split('*');
                     else
@@ -507,8 +507,8 @@ HPD.urls = {
                     chartItems.community_participation =0;
                     chartItems.teacher_performance=0;
                     chartItems.school_management=0;
-
                     chartItemsNext.forEach(function (item) {
+                        //console.log(item)
                         if(item.status == '11313' || item.status == '11314'|| item.status == '11315'|| item.status == '11316'){
                             coms +=item.community_participation
                             gradeObj.coms.push({type: subTargetMap[item.status], percent: item.community_participation})
@@ -1094,19 +1094,21 @@ HPD.urls = {
                     15673: 'Learning Levels',
                     15674: 'Learning Levels',
                     15675: 'Learning Levels',
-                    "": 'Learning Levels',
+                    //"": 'Learning Levels',
                 }
 
                 var chartItems = res.result.target_status, series = [], labels=[], filerLevel = {}, gradeObj = {};
                 var totalCountOfAllResponse = res.result.target_type[0];
-                OthersCount = res.result.status[0];
+                
+                var othersCount = res.result.status[0];
+                /*console.log(othersCount);
+                console.log(totalCountOfAllResponse);*/
                 var chartItems504_4 = res.result.target_status_504_4;
                 var chartItems504_5 = res.result.target_status_504_5;
                 var chartItems504_6 = res.result.target_status_504_6;
                 var item_Target_Value = '';
                 if(chartItems.length){
-                    chartItems.forEach(function (item) {
-                        console.log(JSON.stringify(item));
+                    chartItems.forEach(function (item) {                        
                         gradeObj = {};
                         item.target = targetMap[item.status];
                         if(filerLevel[item.target]) {
@@ -1125,15 +1127,13 @@ HPD.urls = {
                     //filerLevel[item.target].not_updated_count = totalCountOfAllResponse.filerLevel[item.target].yes_count + filerLevel[item.target].no_count + filerLevel[item.target].partial_count
                     filerLevel['Other'] = {
                         target: 'Other',
-                        yes_count: OthersCount.yes_count,
-                        no_count: OthersCount.no_count,
-                        partial_count: OthersCount.partial_count,
-                        not_updated_count: totalCountOfAllResponse.others - (OthersCount.yes_count + OthersCount.no_count + OthersCount.partial_count),
+                        yes_count: othersCount.yes_count,
+                        no_count: othersCount.no_count,
+                        partial_count: othersCount.partial_count,
+                        not_updated_count: totalCountOfAllResponse.others - (othersCount.yes_count + othersCount.no_count + othersCount.partial_count),
                     }
-                    chartItems504_4.forEach(function (item) {
-                        console.log(JSON.stringify(item));
-                        //if(item.status) {
-                            
+                    chartItems504_4.forEach(function (item) { 
+                        if(item.status != "") {
                             item.target = targetMap[item.status];
                             if(filerLevel[item.target]) {
                                 filerLevel[item.target].yes_count += item.yes_count;//Math.floor(item.yes_count/2);
@@ -1148,13 +1148,11 @@ HPD.urls = {
                                 filerLevel[item.target].not_updated_count = item.not_updated_count;//Math.floor(item.not_updated_count/2);
                             }
 
-                        //}
+                        }
                     });
 
                     chartItems504_5.forEach(function (item) {
-                        console.log(JSON.stringify(item));
-                        //if(item.status) {
-                            
+                        if(item.status != "") {
                             item.target = targetMap[item.status];
                             if(filerLevel[item.target]) {
                                 filerLevel[item.target].yes_count += item.yes_count;//Math.floor(item.yes_count/2);
@@ -1169,14 +1167,15 @@ HPD.urls = {
                                 filerLevel[item.target].not_updated_count = item.not_updated_count;//Math.floor(item.not_updated_count/2);
                             }
 
-                        //}
+                        }
                     });
 
-                    chartItems504_6.forEach(function (item) {
-                        console.log(JSON.stringify(item));
-                        //if(item.status) {
-                            
+                    /*chartItems504_6.forEach(function (item) {
+                        if(item.status) {
+                            if (targetMap[item.status] == 'Community Participation')
+                                //console.log('504_6 ' + item.yes_count);
                             item.target = targetMap[item.status];
+                            console.log(JSON.stringify(filerLevel));
                             if(filerLevel[item.target]) {
                                 filerLevel[item.target].yes_count += item.yes_count;//Math.floor(item.yes_count/2);
                                 filerLevel[item.target].no_count += item.no_count; //Math.floor(item.no_count/2);
@@ -1189,9 +1188,17 @@ HPD.urls = {
                                 filerLevel[item.target].partial_count = item.partial_count;//Math.floor(item.partial_count/2);
                                 filerLevel[item.target].not_updated_count = item.not_updated_count;//Math.floor(item.not_updated_count/2);
                             }
+                        }
+                    });*/
+                    for (var i in filerLevel) {
+                        /*if (filerLevel[i].target == "Community Participation" ||
+                            filerLevel[i].target == "School Management") {
+                            console.log('value : ' + JSON.stringify(filerLevel[i]));
+                        }*/
+                        console.log('value : ' + JSON.stringify(filerLevel[i]));
 
-                        //}
-                    });
+                    }
+
                     for (var i in filerLevel) {
                         //filerLevel[i].not_updated_count = totalCountOfAllResponse.
                         var total = filerLevel[i].yes_count + filerLevel[i].no_count + filerLevel[i].partial_count;
