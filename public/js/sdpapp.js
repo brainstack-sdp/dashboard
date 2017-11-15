@@ -16,7 +16,11 @@ HPD.urls = {
 (function() {
 
     var el = {
-        $filter : $('.js-filter'),$iFilter : $('.js-iFilter'), $preLoader : $('#preloader'), $modal: $('.js-modal'), $navs : $('a.nav-link')
+            $filter: $('.js-filter'),
+            $iFilter: $('.js-iFilter'),
+            $preLoader: $('#preloader'),
+            $modal: $('.js-modal'),
+            $navs: $('a.nav-link')
         }, filterList = {}, filters = {}, $scope={}, pendingCalls ={},
         filterAheadMap = {
             district : ['block', 'cluster', 'school_name'],
@@ -159,8 +163,7 @@ HPD.urls = {
         });
 
 
-
-        if(type=="school_name" && appliedFilter.value) {
+        if (type === "school_name" && appliedFilter.value) {
             $.ajax({
                 method: 'GET',
                 url : HPD.urls.surveyTable + '?' + type +'=' +encodeURIComponent($el.val()),
@@ -277,8 +280,9 @@ HPD.urls = {
         }
 
         pendingCalls.subjectStack =  $.when($.ajax({
-                method: 'GET',
-                url: HPD.urls.survey + filterQuery(1)}), $.ajax({
+            method: 'GET',
+            url: HPD.urls.survey + filterQuery(1)
+        }), $.ajax({
             method: 'GET',
             url: HPD.urls.schoolCount + filterQuery(1)}))
             .then(function (result, schoolResult) {
@@ -286,212 +290,219 @@ HPD.urls = {
                 var next_key = Object.keys(schoolResult[0].result)[0];
                 var res = result[0], school = schoolResult[0].result[next_key];
 
-                    var pieData = {}, series = [], sum = 0,totalSchools= 0, gradeMap = {},
-                        chartItems = res.result.complete, labels = [];
+                var pieData = {}, series = [], sum = 0, totalSchools = 0, gradeMap = {},
+                    chartItems = res.result.complete, labels = [];
 
-                    var subjects = {}, filterLevel = {}, filterLevelItems = {}, seriesObj = {}, subjectObject = {};
-                    if(chartItems.length) {
-                        chartItems.forEach(function (item) {
-                            gradeObj = {};
-                            if(item[filterKey]){
-                                if(filterKey== 'school_name'){
-                                    item[filterKey]= item[filterKey].replace(/[0-9]/g, '').trim();
-                                }
-
-                                gradeObj[filterKey] = item[filterKey];
-                                totalSchools = school.filter(function( obj ) {
-                                    return obj[filterKey] == item[filterKey];
-                                });
-                                if(totalSchools.length){
-                                    gradeObj.size = Math.floor((item.size/totalSchools[0].size)*100);
-                                    if(gradeObj.size>100) {
-                                        gradeObj.size = 100;
-                                    }
-                                    gradeObj.color = '#5FB6C7';
-                                    series.push(gradeObj)
-                                }
-
+                var subjects = {}, filterLevel = {}, filterLevelItems = {}, seriesObj = {}, subjectObject = {};
+                if (chartItems.length) {
+                    chartItems.forEach(function (item) {
+                        gradeObj = {};
+                        if (item[filterKey]) {
+                            if (filterKey == 'school_name') {
+                                item[filterKey] = item[filterKey].replace(/[0-9]/g, '').trim();
                             }
 
-                        });
-
-                        AmCharts.makeChart('sdpstatus', {
-                            type: 'serial',
-                            theme: 'blur',
-                            color: '#333',
-                            dataProvider: series,
-                            valueAxes: [
-                                {
-                                    axisAlpha: 0,
-                                    position: 'left',
-                                    title: 'Percentage Completion',
-                                    unit: '%',
-                                    'minimium': 0,'maximum': 100
+                            gradeObj[filterKey] = item[filterKey];
+                            totalSchools = school.filter(function (obj) {
+                                return obj[filterKey] == item[filterKey];
+                            });
+                            if (totalSchools.length) {
+                                gradeObj.size = Math.floor((item.size / totalSchools[0].size) * 100);
+                                if (gradeObj.size > 100) {
+                                    gradeObj.size = 100;
                                 }
-                            ],
-                            startDuration: 1,
-                            graphs: [
-                                {
-                                    balloonText: '<b>[[category]]: [[value]]</b>',
-                                    fillColorsField: 'color',
-                                    fillAlphas: 0.9,
-                                    lineAlpha: 0.2,
-                                    type: 'column',
-                                    valueField: 'size'
-                                }
-                            ],
-                            chartCursor: {
-                                categoryBalloonEnabled: false,
-                                cursorAlpha: 0,
-                                zoomable: false
-                            },
-                            categoryField: filterKey,
-                            categoryAxis: {
-                                gridPosition: 'start',
-                                labelRotation: 45,
-                                gridAlpha: 0.5,
-                                gridColor: '#f0fef1',
-                                title: 'Districts/Blocks/Clusters/Schools',
-                            },
-                            export: {
-                                enabled: true,
-                                "reviver": function(nodeObj) {
-                                    if (nodeObj.className === 'amcharts-axis-label'){
-                                        nodeObj.fill = '#333';
-                                    }
-                                },
-                            },
-                            creditsPosition: 'top-right'
-                        });
-                    } else {
-                        $('#subjectStack').html('<div class="text-center">No Data</div>')
-                    }
-                    $('.js-subjectStack.js-loader').hide();
-
-                    pieData = {}; series = []; sum = 0;
-                        chartItems = res.result.school_type; labels = [];
-
-                     subjects = {}, filterLevel = {}, filterLevelItems = {}, seriesObj = {}, subjectObject = {};
-                    var grades ={}, gradeObj = {};
-
-                    if(chartItems.length) {
-                        chartItems.forEach(function (item) {
-                            if (filterLevel[item._id[filterKey]]) {
-                                filterLevel[item._id[filterKey]].push(item)
-                            } else {
-                                filterLevel[item._id[filterKey]] = [item];
-                            }
-                        });
-                        for (var i in filterLevel) {
-                            if(i){
-                                total = 0;
-                                grades = {"केवल प्राथमिक । Primary only (Class 1-)5": 0, "केवल उच्च प्राथमिक । Upper Primary only (Class 6-8)": 0, "उच्च प्राथमिक एवं माध्यमिक या उच्च माध्यमिक । Upper Primary + Secondary/ Senior Secondary (Class 6-10 OR Class 6-12)": 0}
-                                filterLevel[i].forEach(function (item) {
-                                    grades[item._id.school_type] = item.size;
-                                });
-                                gradeObj = grades;
-                                gradeObj[filterKey] = i;
+                                gradeObj.color = '#5FB6C7';
                                 series.push(gradeObj)
                             }
+
                         }
-                        AmCharts.makeChart("gradeStack", {
-                            "type": "serial",
-                            "theme": "light",
-                            color: '#333',
-                            "colors": [
-                                gradeColors.E,
-                                gradeColors.D,
-                                gradeColors.C
-                            ],
-                            "legend": {
-                                "horizontalGap": 10,
-                                "maxColumns": 1,
-                                "position": "right",
-                                "useGraphSettings": true,
-                                "markerSize": 10
-                            },
-                            "dataProvider": series,
-                            "valueAxes": [
-                                {
-                                    "id": "ValueAxis-1",
-                                    "stackType": "100%",
-                                    "unit": '%',
-                                    "title": "Total Targets"
+
+                    });
+
+                    AmCharts.makeChart('sdpstatus', {
+                        type: 'serial',
+                        theme: 'blur',
+                        color: '#333',
+                        dataProvider: series,
+                        valueAxes: [
+                            {
+                                axisAlpha: 0,
+                                position: 'left',
+                                title: 'Percentage Completion',
+                                unit: '%',
+                                'minimium': 0, 'maximum': 100
+                            }
+                        ],
+                        startDuration: 1,
+                        graphs: [
+                            {
+                                balloonText: '<b>[[category]]: [[value]]</b>',
+                                fillColorsField: 'color',
+                                fillAlphas: 0.9,
+                                lineAlpha: 0.2,
+                                type: 'column',
+                                valueField: 'size'
+                            }
+                        ],
+                        chartCursor: {
+                            categoryBalloonEnabled: false,
+                            cursorAlpha: 0,
+                            zoomable: false
+                        },
+                        categoryField: filterKey,
+                        categoryAxis: {
+                            gridPosition: 'start',
+                            labelRotation: 45,
+                            gridAlpha: 0.5,
+                            gridColor: '#f0fef1',
+                            title: 'Districts/Blocks/Clusters/Schools',
+                        },
+                        export: {
+                            enabled: true,
+                            "reviver": function (nodeObj) {
+                                if (nodeObj.className === 'amcharts-axis-label') {
+                                    nodeObj.fill = '#333';
                                 }
-                            ],
-                            "graphs": [{
+                            },
+                        },
+                        creditsPosition: 'top-right'
+                    });
+                } else {
+                    $('#subjectStack').html('<div class="text-center">No Data</div>')
+                }
+                $('.js-subjectStack.js-loader').hide();
+
+                pieData = {};
+                series = [];
+                sum = 0;
+                chartItems = res.result.school_type;
+                labels = [];
+
+                subjects = {}, filterLevel = {}, filterLevelItems = {}, seriesObj = {}, subjectObject = {};
+                var grades = {}, gradeObj = {};
+
+                if (chartItems.length) {
+                    chartItems.forEach(function (item) {
+                        if (filterLevel[item._id[filterKey]]) {
+                            filterLevel[item._id[filterKey]].push(item)
+                        } else {
+                            filterLevel[item._id[filterKey]] = [item];
+                        }
+                    });
+                    for (var i in filterLevel) {
+                        if (i) {
+                            total = 0;
+                            grades = {
+                                "केवल प्राथमिक । Primary only (Class 1-)5": 0,
+                                "केवल उच्च प्राथमिक । Upper Primary only (Class 6-8)": 0,
+                                "उच्च प्राथमिक एवं माध्यमिक या उच्च माध्यमिक । Upper Primary + Secondary/ Senior Secondary (Class 6-10 OR Class 6-12)": 0
+                            }
+                            filterLevel[i].forEach(function (item) {
+                                grades[item._id.school_type] = item.size;
+                            });
+                            gradeObj = grades;
+                            gradeObj[filterKey] = i;
+                            series.push(gradeObj)
+                        }
+                    }
+                    AmCharts.makeChart("gradeStack", {
+                        "type": "serial",
+                        "theme": "light",
+                        color: '#333',
+                        "colors": [
+                            gradeColors.E,
+                            gradeColors.D,
+                            gradeColors.C
+                        ],
+                        "legend": {
+                            "horizontalGap": 10,
+                            "maxColumns": 1,
+                            "position": "right",
+                            "useGraphSettings": true,
+                            "markerSize": 10
+                        },
+                        "dataProvider": series,
+                        "valueAxes": [
+                            {
+                                "id": "ValueAxis-1",
+                                "stackType": "100%",
+                                "unit": '%',
+                                "title": "Total Targets"
+                            }
+                        ],
+                        "graphs": [{
+                            "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
+                            "fillAlphas": 0.8,
+                            "labelText": "[[value]]",
+                            "lineAlpha": 0.3,
+                            "title": "Primary",
+                            "type": "column",
+                            "color": "#000000",
+                            "valueField": "केवल प्राथमिक । Primary only (Class 1-5)"
+                        },
+                            {
                                 "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
                                 "fillAlphas": 0.8,
                                 "labelText": "[[value]]",
                                 "lineAlpha": 0.3,
-                                "title": "Primary",
+                                "title": "Upper Primary",
                                 "type": "column",
                                 "color": "#000000",
-                                "valueField": "केवल प्राथमिक । Primary only (Class 1-5)"
+                                "valueField": "केवल उच्च प्राथमिक । Upper Primary only (Class 6-8)"
                             },
-                                {
-                                    "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
-                                    "fillAlphas": 0.8,
-                                    "labelText": "[[value]]",
-                                    "lineAlpha": 0.3,
-                                    "title": "Upper Primary",
-                                    "type": "column",
-                                    "color": "#000000",
-                                    "valueField": "केवल उच्च प्राथमिक । Upper Primary only (Class 6-8)"
-                                },
-                                {
-                                    "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
-                                    "fillAlphas": 0.8,
-                                    "labelText": "[[value]]",
-                                    "lineAlpha": 0.3,
-                                    "title": "Upper Primary+Secondary",
-                                    "type": "column",
-                                    "color": "#000000",
-                                    "valueField": "उच्च प्राथमिक एवं माध्यमिक या उच्च माध्यमिक । Upper Primary + Secondary/ Senior Secondary (Class 6-10 OR Class 6-12)"
-                                }],
-                            "categoryField": filterKey,
-                            "categoryAxis": {
-                                "gridPosition": "start",
-                                "axisAlpha": 0,
-                                "gridAlpha": 0,
-                                "position": "left",
-                                labelRotation: 45,
-                                title: 'Districts/Blocks/Clusters/Schools'
-                            },
-                            "export": {
-                                "enabled": true,
-                                "reviver": function (nodeObj) {
-                                    if (nodeObj.className === 'amcharts-axis-label') {
-                                        nodeObj.fill = '#333';
-                                    }
+                            {
+                                "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
+                                "fillAlphas": 0.8,
+                                "labelText": "[[value]]",
+                                "lineAlpha": 0.3,
+                                "title": "Upper Primary+Secondary",
+                                "type": "column",
+                                "color": "#000000",
+                                "valueField": "उच्च प्राथमिक एवं माध्यमिक या उच्च माध्यमिक । Upper Primary + Secondary/ Senior Secondary (Class 6-10 OR Class 6-12)"
+                            }],
+                        "categoryField": filterKey,
+                        "categoryAxis": {
+                            "gridPosition": "start",
+                            "axisAlpha": 0,
+                            "gridAlpha": 0,
+                            "position": "left",
+                            labelRotation: 45,
+                            title: 'Districts/Blocks/Clusters/Schools'
+                        },
+                        "export": {
+                            "enabled": true,
+                            "reviver": function (nodeObj) {
+                                if (nodeObj.className === 'amcharts-axis-label') {
+                                    nodeObj.fill = '#333';
                                 }
-                            },
-                            "chartScrollbar": {
-                                "enabled": true,
-                                "selectedBackgroundColor": '#333',
-                                "gridCount": 4
                             }
+                        },
+                        "chartScrollbar": {
+                            "enabled": true,
+                            "selectedBackgroundColor": '#333',
+                            "gridCount": 4
+                        }
 
-                        });
-                    } else {
-                        $('#gradeStack').html('<div class="text-center">No Data</div>')
-                    }
-                    $('.js-gradeStack.js-loader').hide();
+                    });
+                } else {
+                    $('#gradeStack').html('<div class="text-center">No Data</div>')
+                }
+                $('.js-gradeStack.js-loader').hide();
 
                 var subTargetMap = {
-                        11313: 'Community Participation in School Progress',
-                        11314: 'Regular SMC Meetings',
-                        11315: 'Leverage Local Talent',
-                        11316:	'Parent-Teacher Interaction',
+                    11313: 'Community Participation in School Progress',
+                    11314: 'Regular SMC Meetings',
+                    11315: 'Leverage Local Talent',
+                    11316: 'Parent-Teacher Interaction',
 
-                        11317:	'Attendance and Punctuality',
-                        11318:	'Efficiency and Teaching Methods',
-                        11319:  'Reduce Vacancies',
+                    11317: 'Attendance and Punctuality',
+                    11318: 'Efficiency and Teaching Methods',
+                    11319: 'Reduce Vacancies',
 
-                        11320:	'Infrastructural Improvement',
-                        11321:	'Timely Requests to DEE/SSA',
-                        15171:	'Co-curricular Focus',
-                        15172:	'Enrolment'
+                    11320: 'Infrastructural Improvement',
+                    11321: 'Timely Requests to DEE/SSA',
+                    15171: 'Co-curricular Focus',
+                    15172: 'Enrolment'
                 };
 
                 var chartItems = res.result.target_type, series = [], gradeObj = {}, possibleAnswer = {yes_count:{name:'Yes'}, no_count:{name:'No'},partial_count: {name:'Partial'}}, selected, total = 0;
@@ -619,131 +630,137 @@ HPD.urls = {
                 }
                 $('.js-gradePie.js-loader').hide();
 
-                    var resource_1 = res.result.resource_584;
-                    var resource_2 = res.result.resource_587;
-                    var resource_3 = res.result.resource_588;
+                var resource_1 = res.result.resource_584;
+                var resource_2 = res.result.resource_587;
+                var resource_3 = res.result.resource_588;
 
-                    var labels = [], series = [], filterLevel = {}, filterLevelItems = {}, seriesObj = {}, levels = ['Human', 'Physical', 'Financial Resource'];
-                    var classes = {}, classObject = {};
-                    if(resource_1.length && resource_2.length && resource_3.length) {
-                        resource_1.forEach(function (item) {
-                            item.resource = levels[0]
-                        });
-                        resource_2.forEach(function (item) {
-                            item.resource = levels[1]
-                        });
-                        resource_3.forEach(function (item) {
-                            item.resource = levels[2]
-                        });
-                        chartItems = resource_1.concat(resource_2).concat(resource_3)
+                var labels = [], series = [], filterLevel = {}, filterLevelItems = {}, seriesObj = {},
+                    levels = ['Human', 'Physical', 'Financial Resource'];
+                var classes = {}, classObject = {};
+                if (resource_1.length && resource_2.length && resource_3.length) {
+                    resource_1.forEach(function (item) {
+                        item.resource = levels[0]
+                    });
+                    resource_2.forEach(function (item) {
+                        item.resource = levels[1]
+                    });
+                    resource_3.forEach(function (item) {
+                        item.resource = levels[2]
+                    });
+                    chartItems = resource_1.concat(resource_2).concat(resource_3)
 
-                        chartItems.forEach(function (item) {
-                            if (filterLevel[item[filterKey]]) {
-                                filterLevel[item[filterKey]].push(item)
-                            } else {
-                                filterLevel[item[filterKey]] = [item];
-                            }
-                        });
-                        for (var i=0;i< levels.length;i++) {
-                            labels.push({
-                                "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
-                                "fillAlphas": 0.8,
-                                "labelText": "",
-                                "lineAlpha": 0.3,
-                                "title": levels[i],
-                                "type": "column",
-                                "color": "#333",
-                                "valueField": levels[i]
-                            })
+                    chartItems.forEach(function (item) {
+                        if (filterLevel[item[filterKey]]) {
+                            filterLevel[item[filterKey]].push(item)
+                        } else {
+                            filterLevel[item[filterKey]] = [item];
                         }
-                        for (var i in filterLevel) {
-                            if(!i){
-                                continue;
-                            }
-                            seriesObj = {};
-                            var sum = 0, total = 0, ctr=0;
-                            totalSchools = school.filter(function( obj ) {
-                                return obj[filterKey] == i
-                            });
-                            filterLevel[i].forEach(function (item) {
-
-                                switch (item.resource) {
-                                    case levels[0] :
-                                        sum += 1 * item.size;
-                                        break;
-                                    case levels[1] :
-                                        sum += 1 * item.size;
-                                        break;
-                                    case levels[2] :
-                                        sum += 1 * item.size;
-                                        break;
-                                }
-                                seriesObj[item.resource] = sum
-
-                            });
-
-                            seriesObj.level = i;
-
-                            series.push(seriesObj)
-                        }
-                        AmCharts.makeChart("resourceStack", {
-                            "type": "serial",
-                            "theme": "light",
-                            color: '#333',
-                            "colors": [
-                                gradeColors.A,
-                                gradeColors.B,
-                                gradeColors.C,
-                                gradeColors.D,
-                                gradeColors.E
-                            ],
-                            "legend": {
-                                "horizontalGap": 10,
-                                "maxColumns": 1,
-                                "position": "right",
-                                "useGraphSettings": true,
-                                "markerSize": 10
-                            },
-                            "dataProvider": series,
-                            "valueAxes": [
-                                {
-                                    "id": "ValueAxis-1",
-                                    "title": "Request Count"
-                                }
-                            ],
-
-                            "graphs": labels,
-                            "categoryField": 'level',
-                            "categoryAxis": {
-                                "gridPosition": "start",
-                                "axisAlpha": 0,
-                                "gridAlpha": 0,
-                                "position": "left",
-                                title: 'Districts/Blocks/Clusters/Schools',
-                                labelRotation: 45
-                            },
-                            "export": {
-                                "enabled": true,
-                                "reviver": function (nodeObj) {
-                                    if (nodeObj.className === 'amcharts-axis-label') {
-                                        nodeObj.fill = '#333';
-                                    }
-                                },
-                            },
-                            "chartScrollbar": {
-                                "enabled": true,
-                                "selectedBackgroundColor": '#333',
-                                "gridCount": 5
-                            }
-
+                    });
+                    for (var i = 0; i < levels.length; i++) {
+                        labels.push({
+                            "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
+                            "fillAlphas": 0.8,
+                            "labelText": "",
+                            "lineAlpha": 0.3,
+                            "title": levels[i],
+                            "type": "column",
+                            "color": "#333",
+                            "valueField": levels[i]
                         })
-                    } else {
-                        $('#resourceStack').html('<div class="text-center">No Data</div>')
                     }
-                    $('.js-resourceStack.js-loader').hide();
+                    for (var i in filterLevel) {
+                        if (!i) {
+                            continue;
+                        }
+                        seriesObj = {};
+                        var sum = 0, total = 0, ctr = 0;
+                        totalSchools = school.filter(function (obj) {
+                            return obj[filterKey] == i
+                        });
+                        filterLevel[i].forEach(function (item) {
 
-                var chartItems = res.result.status, possibleAnswer = {yes_count:{name:'Yes'}, no_count:{name:'No'},partial_count: {name:'Partial'}, not_updated_count: {name:'Not updated'}, total_count: {name:'Total'}}, selected, total = 0;
+                            switch (item.resource) {
+                                case levels[0] :
+                                    sum += 1 * item.size;
+                                    break;
+                                case levels[1] :
+                                    sum += 1 * item.size;
+                                    break;
+                                case levels[2] :
+                                    sum += 1 * item.size;
+                                    break;
+                            }
+                            seriesObj[item.resource] = sum
 
+                        });
+
+                        seriesObj.level = i;
+
+                        series.push(seriesObj)
+                    }
+                    AmCharts.makeChart("resourceStack", {
+                        "type": "serial",
+                        "theme": "light",
+                        color: '#333',
+                        "colors": [
+                            gradeColors.A,
+                            gradeColors.B,
+                            gradeColors.C,
+                            gradeColors.D,
+                            gradeColors.E
+                        ],
+                        "legend": {
+                            "horizontalGap": 10,
+                            "maxColumns": 1,
+                            "position": "right",
+                            "useGraphSettings": true,
+                            "markerSize": 10
+                        },
+                        "dataProvider": series,
+                        "valueAxes": [
+                            {
+                                "id": "ValueAxis-1",
+                                "title": "Request Count"
+                            }
+                        ],
+
+                        "graphs": labels,
+                        "categoryField": 'level',
+                        "categoryAxis": {
+                            "gridPosition": "start",
+                            "axisAlpha": 0,
+                            "gridAlpha": 0,
+                            "position": "left",
+                            title: 'Districts/Blocks/Clusters/Schools',
+                            labelRotation: 45
+                        },
+                        "export": {
+                            "enabled": true,
+                            "reviver": function (nodeObj) {
+                                if (nodeObj.className === 'amcharts-axis-label') {
+                                    nodeObj.fill = '#333';
+                                }
+                            },
+                        },
+                        "chartScrollbar": {
+                            "enabled": true,
+                            "selectedBackgroundColor": '#333',
+                            "gridCount": 5
+                        }
+
+                    })
+                } else {
+                    $('#resourceStack').html('<div class="text-center">No Data</div>')
+                }
+                $('.js-resourceStack.js-loader').hide();
+
+                var chartItems = res.result.target_total, possibleAnswer = {
+                    yes_count: {name: 'Yes'},
+                    no_count: {name: 'No'},
+                    partial_count: {name: 'Partial'},
+                    not_updated_count: {name: 'Not updated'},
+                    total_count: {name: 'Total'}
+                }, selected, total = 0;
                 if(chartItems.length) {
                     chartItems.forEach(function (item) {
                         if(item.status){
@@ -751,7 +768,9 @@ HPD.urls = {
                             possibleAnswer.partial_count.proof = item.partial_count;
                         }
                         for(var i in item){
-                            if(i=='status') {continue;}
+                            if (i === 'status') {
+                                continue;
+                            }
                             if (possibleAnswer[i]) {
                                 if(possibleAnswer[i].count) {
                                     possibleAnswer[i].count += item[i];
@@ -778,12 +797,12 @@ HPD.urls = {
                         percent: possibleAnswer.no_count.count,
                         color: gradeColors.D,
                         subs: [{
-                        type: "Proof",
-                        percent: 0
-                    }, {
-                        type: "No Proof",
-                        percent: possibleAnswer.no_count.count
-                    }]
+                            type: "Proof",
+                            percent: 0
+                        }, {
+                            type: "No Proof",
+                            percent: possibleAnswer.no_count.count
+                        }]
                     },{
                         type: "Not updated",
                         percent: possibleAnswer.not_updated_count.count,
@@ -810,7 +829,7 @@ HPD.urls = {
                     function generateStatusChartData() {
                         var chartData = [];
                         for (var i = 0; i < types.length; i++) {
-                            if (i == selected) {
+                            if (i === selected) {
                                 for (var x = 0; x < types[i].subs.length; x++) {
                                     chartData.push({
                                         type: types[i].subs[x].type,
@@ -881,9 +900,9 @@ HPD.urls = {
                             if (grades.yes_count > 100) {
                                 grades.yes_count = 100;
                             }
-                        //    grades.no_count = item.no_count;
-                        //   grades.partial_count = item.partial_count;
-                        //   grades.not_updated_count = item.not_updated_count;
+                            //    grades.no_count = item.no_count;
+                            //   grades.partial_count = item.partial_count;
+                            //   grades.not_updated_count = item.not_updated_count;
                         });
                         gradeObj = grades;
                         gradeObj[filterKey] = i;
@@ -1076,7 +1095,7 @@ HPD.urls = {
                 $('.js-targetTotal.js-loader').hide();
 
                 var targetMap = {
-                    
+
                     11313: 'Community Participation',
                     11314: 'Community Participation',
                     11315: 'Community Participation',
@@ -1090,27 +1109,27 @@ HPD.urls = {
                     11321:	'School Management',
                     15171:	'School Management',
                     15172:	'School Management',
-                    
+
                     15673: 'Learning Levels',
                     15674: 'Learning Levels',
                     15675: 'Learning Levels',
                     //"": 'Learning Levels',
-                }
+                };
 
                 var chartItems = res.result.target_status, series = [], labels=[], filerLevel = {}, gradeObj = {};
                 var totalCountOfAllResponse = res.result.target_type[0];
-                
-                var othersCount = res.result.status[0];
-                /*console.log(othersCount);
-                console.log(totalCountOfAllResponse);*/
+
+                var othersStatus = res.result.status;
+
                 var chartItems504_4 = res.result.target_status_504_4;
                 var chartItems504_5 = res.result.target_status_504_5;
                 var chartItems504_6 = res.result.target_status_504_6;
                 var item_Target_Value = '';
                 if(chartItems.length){
-                    chartItems.forEach(function (item) {                        
+                    chartItems.forEach(function (item) {
                         gradeObj = {};
                         item.target = targetMap[item.status];
+                        if (!item.target || typeof item.target === 'undefined') return;
                         if(filerLevel[item.target]) {
                             filerLevel[item.target].yes_count += item.yes_count;// > 1 ? Math.floor(item.yes_count/2) : item.yes_count;
                             filerLevel[item.target].no_count += item.no_count;// > 1 ? Math.floor(item.no_count/2) : item.no_count;
@@ -1125,16 +1144,27 @@ HPD.urls = {
                         }
                     });
                     //filerLevel[item.target].not_updated_count = totalCountOfAllResponse.filerLevel[item.target].yes_count + filerLevel[item.target].no_count + filerLevel[item.target].partial_count
+                    var othersCount = {yes_count: 0, no_count: 0, partial_count: 0};
+
+                    if (othersStatus.length > 0) {
+                        othersStatus.forEach(function (item) {
+                            othersCount.yes_count += item.yes_count;
+                            othersCount.no_count += item.no_count;
+                            othersCount.partial_count += item.partial_count;
+                        });
+                    }
+
                     filerLevel['Other'] = {
                         target: 'Other',
                         yes_count: othersCount.yes_count,
                         no_count: othersCount.no_count,
                         partial_count: othersCount.partial_count,
                         not_updated_count: totalCountOfAllResponse.others - (othersCount.yes_count + othersCount.no_count + othersCount.partial_count),
-                    }
-                    chartItems504_4.forEach(function (item) { 
-                        if(item.status != "") {
+                    };
+                    chartItems504_4.forEach(function (item) {
+                        if (item.status !== "") {
                             item.target = targetMap[item.status];
+                            if (!item.target || typeof item.target === 'undefined') return;
                             if(filerLevel[item.target]) {
                                 filerLevel[item.target].yes_count += item.yes_count;//Math.floor(item.yes_count/2);
                                 filerLevel[item.target].no_count += item.no_count; //Math.floor(item.no_count/2);
@@ -1152,8 +1182,9 @@ HPD.urls = {
                     });
 
                     chartItems504_5.forEach(function (item) {
-                        if(item.status != "") {
+                        if (item.status !== "") {
                             item.target = targetMap[item.status];
+                            if (!item.target || typeof item.target === 'undefined') return;
                             if(filerLevel[item.target]) {
                                 filerLevel[item.target].yes_count += item.yes_count;//Math.floor(item.yes_count/2);
                                 filerLevel[item.target].no_count += item.no_count; //Math.floor(item.no_count/2);
@@ -1210,9 +1241,9 @@ HPD.urls = {
                             filerLevel[i].not_updated_count = totalCountOfAllResponse.teacher_performance - total;
                         else if (filerLevel[i].target == "School Management")
                             filerLevel[i].not_updated_count = totalCountOfAllResponse.school_management - total;
+                        if (filerLevel[i].not_updated_count < 0)
+                            filerLevel[i].not_updated_count = 0;
                     }
-
-                    // /console.log(JSON.stringify(filerLevel));
                     // filerLevel['Other'].yes_count = Math.floor(filerLevel['Other'].yes_count/2);
                     // filerLevel['Other'].no_count = Math.floor(filerLevel['Other'].no_count/2);
                     // filerLevel['Other'].partial_count = Math.floor(filerLevel['Other'].partial_count/2);
@@ -1257,36 +1288,36 @@ HPD.urls = {
                             "color": "#333",
                             "valueField": "yes_count"
                         },
-                        {
-                            "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
-                            "fillAlphas": 0.8,
-                            "labelText": "[[value]]",
-                            "lineAlpha": 0.3,
-                            "title": "No",
-                            "type": "column",
-                            "color": "#333",
-                            "valueField": "no_count"
-                        },
-                        {
-                            "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
-                            "fillAlphas": 0.8,
-                            "labelText": "[[value]]",
-                            "lineAlpha": 0.3,
-                            "title": "Partial",
-                            "type": "column",
-                            "color": "#333",
-                            "valueField": "partial_count"
-                        },
-                        {
-                            "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
-                            "fillAlphas": 0.8,
-                            "labelText": "[[value]]",
-                            "lineAlpha": 0.3,
-                            "title": "Not updated",
-                            "type": "column",
-                            "color": "#333",
-                            "valueField": "not_updated_count"
-                        }],
+                            {
+                                "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
+                                "fillAlphas": 0.8,
+                                "labelText": "[[value]]",
+                                "lineAlpha": 0.3,
+                                "title": "No",
+                                "type": "column",
+                                "color": "#333",
+                                "valueField": "no_count"
+                            },
+                            {
+                                "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
+                                "fillAlphas": 0.8,
+                                "labelText": "[[value]]",
+                                "lineAlpha": 0.3,
+                                "title": "Partial",
+                                "type": "column",
+                                "color": "#333",
+                                "valueField": "partial_count"
+                            },
+                            {
+                                "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
+                                "fillAlphas": 0.8,
+                                "labelText": "[[value]]",
+                                "lineAlpha": 0.3,
+                                "title": "Not updated",
+                                "type": "column",
+                                "color": "#333",
+                                "valueField": "not_updated_count"
+                            }],
                         "rotate": true,
                         "categoryField": 'target',
                         "categoryAxis": {
@@ -1342,13 +1373,11 @@ HPD.urls = {
     el.$navs.on('click', function() {
         $('.nav-item').toggleClass('active');
         $('.tab-pane').toggleClass('active');
-    })
+    });
     $('.js-close').on('click', function() {
         el.$modal.hide();
         el.$modal.removeClass('in');
-    })
-
-
+    });
 
     var init = function() {
         pendingCalls.filter = $.ajax({
