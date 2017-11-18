@@ -170,6 +170,7 @@ HPD.urls = {
                 success: function(res) {
                     var table = res.result.table[0];
                     //console.log(JSON.stringify(table));
+
                     if (table.target_type)
                         table.target_type = table.target_type.split('*');
                     else
@@ -195,22 +196,25 @@ HPD.urls = {
                     else
                         table.methods = '';
                     table.target_type[0] = 'Learning Levels:' + table.target_type[0];
-                    table.target_type[2] = 'Others:' + table.target_type[2];
+                    table.target_type[4] = 'Others:' + table.target_type[4];
+                    table.target_type[5] = 'Others:' + table.target_type[5];
                     var html='';
 
-                    for(var i=0; i< table.target_type.length; i++){
-                        var targetCat = table.target_type[i].split(':');
-                        html+= '<tr class="js-row">';
-                        html+= '<td>' + table.school+  '</td>'
-                        html+= '<td>' + targetCat[0]+  '</td>'
-                        html+= '<td>' + targetCat[1].replace(new RegExp("\\+","g"),' ')+  '</td>'
-                        html+= '<td>' + table.sa1[i]+  '</td>'
-                        html+= '<td>' + table.sa2[i]+  '</td>'
-                        html+= '<td>' + table.smc[i]+  '</td>'
-                        html+= '<td>' + table.methods[i]+  '</td>'
-                        html+= '<td>' + table.status[i]+  '</td>'
-                        html+= '<td>' + table.requirememt.replace(new RegExp("\\*","g"),'<br>')+  '</td>'
-                        html +='</tr>'
+                    console.log('.target_type', table.target_type);
+                    for (var i = 0; i < table.target_type.length; i++) {
+                        var targetCat = table.target_type[i].indexOf(':') > -1 ? table.target_type[i].split(':') : [table.target_type[i], ''];
+
+                        html += '<tr class="js-row">';
+                        html += '<td>' + table.school.trim() + '</td>';
+                        html += '<td>' + targetCat[0].trim() + '</td>';
+                        html += '<td>' + (targetCat[1] && targetCat[1].replace(new RegExp("\\+", "g"), ' ')) + '</td>';
+                        html += '<td>' + table.sa1[i].trim() + '</td>';
+                        html += '<td>' + table.sa2[i].trim() + '</td>';
+                        html += '<td>' + table.smc[i].trim() + '</td>';
+                        html += '<td>' + table.methods[i].trim() + '</td>';
+                        html += '<td>' + table.status[i] + '</td>';
+                        html += '<td>' + table.requirememt.replace(new RegExp("\\*", "g"), '<br>').trim() + '</td>';
+                        html += '</tr>';
                     }
                     $('.js-tableBar').show();
                     $('.js-row').remove();
@@ -780,7 +784,7 @@ HPD.urls = {
                             }
                         }
                     });
-
+                    console.log('possibleAnswer', possibleAnswer);
                     var types = [{
                         type: "Yes",
                         percent: possibleAnswer.yes_count.count,
@@ -828,6 +832,8 @@ HPD.urls = {
 
                     function generateStatusChartData() {
                         var chartData = [];
+                        console.log('types', types);
+
                         for (var i = 0; i < types.length; i++) {
                             if (i === selected) {
                                 for (var x = 0; x < types[i].subs.length; x++) {
@@ -847,6 +853,7 @@ HPD.urls = {
                                 });
                             }
                         }
+                        console.log('chartData', chartData);
                         return chartData;
                     }
 
@@ -1394,7 +1401,7 @@ HPD.urls = {
 
         //chartInit('district', '','KULLU','');
 
-    }
+    };
     init();
 
     var getDistributionFile = function(school_name){
@@ -1425,7 +1432,7 @@ HPD.urls = {
             console.log('Cannot Load File');
         }
         xhr.send();
-    }
+    };
 
     $('body').on('click','.js-schoolPdf', function() {
         getDistributionFile($(this).text().split('.')[0]);
@@ -1435,4 +1442,4 @@ HPD.urls = {
         $('.js-filter[data-type="district"]').trigger('change')
     })
 
-})()
+})();

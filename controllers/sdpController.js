@@ -174,7 +174,7 @@ module.exports.table = function(req, res) {
       group_name = 'cluster';
       group = 'cluster';
       where = {'$match': {'[question(343), option(10872)]': req.query.block }};
-    } else if(req.query.cluster) { 
+    } else if (req.query.cluster) {
       query = 'school_name';
       group_name = '[question(343), option(10873)]';
       group = '[question(343), option(10873)]';
@@ -198,7 +198,7 @@ module.exports.table = function(req, res) {
     }
     Promise.all([
         SurveyModel.sdpTable(where),
-    ]).then(function(data) {
+    ]).then(function (data) {
         var response = {
           table: data[0],
           target_status_504: data[1],
@@ -206,7 +206,7 @@ module.exports.table = function(req, res) {
           target_status: data[3]
         };
       res.json({'message': 'Data', 'result': response, 'error': false});
-    }).catch(function(err){
+    }).catch(function (err) {
       console.log(err);
       res.status(500).json({"message": "err", "err": err, "error": true});
     });
@@ -252,7 +252,7 @@ module.exports.pdf = function(req, res) {
         group_name = 'cluster';
         group = 'cluster';
         where = {'$match': {'[question(343), option(10872)]': req.query.block }};
-      } else if(req.query.cluster) { 
+    } else if (req.query.cluster) {
         query = 'school_name';
         group_name = '[question(343), option(10873)]';
         group = '[question(343), option(10873)]';
