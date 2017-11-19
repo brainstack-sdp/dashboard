@@ -1496,7 +1496,7 @@ surveySchema.statics.sdpTable = function (where) {
                     $concat: [`$${target_var['512_1']}`, '* ', `$${target_var['461_1']}`, '* ', `$${target_var['461_2']}`, '* ', `$${target_var['461_3']}`, '* ', `$${target_var['518_1']}`, '* ', `$${target_var['518_2']}`]
                 },
                 'status': {
-                    $concat: [`$${target_var['692_1']}`, '* ', `$${target_var['694_1']}`, '* ', `$${target_var['696_1']}`, ',', `$${target_var['698_1']}`]
+                    $concat: [`$${target_var['698_1']}`, '* ', `$${target_var['692_1']}`, '* ', `$${target_var['694_1']}`, '* ', 'Not Updated', '* ', `$${target_var['696_1']}`, '* ', 'Not Updated']
                 },
                 //                    'proof': {$concat:[ '$'+target_var['693_1'], ', ', '$'+target_var['695_1'], ', ', '$'+target_var['697_1'], ',', '$'+target_var['699_1']]},
                 'requirememt': {
