@@ -40,7 +40,8 @@ HPD.urls = {
             B: "#FA7413",
             C: "#FFD159",
             D: "#5FB6C7",
-            E: "#C9C77C"
+            E: "#C9C77C",
+            F: "#9a9958"
         }, typeMap ={
             1 : 'Basic',
             2 : 'Mediocre',
@@ -760,17 +761,19 @@ HPD.urls = {
 
                 var chartItems = res.result.target_total, possibleAnswer = {
                     yes_count: {name: 'Yes'},
+                    yes_count_with_proof: {name: 'Yes with proof'},
                     no_count: {name: 'No'},
                     partial_count: {name: 'Partial'},
+                    partial_count_with_proof: {name: 'Partial with proof'},
                     not_updated_count: {name: 'Not updated'},
                     total_count: {name: 'Total'}
                 }, selected, total = 0;
                 if(chartItems.length) {
                     chartItems.forEach(function (item) {
-                        if(item.status){
-                            possibleAnswer.yes_count.proof = item.yes_count;
-                            possibleAnswer.partial_count.proof = item.partial_count;
-                        }
+
+                        possibleAnswer.yes_count.proof = item.yes_count_with_proof;
+                        possibleAnswer.partial_count.proof = item.partial_count_with_proof;
+
                         for(var i in item){
                             if (i === 'status') {
                                 continue;
@@ -791,10 +794,12 @@ HPD.urls = {
                         color: gradeColors.E,
                         subs: [{
                             type: "Proof",
-                            percent: possibleAnswer.yes_count.proof
-                        }, {
+                            percent: possibleAnswer.yes_count_with_proof.count,
+                            color: '#bfbe5c'
+                            }, {
                             type: "No Proof",
-                            percent: possibleAnswer.yes_count.count - possibleAnswer.yes_count.proof
+                            percent: possibleAnswer.yes_count.count - possibleAnswer.yes_count_with_proof.count,
+                            color: gradeColors.E
                         }]
                     },{
                         type: "No",
@@ -802,10 +807,12 @@ HPD.urls = {
                         color: gradeColors.D,
                         subs: [{
                             type: "Proof",
-                            percent: 0
+                            percent: 0,
+                            color: gradeColors.D
                         }, {
-                            type: "No Proof",
-                            percent: possibleAnswer.no_count.count
+                            type: "No",
+                            percent: possibleAnswer.no_count.count,
+                            color: gradeColors.D
                         }]
                     },{
                         type: "Not updated",
@@ -813,34 +820,38 @@ HPD.urls = {
                         color: gradeColors.B,
                         subs: [{
                             type: "Proof",
-                            percent: 0
+                            percent: 0,
+                            color: gradeColors.B
                         }, {
-                            type: "No Proof",
-                            percent: possibleAnswer.not_updated_count.count
+                            type: "Not updated",
+                            percent: possibleAnswer.not_updated_count.count,
+                            color: gradeColors.B
                         }]
-                    },{type: "Partial",
+                    },{
+                        type: "Partial",
                         percent: possibleAnswer.partial_count.count,
                         color: gradeColors.C,
                         subs: [{
                             type: "Proof",
-                            percent: possibleAnswer.partial_count.proof
+                            percent: possibleAnswer.partial_count_with_proof.count,
+                            color: '#f9c133'
                         }, {
                             type: "No Proof",
-                            percent: possibleAnswer.partial_count.count - possibleAnswer.partial_count.proof
+                            percent: possibleAnswer.partial_count.count - possibleAnswer.partial_count_with_proof.count,
+                            color: gradeColors.C
                         }]
                     }];
 
                     function generateStatusChartData() {
                         var chartData = [];
-                        console.log('types', types);
-
+                        console.log('types',types);
                         for (var i = 0; i < types.length; i++) {
                             if (i === selected) {
                                 for (var x = 0; x < types[i].subs.length; x++) {
                                     chartData.push({
                                         type: types[i].subs[x].type,
                                         percent: types[i].subs[x].percent,
-                                        color: types[i].color,
+                                        color: types[i].subs[x].color,
                                         pulled: true
                                     });
                                 }
