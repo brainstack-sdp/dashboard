@@ -1609,11 +1609,23 @@ surveySchema.statics.sdpTable = function (where) {
                     $concat: [`$${target_var['512_1']}`, '* ', `$${target_var['461_1']}`, '* ', `$${target_var['461_2']}`, '* ', `$${target_var['461_3']}`, '* ', `$${target_var['518_1']}`, '* ', `$${target_var['518_2']}`]
                 },
                 'status': {
-                    $concat: [{
-                        "$cond": [{
-                            $eq: [target_var['698_1'], 'हाँ । Yes']
-                        }, 1, 0
-                        ]},
+                    $concat: [
+                        {
+                            "$cond": [{
+                                $and: [
+                                    { $eq: [`$${target_var['698_1']}`, 'हाँ । Yes'] },
+                                    { $ne: ['$[question(699), option(15737)]', ''] }
+                                ]}, '$[question(699), option(15737)]', ''
+                            ]
+                        }, ' *',
+                        {
+                            "$cond": [{
+                                $and: [
+                                    { $eq: [`$${target_var['692_1']}`, 'हाँ । Yes'] },
+                                    { $ne: ['$[question(693), option(15664)]', ''] }
+                                ]}, '$[question(693), option(15664)]', ''
+                            ]
+                        }, '* ',
                        // { $cond: [{$en: [target_var['698_1'], 'हाँ । Yes'], 1, 0}, '* ',
                         `$${target_var['692_1']}`, '* ',
                         `$${target_var['694_1']}`, '* ',
