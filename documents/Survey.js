@@ -1415,7 +1415,7 @@ surveySchema.statics.targetTotalCount = function (where, resource, group_name, q
                         "$sum": {
                             "$cond": [{
                                 "$and": [
-                                    {$eq: ['$[question(692)]', 'हाँ । Yes']},
+                                    {$eq: ['$[question(692)]', 'कुछ हद तक, हाँ । Partially']},
                                     {$ne: ['$[question(693), option(15664)]', '']}
                                 ]}, 1, 0
                             ]
@@ -1435,7 +1435,7 @@ surveySchema.statics.targetTotalCount = function (where, resource, group_name, q
                         "$sum": {
                             "$cond": [{
                                 "$and": [
-                                    {$eq: ['$[question(694)]', 'हाँ । Yes']},
+                                    {$eq: ['$[question(694)]', 'कुछ हद तक, हाँ । Partially']},
                                     {$ne: ['$[question(695), option(15730)]', '']}
                                 ]}, 1, 0
                             ]
@@ -1455,7 +1455,7 @@ surveySchema.statics.targetTotalCount = function (where, resource, group_name, q
                         "$sum": {
                             "$cond": [{
                                 "$and": [
-                                    {$eq: ['$[question(696)]', 'हाँ । Yes']},
+                                    {$eq: ['$[question(696)]', 'कुछ हद तक, हाँ । Partially']},
                                     {$ne: ['$[question(697), option(15672)]', '']}
                                 ]}, 1, 0
                             ]
@@ -1475,7 +1475,7 @@ surveySchema.statics.targetTotalCount = function (where, resource, group_name, q
                         "$sum": {
                             "$cond": [{
                                 "$and": [
-                                    {$eq: ['$[question(549)]', 'हाँ । Yes']},
+                                    {$eq: ['$[question(549)]', 'कुछ हद तक, हाँ । Partially']},
                                     {$ne: ['$[question(550), option(11381)]', '']}
                                 ]}, 1, 0
                             ]
@@ -1495,7 +1495,7 @@ surveySchema.statics.targetTotalCount = function (where, resource, group_name, q
                         "$sum": {
                             "$cond": [{
                                 "$and": [
-                                    {$eq: ['$[question(698)]', 'हाँ । Yes']},
+                                    {$eq: ['$[question(698)]', 'कुछ हद तक, हाँ । Partially']},
                                     {$ne: ['$[question(699), option(15737)]', '']}
                                 ]}, 1, 0
                             ]
@@ -1609,8 +1609,12 @@ surveySchema.statics.sdpTable = function (where) {
                     $concat: [`$${target_var['512_1']}`, '* ', `$${target_var['461_1']}`, '* ', `$${target_var['461_2']}`, '* ', `$${target_var['461_3']}`, '* ', `$${target_var['518_1']}`, '* ', `$${target_var['518_2']}`]
                 },
                 'status': {
-                    $concat: [
-                        `$${target_var['698_1']}`, '* ',
+                    $concat: [{
+                        "$cond": [{
+                            $eq: [target_var['698_1'], 'हाँ । Yes']
+                        }, 1, 0
+                        ]},
+                       // { $cond: [{$en: [target_var['698_1'], 'हाँ । Yes'], 1, 0}, '* ',
                         `$${target_var['692_1']}`, '* ',
                         `$${target_var['694_1']}`, '* ',
                         'Not Updated', '* ',
