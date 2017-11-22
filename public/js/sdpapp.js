@@ -1005,7 +1005,7 @@ HPD.urls = {
                         }
 
                     });
-                    console.log(filterLevel);
+
                     for (var i in filterLevel) {
                         total = 0;
                         grades = {"yes_count": 0, "yes_count_with_proof": 0, "no_count": 0, "partial_count": 0, "partial_count_with_proof": 0, "not_updated_count":0};
@@ -1065,7 +1065,7 @@ HPD.urls = {
                                 "fillAlphas": 0.8,
                                 "labelText": "[[value]]",
                                 "lineAlpha": 0.3,
-                                "title": "Yes",
+                                "title": "Yes without proof",
                                 "type": "column",
                                 "color": "#000000",
                                 "valueField": "yes_count"
@@ -1095,7 +1095,7 @@ HPD.urls = {
                                 "fillAlphas": 0.8,
                                 "labelText": "[[value]]",
                                 "lineAlpha": 0.3,
-                                "title": "Partial",
+                                "title": "Partial without proof",
                                 "type": "column",
                                 "color": "#000000",
                                 "valueField": "partial_count"
