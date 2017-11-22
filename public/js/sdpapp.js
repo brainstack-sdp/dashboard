@@ -41,7 +41,8 @@ HPD.urls = {
             C: "#FFD159",
             D: "#5FB6C7",
             E: "#C9C77C",
-            F: "#9a9958"
+            F: "#adac53",
+            G: "#e8ab11"
         }, typeMap ={
             1 : 'Basic',
             2 : 'Mediocre',
@@ -795,7 +796,7 @@ HPD.urls = {
                         subs: [{
                             type: "Proof",
                             percent: possibleAnswer.yes_count_with_proof.count,
-                            color: '#bfbe5c'
+                            color: gradeColors.F
                             }, {
                             type: "No Proof",
                             percent: possibleAnswer.yes_count.count - possibleAnswer.yes_count_with_proof.count,
@@ -834,7 +835,7 @@ HPD.urls = {
                         subs: [{
                             type: "Proof",
                             percent: possibleAnswer.partial_count_with_proof.count,
-                            color: '#f9c133'
+                            color: gradeColors.G
                         }, {
                             type: "No Proof",
                             percent: possibleAnswer.partial_count.count - possibleAnswer.partial_count_with_proof.count,
@@ -1004,13 +1005,16 @@ HPD.urls = {
                         }
 
                     });
+                    console.log(filterLevel);
                     for (var i in filterLevel) {
                         total = 0;
-                        grades = {"yes_count": 0, "no_count": 0, "partial_count": 0, "not_updated_count":0};
+                        grades = {"yes_count": 0, "yes_count_with_proof": 0, "no_count": 0, "partial_count": 0, "partial_count_with_proof": 0, "not_updated_count":0};
                         filterLevel[i].forEach(function (item) {
                             grades.yes_count = item.yes_count;
+                            grades.yes_count_with_proof = item.yes_count_with_proof;
                             grades.no_count = item.no_count;
                             grades.partial_count = item.partial_count;
+                            grades.partial_count_with_proof = item.partial_count_with_proof;
                             grades.not_updated_count = item.not_updated_count;
                         });
                         gradeObj = grades;
@@ -1023,8 +1027,10 @@ HPD.urls = {
                         color: '#333',
                         "colors": [
                             gradeColors.E,
+                            gradeColors.F,
                             gradeColors.D,
                             gradeColors.C,
+                            gradeColors.G,
                             gradeColors.B
                         ],
                         "legend": {
@@ -1043,16 +1049,27 @@ HPD.urls = {
                                 "title": "Status of Target Completion (Percentage)"
                             }
                         ],
-                        "graphs": [{
-                            "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
-                            "fillAlphas": 0.8,
-                            "labelText": "[[value]]",
-                            "lineAlpha": 0.3,
-                            "title": "Yes",
-                            "type": "column",
-                            "color": "#000000",
-                            "valueField": "yes_count"
-                        },
+                        "graphs": [
+                            {
+                                "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
+                                "fillAlphas": 0.8,
+                                "labelText": "[[value]]",
+                                "lineAlpha": 0.3,
+                                "title": "Yes with proof",
+                                "type": "column",
+                                "color": "#000000",
+                                "valueField": "yes_count_with_proof"
+                            },
+                            {
+                                "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
+                                "fillAlphas": 0.8,
+                                "labelText": "[[value]]",
+                                "lineAlpha": 0.3,
+                                "title": "Yes",
+                                "type": "column",
+                                "color": "#000000",
+                                "valueField": "yes_count"
+                            },
                             {
                                 "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
                                 "fillAlphas": 0.8,
@@ -1062,6 +1079,16 @@ HPD.urls = {
                                 "type": "column",
                                 "color": "#000000",
                                 "valueField": "no_count"
+                            },
+                            {
+                                "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
+                                "fillAlphas": 0.8,
+                                "labelText": "[[value]]",
+                                "lineAlpha": 0.3,
+                                "title": "Partial with proof",
+                                "type": "column",
+                                "color": "#000000",
+                                "valueField": "partial_count_with_proof"
                             },
                             {
                                 "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
