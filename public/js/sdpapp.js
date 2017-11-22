@@ -166,11 +166,12 @@ HPD.urls = {
 
 
         if (type === "school_name" && appliedFilter.value) {
+            var table = {};
             $.ajax({
                 method: 'GET',
                 url : HPD.urls.surveyTable + '?' + type +'=' +encodeURIComponent($el.val()),
                 success: function(res) {
-                    var table = res.result.table[0];
+                     table = res.result.table[0];
                     //console.log(JSON.stringify(table));
 
                     if (table.target_type)

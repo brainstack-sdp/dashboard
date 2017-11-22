@@ -1274,7 +1274,7 @@ surveySchema.statics.targetTotalCount = function (where, resource, group_name, q
                             "$cond": [{
                                 "$and": [
                                     {$eq: ['$[question(692)]', 'हाँ । Yes']},
-                                    {$ne: ['$[question(693), option(15664)]', '']}
+                                    {$ne: [`$${target_var['693_1']}`, '']}
                                 ]}, 1, 0
                             ]
                         }
@@ -1293,7 +1293,7 @@ surveySchema.statics.targetTotalCount = function (where, resource, group_name, q
                             "$cond": [{
                                 "$and": [
                                     {$eq: ['$[question(694)]', 'हाँ । Yes']},
-                                    {$ne: ['$[question(695), option(15668)]', '']}
+                                    {$ne: [`$${target_var['695_1']}`, '']}
                                 ]}, 1, 0
                             ]
                         }
@@ -1312,7 +1312,7 @@ surveySchema.statics.targetTotalCount = function (where, resource, group_name, q
                             "$cond": [{
                                 "$and": [
                                     {$eq: ['$[question(696)]', 'हाँ । Yes']},
-                                    {$ne: ['$[question(697), option(15672)]', '']}
+                                    {$ne: [`$${target_var['697_1']}`, '']}
                                 ]}, 1, 0
                             ]
                         }
@@ -1351,7 +1351,7 @@ surveySchema.statics.targetTotalCount = function (where, resource, group_name, q
                             "$cond": [{
                                 "$and": [
                                     {$eq: ['$[question(698)]', 'हाँ । Yes']},
-                                    {$ne: ['$[question(699), option(15737)]', '']}
+                                    {$ne: [`$${target_var['699_1']}`, '']}
                                 ]}, 1, 0
                             ]
                         }
@@ -1416,7 +1416,7 @@ surveySchema.statics.targetTotalCount = function (where, resource, group_name, q
                             "$cond": [{
                                 "$and": [
                                     {$eq: ['$[question(692)]', 'कुछ हद तक, हाँ । Partially']},
-                                    {$ne: ['$[question(693), option(15664)]', '']}
+                                    {$ne: [`$${target_var['693_1']}`, '']}
                                 ]}, 1, 0
                             ]
                         }
@@ -1436,7 +1436,7 @@ surveySchema.statics.targetTotalCount = function (where, resource, group_name, q
                             "$cond": [{
                                 "$and": [
                                     {$eq: ['$[question(694)]', 'कुछ हद तक, हाँ । Partially']},
-                                    {$ne: ['$[question(695), option(15730)]', '']}
+                                    {$ne: [`$${target_var['695_1']}`, '']}
                                 ]}, 1, 0
                             ]
                         }
@@ -1456,7 +1456,7 @@ surveySchema.statics.targetTotalCount = function (where, resource, group_name, q
                             "$cond": [{
                                 "$and": [
                                     {$eq: ['$[question(696)]', 'कुछ हद तक, हाँ । Partially']},
-                                    {$ne: ['$[question(697), option(15672)]', '']}
+                                    {$ne: [`$${target_var['697_1']}`, '']}
                                 ]}, 1, 0
                             ]
                         }
@@ -1496,7 +1496,7 @@ surveySchema.statics.targetTotalCount = function (where, resource, group_name, q
                             "$cond": [{
                                 "$and": [
                                     {$eq: ['$[question(698)]', 'कुछ हद तक, हाँ । Partially']},
-                                    {$ne: ['$[question(699), option(15737)]', '']}
+                                    {$ne: [`$${target_var['698_1']}`, '']}
                                 ]}, 1, 0
                             ]
                         }
@@ -1610,31 +1610,47 @@ surveySchema.statics.sdpTable = function (where) {
                 },
                 'status': {
                     $concat: [
+                        //  `$$target_var['698_1']}, '* ',
                         {
                             "$cond": [{
                                 $and: [
                                     { $eq: [`$${target_var['698_1']}`, 'हाँ । Yes'] },
-                                    { $ne: ['$[question(699), option(15737)]', ''] }
-                                ]}, '$[question(699), option(15737)]', ''
+                                    { $ne: [`$${target_var['699_1']}`, ''] }
+                                ]}, `$${target_var['699_1']}`, ''
                             ]
                         }, ' *',
+                        //  `$${target_var['692_1']}`, '* ',
                         {
                             "$cond": [{
                                 $and: [
                                     { $eq: [`$${target_var['692_1']}`, 'हाँ । Yes'] },
-                                    { $ne: ['$[question(693), option(15664)]', ''] }
-                                ]}, '$[question(693), option(15664)]', ''
+                                    { $ne: [`$${target_var['693_1']}`, ''] }
+                                ]}, `$${target_var['693_1']}`, ''
                             ]
                         }, '* ',
-                       // { $cond: [{$en: [target_var['698_1'], 'हाँ । Yes'], 1, 0}, '* ',
-                        `$${target_var['692_1']}`, '* ',
-                        `$${target_var['694_1']}`, '* ',
+                        //  `$${target_var['694_1']}`, '* ',
+                        {
+                            "$cond": [{
+                                $and: [
+                                    { $eq: [`$${target_var['694_1']}`, 'हाँ । Yes'] },
+                                    { $ne: [`$${target_var['695_1']}`, ''] }
+                                ]}, `$${target_var['695_1']}`, ''
+                            ]
+                        }, '* ',
                         'Not Updated', '* ',
-                        `$${target_var['696_1']}`, '* ',
+                        // `$${target_var['696_1']}`, '* ',
+                        {
+                            "$cond": [{
+                                $and: [
+                                    { $eq: [`$${target_var['696_1']}`, 'हाँ । Yes'] },
+                                    { $ne: [`$${target_var['697_1']}`, ''] }
+                                ]}, `$${target_var['697_1']}`, ''
+                            ]
+                        }, '* ',
                         'Not Updated'
                     ]
                 },
-                //                    'proof': {$concat:[ '$'+target_var['693_1'], ', ', '$'+target_var['695_1'], ', ', '$'+target_var['697_1'], ',', '$'+target_var['699_1']]},
+                // 'proof': {$concat:[ '$'+target_var['693_1'], ', ', '$'+target_var['695_1'], ', ', '$'+target_var['697_1'], ',', '$'+target_var['699_1']]},
                 'requirememt': {
                     $concat: [`$${target_var['584_1']}`, '* ', `$${target_var['587_1']}`, '* ', `$${target_var['588_1']}`]
                 },
