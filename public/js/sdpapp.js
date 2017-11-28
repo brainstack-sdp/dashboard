@@ -203,7 +203,6 @@ HPD.urls = {
                     table.target_type[5] = 'Others:' + table.target_type[5];
                     var html='';
 
-                    console.log('.target_type', table.target_type);
                     for (var i = 0; i < table.target_type.length; i++) {
                         var targetCat = table.target_type[i].indexOf(':') > -1 ? table.target_type[i].split(':') : [table.target_type[i], ''];
 
@@ -526,7 +525,7 @@ HPD.urls = {
                     chartItems.teacher_performance=0;
                     chartItems.school_management=0;
                     chartItemsNext.forEach(function (item) {
-                        //console.log(item)
+
                         if(item.status == '11313' || item.status == '11314'|| item.status == '11315'|| item.status == '11316'){
                             coms +=item.community_participation
                             gradeObj.coms.push({type: subTargetMap[item.status], percent: item.community_participation})
@@ -789,7 +788,7 @@ HPD.urls = {
                             }
                         }
                     });
-                    console.log('possibleAnswer', possibleAnswer);
+
                     var types = [{
                         type: "Yes",
                         percent: possibleAnswer.yes_count.count,
@@ -846,7 +845,7 @@ HPD.urls = {
 
                     function generateStatusChartData() {
                         var chartData = [];
-                        console.log('types',types);
+
                         for (var i = 0; i < types.length; i++) {
                             if (i === selected) {
                                 for (var x = 0; x < types[i].subs.length; x++) {
@@ -866,7 +865,7 @@ HPD.urls = {
                                 });
                             }
                         }
-                        console.log('chartData', chartData);
+
                         return chartData;
                     }
 
@@ -906,16 +905,20 @@ HPD.urls = {
                 chartItems = res.result.target_total, grades = {}, filterLevel= {}, series = [];
                 if(chartItems.length) {
                     chartItems.forEach(function (item) {
+                        if (!item[filterKey]) return;
                         if (filterLevel[item[filterKey]]) {
                             filterLevel[item[filterKey]].push(item)
                         } else {
                             filterLevel[item[filterKey]] = [item];
                         }
                     });
+
                     for (var i in filterLevel) {
                         total = 0;
                         grades = {"yes_count": 0, "yes_count_with_proof": 0, "no_count": 0, "partial_count": 0, "partial_count_with_proof": 0, "not_updated_count":0};
                         filterLevel[i].forEach(function (item) {
+
+                          //  if(!item.district || item.district === '') { return; }
                             grades.yes_count = Math.floor((item.yes_count/item.total_count)*100);
                             if (grades.yes_count > 100) {
                                 grades.yes_count = 100;
@@ -928,6 +931,7 @@ HPD.urls = {
                         gradeObj[filterKey] = i;
                         series.push(gradeObj)
                     }
+
                     AmCharts.makeChart("targetStatus", {
                         "type": "serial",
                         "theme": "light",
