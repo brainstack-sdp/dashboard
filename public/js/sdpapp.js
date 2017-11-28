@@ -41,8 +41,8 @@ HPD.urls = {
             C: "#FFD159",
             D: "#5FB6C7",
             E: "#C9C77C",
-            F: "#adac53",
-            G: "#e8ab11"
+            F: "#888742",
+            G: "#dc9e00"
         }, typeMap ={
             1 : 'Basic',
             2 : 'Mediocre',
@@ -903,7 +903,7 @@ HPD.urls = {
                 }
                 $('.js-targetStatusValue.js-loader').hide();
 
-                chartItems = res.result.target, grades = {}, filterLevel= {}, series = [];
+                chartItems = res.result.target_total, grades = {}, filterLevel= {}, series = [];
                 if(chartItems.length) {
                     chartItems.forEach(function (item) {
                         if (filterLevel[item[filterKey]]) {
@@ -914,7 +914,7 @@ HPD.urls = {
                     });
                     for (var i in filterLevel) {
                         total = 0;
-                        grades = {"yes_count": 0, "no_count": 0, "partial_count": 0, "not_updated_count":0};
+                        grades = {"yes_count": 0, "yes_count_with_proof": 0, "no_count": 0, "partial_count": 0, "partial_count_with_proof": 0, "not_updated_count":0};
                         filterLevel[i].forEach(function (item) {
                             grades.yes_count = Math.floor((item.yes_count/item.total_count)*100);
                             if (grades.yes_count > 100) {
@@ -1009,12 +1009,12 @@ HPD.urls = {
 
                     for (var i in filterLevel) {
                         total = 0;
-                        grades = {"yes_count": 0, "yes_count_with_proof": 0, "no_count": 0, "partial_count": 0, "partial_count_with_proof": 0, "not_updated_count":0};
+                        grades = {"yes_count_without_proof": 0, "yes_count_with_proof": 0, "no_count": 0, "partial_count_without_proof": 0, "partial_count_with_proof": 0, "not_updated_count":0};
                         filterLevel[i].forEach(function (item) {
-                            grades.yes_count = item.yes_count;
+                            grades.yes_count_without_proof = item.yes_count - item.yes_count_with_proof;
                             grades.yes_count_with_proof = item.yes_count_with_proof;
                             grades.no_count = item.no_count;
-                            grades.partial_count = item.partial_count;
+                            grades.partial_count_without_proof = item.partial_count - item.partial_count_with_proof;
                             grades.partial_count_with_proof = item.partial_count_with_proof;
                             grades.not_updated_count = item.not_updated_count;
                         });
@@ -1027,11 +1027,11 @@ HPD.urls = {
                         "theme": "light",
                         color: '#333',
                         "colors": [
-                            gradeColors.E,
                             gradeColors.F,
+                            gradeColors.E,
                             gradeColors.D,
-                            gradeColors.C,
                             gradeColors.G,
+                            gradeColors.C,
                             gradeColors.B
                         ],
                         "legend": {
@@ -1069,7 +1069,7 @@ HPD.urls = {
                                 "title": "Yes without proof",
                                 "type": "column",
                                 "color": "#000000",
-                                "valueField": "yes_count"
+                                "valueField": "yes_count_without_proof"
                             },
                             {
                                 "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",
@@ -1099,7 +1099,7 @@ HPD.urls = {
                                 "title": "Partial without proof",
                                 "type": "column",
                                 "color": "#000000",
-                                "valueField": "partial_count"
+                                "valueField": "partial_count_without_proof"
                             },
                             {
                                 "balloonText": "<b>[[category]]</b><br><span style='font-size:12px'>[[title]]: <b>[[value]]</b></span>",

@@ -359,6 +359,116 @@ surveySchema.statics.targetCount = function (where, resource, group_name, query)
     }.bind(this));
 };
 
+// OMPLIANCE WITH SA1 progress CHECK-IN
+surveySchema.statics.targetProgressCount = function (where, resource, group_name, query) {
+    // and
+    return new Promise(function (resolve, reject) {
+        "use strict";
+        this.aggregate([
+            where,
+            {
+                '$group': {
+                    '_id': `$${group_name}`,
+                    "yes_count": {
+                        "$sum": {
+                            "$cond": [{
+                                $and: [
+                                    {
+                                        $or: [
+                                            {
+                                                $and: [
+                                                    {$eq: ['$[variable(692)]', '15661']},
+                                                    {$ne: ['$[question(693) option(15664)]', '']}
+                                                ]
+                                            },
+                                            {$eq: ['$[variable(692)]', '15662']},
+                                            {
+                                                $and: [
+                                                    {$eq: ['$[variable(692)]', '15663']},
+                                                    {$ne: ['$[question(692) option(15664)]', '']}
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        $or: [
+                                            {
+                                                $and: [
+                                                    {$eq: ['$[variable(694)]', '15665']},
+                                                    {$ne: ['$[question(695) option(15668)]', '']}
+                                                ]
+                                            },
+                                            {$eq: ['$[variable(694)]', '15666']},
+                                            {
+                                                $and: [
+                                                    {$eq: ['$[variable(694)]', '15667']},
+                                                    {$ne: ['$[question(695) option(15668)]', '']}
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        $or: [
+                                            {
+                                                $and: [
+                                                    {$eq: ['$[variable(696)]', '15669']},
+                                                    {$ne: ['$[question(697) option(15672)]', '']}
+                                                ]
+                                            },
+                                            {$eq: ['$[variable(696)]', '15670']},
+                                            {
+                                                $and: [
+                                                    {$eq: ['$[variable(696)]', '15671']},
+                                                    {$ne: ['$[question(697) option(15672)]', '']}
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        $or: [
+                                            {
+                                                $and: [
+                                                    {$eq: ['$[variable(698)]', '15673']},
+                                                    {$ne: ['$[question(699) option(15676)]', '']}
+                                                ]
+                                            },
+                                            {$eq: ['$[variable(699)]', '15674']},
+                                            {
+                                                $and: [
+                                                    {$eq: ['$[variable(698)]', '15675']},
+                                                    {$ne: ['$[question(699) option(15676)]', '']}
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }, 1, 0]
+                        }
+                    },
+                    "total_count": { "$sum": 1 }
+                }
+            },
+            {
+                "$project": {
+                    "_id": 0,
+                    [query]: "$_id",
+                    "yes_count": '$yes_count',
+                    "no_count": 1,
+                    "partial_count": 1,
+                    "not_updated_count": 1,
+                    "total_count": "$total_count"
+                    // "noupdate_count": 1
+                }
+            }
+        ]).exec(function (err, data) {
+            if (err) {
+                reject(err);
+            }
+            resolve(data);
+        });
+    }.bind(this));
+};
+
 /* surveySchema.statics.targetStatusCount = function (where, resource, group_name, query) {
     return new Promise(function (resolve, reject) {
         "use strict";
@@ -1557,16 +1667,16 @@ surveySchema.statics.targetTotalCount = function (where, resource, group_name, q
                     "_id": 0,
                     [query]: "$_id",
                     "yes_count": {
-                        '$add': ['$yes_count_692', '$yes_count_694', '$yes_count_696', '$yes_count_698', '$yes_count_549']
+                        '$add': ['$yes_count_692', '$yes_count_694', '$yes_count_696', '$yes_count_698']
                     },
                     "yes_count_with_proof": {
-                        '$add': ['$yes_count_with_proof_692', '$yes_count_with_proof_694', '$yes_count_with_proof_696', '$yes_count_with_proof_698', '$yes_count_with_proof_549']
+                        '$add': ['$yes_count_with_proof_692', '$yes_count_with_proof_694', '$yes_count_with_proof_696', '$yes_count_with_proof_698']
                     },
                     "no_count": {
-                        '$add': ['$no_count_692', '$no_count_694', '$no_count_696', '$no_count_698', '$no_count_549']
+                        '$add': ['$no_count_692', '$no_count_694', '$no_count_696', '$no_count_698']
                     },
                     "partial_count": {
-                        '$add': ['$partial_count_692', '$partial_count_694', '$partial_count_696', '$partial_count_698', '$partial_count_549']
+                        '$add': ['$partial_count_692', '$partial_count_694', '$partial_count_696', '$partial_count_698']
                     },
                     "partial_count_with_proof": {
                         '$add': ['$partial_count_with_proof_692', '$partial_count_with_proof_694', '$partial_count_with_proof_696', '$partial_count_with_proof_698', '$partial_count_with_proof_549']

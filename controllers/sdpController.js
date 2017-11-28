@@ -88,7 +88,7 @@ module.exports.analyticsSurvey = function(req, res) {
       query = 'school_name';
       group_name = '[question(343), option(10873)]';
       group = '[question(343), option(10873)]';
-      where = {'$match': {'[question(343), option(10873)]': {'$regex':req.query.school_name }}};
+      where = {'$match': {'[question(343), option(10873)]': {'$regex': req.query.school_name }}};
     } else{
       query = 'district';
       group_name = '[question(343), option(10871)]';
@@ -128,10 +128,10 @@ module.exports.analyticsSurvey = function(req, res) {
         SurveyModel.targetTotalCount(where, resources[588], group_name, query),
         SurveyModel.targetStatus504Count(where, resources[588], group_name, query),
         SurveyModel.targetType504Count(where, resources[588], group_name, query),
-
         SurveyModel.targetStatus504_4Count(where, resources[588], group_name, query),
         SurveyModel.targetStatus504_5Count(where, resources[588], group_name, query),
-        //SurveyModel.targetStatus504_6Count(where, resources[588], group_name, query),
+        SurveyModel.targetProgressCount(where, resources[588], group_name, query)
+        // SurveyModel.targetStatus504_6Count(where, resources[588], group_name, query),
     ]).then(function(data) {
         var response = {
             complete: data[0],
@@ -148,11 +148,11 @@ module.exports.analyticsSurvey = function(req, res) {
             target_type_504: data[11],
             target_status_504_4: data[12],
             target_status_504_5: data[13],
+            targetProgressCount: data[14]
             //target_status_504_6: data[14],
         };
-        console.log(JSON.stringify(data[8]));
         res.json({'message': 'Data', 'result':response, 'error': false});
-    }).catch(function(err){
+    }).catch(function (err) {
       console.log(err);
       res.status(500).json({"message": "err", "err": err, "error": true});
     });
@@ -179,7 +179,7 @@ module.exports.table = function(req, res) {
       group_name = '[question(343), option(10873)]';
       group = '[question(343), option(10873)]';
       where = {'$match': {'cluster': req.query.cluster }};
-    } else if(req.query.school_name) {
+    } else if (req.query.school_name) {
       query = 'school_name';
       group_name = '[question(343), option(10873)]';
       group = '[question(591)]';
