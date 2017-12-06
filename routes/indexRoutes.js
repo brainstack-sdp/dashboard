@@ -17,7 +17,7 @@ let sdpController = require("../controllers/sdpController");
  * @param  {Object} req
  * @return {Object} json
  */
-router.get("/", schoolController.index);
+router.get("/", sdpController.home);
 router.get("/sdp", sdpController.home);
 router.get("/login", schoolController.login);
 
