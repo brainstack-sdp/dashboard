@@ -512,13 +512,14 @@ HPD.urls = {
                 };
 
                 var chartItems = res.result.target_type, series = [], gradeObj = {}, possibleAnswer = {yes_count:{name:'Yes'}, no_count:{name:'No'},partial_count: {name:'Partial'}}, selected, total = 0;
-                gradeObj.coms =[]
-                gradeObj.stu =[]
-                gradeObj.teach =[]
-
-                var coms= 0, stu= 0, teach=0
+                gradeObj.coms =[];
+                gradeObj.stu =[];
+                gradeObj.teach =[];
+                console.log('chartItems1',chartItems);
+                var coms= 0, stu= 0, teach=0;
 
                 var chartItemsNext = res.result.target_type_504;
+                console.log('chartItemsNext',chartItemsNext);
                 if(chartItems.length) {
                     chartItems = chartItems[0];
                     chartItems.community_participation =0;
@@ -527,13 +528,13 @@ HPD.urls = {
                     chartItemsNext.forEach(function (item) {
 
                         if(item.status == '11313' || item.status == '11314'|| item.status == '11315'|| item.status == '11316'){
-                            coms +=item.community_participation
+                            coms +=item.community_participation;
                             gradeObj.coms.push({type: subTargetMap[item.status], percent: item.community_participation})
                         } else if(item.status == '11320' || item.status == '11321'|| item.status == '15171'|| item.status == '15172'){
-                            stu +=item.school_management
+                            stu +=item.school_management;
                             gradeObj.stu.push({type: subTargetMap[item.status], percent: item.school_management})
                         } else if(item.status == '11317' || item.status == '11318'|| item.status == '11319') {
-                            teach += item.teacher_performance
+                            teach += item.teacher_performance;
                             gradeObj.teach.push({type: subTargetMap[item.status], percent: item.teacher_performance})
                         } else {
 

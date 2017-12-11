@@ -1313,9 +1313,9 @@ surveySchema.statics.targetType504Count = function (where, resource, group_name,
                         "$sum": {
                             "$cond": [{
                                 $or: [
-                                    { $setIsSubset: [ ['$cp_1'], ['11313', '11314', '11315', '11316' ] ] },
-                                    { $setIsSubset: [ ['$cp_2'], ['11313', '11314', '11315', '11316' ] ] },
-                                    { $setIsSubset: [ ['$cp_3'], ['11313', '11314', '11315', '11316' ] ] }
+                                    { $setIsSubset: [ ['$cp_1'], ['11313', '11314', '11315', '11316'] ] },
+                                    { $setIsSubset: [ ['$cp_2'], ['11313', '11314', '11315', '11316'] ] },
+                                    { $setIsSubset: [ ['$cp_3'], ['11313', '11314', '11315', '11316'] ] }
                                 ]
                             }, 1, 0]
                         }
@@ -1324,9 +1324,9 @@ surveySchema.statics.targetType504Count = function (where, resource, group_name,
                         "$sum": {
                             "$cond": [{
                                 $or: [
-                                    { $setIsSubset: [ ['$cp_1'], ['11317', '11318', '11319' ] ] },
-                                    { $setIsSubset: [ ['$cp_2'], ['11317', '11318', '11319' ] ] },
-                                    { $setIsSubset: [ ['$cp_3'], ['11317', '11318', '11319' ] ] }
+                                    { $setIsSubset: [ ['$cp_1'], ['11317', '11318', '11319'] ] },
+                                    { $setIsSubset: [ ['$cp_2'], ['11317', '11318', '11319'] ] },
+                                    { $setIsSubset: [ ['$cp_3'], ['11317', '11318', '11319'] ] }
                                 ]
                             }, 1, 0]
                         }
@@ -1335,9 +1335,9 @@ surveySchema.statics.targetType504Count = function (where, resource, group_name,
                         "$sum": {
                             "$cond": [{
                                 $or: [
-                                    { $setIsSubset: [ ['$cp_1'], ['11320', '11321', '15171', '15172' ] ] },
-                                    { $setIsSubset: [ ['$cp_2'], ['11320', '11321', '15171', '15172' ] ] },
-                                    { $setIsSubset: [ ['$cp_3'], ['11320', '11321', '15171', '15172' ] ] }
+                                    { $setIsSubset: [ ['$cp_1'], ['11320', '11321', '15171', '15172'] ] },
+                                    { $setIsSubset: [ ['$cp_2'], ['11320', '11321', '15171', '15172'] ] },
+                                    { $setIsSubset: [ ['$cp_3'], ['11320', '11321', '15171', '15172'] ] }
                                 ]
                             }, 1, 0]
                         }
@@ -1724,27 +1724,27 @@ surveySchema.statics.sdpTable = function (where) {
                         {
                             "$cond": [{
                                 $and: [
-                                    { $eq: [`$${target_var['698_1']}`, 'हाँ । Yes'] },
+                                    { $eq: [`$${target_var['698_1']}`, 'हाँ (Yes)'] },
                                     { $ne: [`$${target_var['699_1']}`, ''] }
-                                ]}, `$${target_var['699_1']}`, ''
+                                ]}, `$${target_var['699_1']}.filename`, ''
                             ]
                         }, ' *',
                         //  `$${target_var['692_1']}`, '* ',
                         {
                             "$cond": [{
                                 $and: [
-                                    { $eq: [`$${target_var['692_1']}`, 'हाँ । Yes'] },
+                                    { $eq: [`$${target_var['692_1']}`, 'हाँ (Yes)'] },
                                     { $ne: [`$${target_var['693_1']}`, ''] }
-                                ]}, `$${target_var['693_1']}`, ''
+                                ]}, `$${target_var['693_1']}.filename`, ''
                             ]
                         }, '* ',
                         //  `$${target_var['694_1']}`, '* ',
                         {
                             "$cond": [{
                                 $and: [
-                                    { $eq: [`$${target_var['694_1']}`, 'हाँ । Yes'] },
+                                    { $eq: [`$${target_var['694_1']}`, 'हाँ (Yes)'] },
                                     { $ne: [`$${target_var['695_1']}`, ''] }
-                                ]}, `$${target_var['695_1']}`, ''
+                                ]}, `$${target_var['695_1']}.filename`, ''
                             ]
                         }, '* ',
                         'Not Updated', '* ',
@@ -1752,9 +1752,9 @@ surveySchema.statics.sdpTable = function (where) {
                         {
                             "$cond": [{
                                 $and: [
-                                    { $eq: [`$${target_var['696_1']}`, 'हाँ । Yes'] },
+                                    { $eq: [`$${target_var['696_1']}`, 'हाँ (Yes)'] },
                                     { $ne: [`$${target_var['697_1']}`, ''] }
-                                ]}, `$${target_var['697_1']}`, ''
+                                ]}, `$${target_var['697_1']}.filename`, ''
                             ]
                         }, '* ',
                         'Not Updated'

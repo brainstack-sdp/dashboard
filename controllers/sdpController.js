@@ -61,19 +61,18 @@ module.exports.home = function (req, res) {
   //}
 };
 
-
 module.exports.analyticsSurvey = function(req, res) {
     console.log('abba jana ' + req.query.cluster);
     let group = '';
     let group_name = '';
-    let query = ''
+    let query = '';
     let where = undefined;
-    if(req.query.district) {
+    if (req.query.district) {
       query = 'block';
       group_name = '[question(343), option(10872)]';
       group = '[question(343), option(10872)]';
       where = {'$match': {'[question(343), option(10871)]': req.query.district }};
-    } else if(req.query.block) {
+    } else if (req.query.block) {
       console.log('asasasas ' + req.query.block);
       query = 'cluster';
       group_name = 'cluster';
@@ -132,7 +131,7 @@ module.exports.analyticsSurvey = function(req, res) {
         SurveyModel.targetStatus504_5Count(where, resources[588], group_name, query),
         SurveyModel.targetProgressCount(where, resources[588], group_name, query)
         // SurveyModel.targetStatus504_6Count(where, resources[588], group_name, query),
-    ]).then(function(data) {
+    ]).then(function (data) {
         var response = {
             complete: data[0],
             school_type: data[1],
